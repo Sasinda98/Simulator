@@ -12,17 +12,20 @@
 /*
  * 
  */
-int generateTaskFile(char *c);
+int generateTaskFile(char *fileName);
+int readTaskFile(char *fileName);
 
 int main(int argc, char** argv) {
-    printf("It runs!");
+    printf("Scheduler started!\n");
    
-    generateTaskFile("task_file");  //generates task file.
+    //generateTaskFile("task_file");  //generates task file.
+    readTaskFile("task_file");
 
     return 0;
 }
 
-int generateTaskFile( char *fileName){
+//Generates task file, returns 0 on success and less than 0 on failure.
+int generateTaskFile(char *fileName){
        
     FILE *pFile = fopen(fileName, "w");    //open for writing.
     
@@ -51,9 +54,33 @@ int generateTaskFile( char *fileName){
         }
     }
     
-    fclose(pFile);
-    pFile = NULL;
+    fclose(pFile);  //closing opened file.
+    pFile = NULL; //making sure ref is not there anymore.
     
     return 0;
 }
 
+//Reads the taskfile line by line
+int readTaskFile(char *fileName){
+    
+    FILE *pFile = fopen(fileName, "r");    //open for writing.
+    
+    if(pFile == NULL){
+        char temp[3];
+        printf("Failed to open file, press any key followed by enter key to exit.");
+        scanf("%s", temp);
+        return -1;
+    }
+    
+    int task_number, cpu_burst;
+    for(int i = 0; i < 100; i++){
+        fscanf(pFile, "%d %d\n", &task_number, &cpu_burst);
+        printf("%d %d\n", task_number, cpu_burst);
+    }
+    
+    
+    fclose(pFile);  //closing opened file
+    pFile = NULL; //making sure reference is not there anymore.
+    return 0;
+    
+}
