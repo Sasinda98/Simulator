@@ -51,7 +51,7 @@ int insert(struct Task newTask){
             rear = rear % (MAX_SIZE);
         
         *(pTaskArray + rear) = newTask;
-        printf("\n Inserted = %d\n", *(pTaskArray + rear) );
+        printf("\n Inserted = %d\n", (pTaskArray + rear)->task_number );
         nItems++;
         return 1;   //success
     }
