@@ -12,7 +12,7 @@
 
 int generateTaskFile(char *fileName);
 int readTaskFile(char *fileName);
-int getTwoTasks(char *fileName);
+struct Task *getNextTwoTasks(char *fileName);
 
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
@@ -44,8 +44,12 @@ int main(int argc, char** argv) {
     }
     
     
-    for(int i=0; i<2; i++){
-        getTwoTasks("task_file");
+    for(int i=0; i<58; i++){
+        struct Task *task = getNextTwoTasks("task_file");
+        if( task != NULL){
+            printf("%d %d\n", task->task_number, task->cpu_burst);
+            printf("%d %d\n", (task+1)->task_number, (task+1)->cpu_burst);
+        }
     }
     
    
@@ -119,9 +123,15 @@ int readTaskFile(char *fileName){
 }
 
 long fileReadHead;
+struct Task *taskArray = NULL;
 
-//Reads the taskfile 2 tasks at a time.
-int getTwoTasks(char *fileName){
+/*
+ * Returns pointer to two tasks from task file per call, if not found or error returns NULL
+ * Refered to the link below to get an idea on how to return array of struct.
+ * Link: https://stackoverflow.com/questions/47028165/how-do-i-return-an-array-of-struct-from-a-function
+ * Accessed: 1 May 2019
+ */
+struct Task *getNextTwoTasks(char *fileName){
     
     FILE *pFile = fopen(fileName, "r");    //open for writing.
     
@@ -129,11 +139,11 @@ int getTwoTasks(char *fileName){
         char temp[3];
         printf("Failed to open file, press any key followed by enter key to exit.");
         scanf("%s", temp);
-        return -1;
+        return NULL;
     }
     
     fseek(pFile, 0, SEEK_END);  //moving file position indicator to the end.
-   // printf("SIZE  %ld\n", ftell(pFile));    
+
     long endOfFile = ftell(pFile);  //current position (i.e. eof) of file position indicator.
     
     if(fileReadHead != endOfFile){      //if file position indicatior 'fileReadHead' is not at the end of file.
@@ -141,20 +151,34 @@ int getTwoTasks(char *fileName){
         fseek(pFile, fileReadHead, SEEK_SET);  //move file position indicator to last left off position.         
 
         int task_number, cpu_burst;
-
+        struct Task task[2];
+        taskArray = &task[0];
+        
+        struct Task *taskArray = malloc(sizeof(struct Task) * 2);
+      
         for(int i = 0; i < 2; i++){
             fscanf(pFile, "%d %d\n", &task_number, &cpu_burst);  //moves file position indicator by 2 lines, (for loop).
-            printf("%d %d\n", task_number, cpu_burst);
+    
+            task[i].task_number = task_number;
+            task[i].cpu_burst = cpu_burst;
         }
+        
+        *(taskArray) = task[0]; //setting up the pointers.
+        *(taskArray + 1) = task[1]; //setting up the pointers.
+          
+        fileReadHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
+        fclose(pFile);  //closing opened file
+        pFile = NULL; //making sure reference is not there anymore.
+        return taskArray;
     }else{
         printf("END OF FILE REACHED\n");
     }
 
-    fileReadHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
+   fileReadHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
 
     fclose(pFile);  //closing opened file
     pFile = NULL; //making sure reference is not there anymore.
-    return 0;
+    return NULL;
     
 }
 
