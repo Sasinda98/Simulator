@@ -17,9 +17,9 @@ struct Task *getNextTwoTasks(char *fileName);
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
     printf("Scheduler started!\n");
-   /*
-    struct Task tasks[5];
-    initialize(tasks, 3);
+
+    struct Task tasks[100];
+    initialize(tasks, 100);
 
     struct Task ts1;
     ts1.task_number = 44;
@@ -32,24 +32,24 @@ int main(int argc, char** argv) {
     
     int a,b,c; 
     
-    a = insert(ts1);
-    b = insert(ts2);
-    c = insert(ts3);
+   // a = insert(ts1);
+   // b = insert(ts2);
+   // c = insert(ts3);
     
-    printf("%d, %d, %d\n", a,b,c); */ 
+
     
+    for(int i=0; i<52; i++){
+        struct Task *task = getNextTwoTasks("task_file");   //returns null on error or EOF else pointer is returned.
+        if( task != NULL){  //if task is getting returned.
+            //printf("%d %d\n", task->task_number, task->cpu_burst);
+            //printf("%d %d\n", (task+1)->task_number, (task+1)->cpu_burst);
+            insert(*task);
+            insert(*(task+1));
+        }
+    }
     while(isEmpty()==0){
           struct Task *out = pop();
-    printf("Popped task#= %d\n", out->task_number);
-    }
-    
-    
-    for(int i=0; i<58; i++){
-        struct Task *task = getNextTwoTasks("task_file");
-        if( task != NULL){
-            printf("%d %d\n", task->task_number, task->cpu_burst);
-            printf("%d %d\n", (task+1)->task_number, (task+1)->cpu_burst);
-        }
+             printf("Popped task#= %d\n", out->task_number);
     }
     
    
