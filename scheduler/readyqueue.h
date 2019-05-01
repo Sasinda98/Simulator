@@ -43,6 +43,25 @@ int isFull(){
     return 0;
 }
 
+int isFullTwo(){
+    if(( MAX_SIZE % 2 ) == 0){
+        if(nItems == MAX_SIZE){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+    else{   //if max size is odd
+        if(nItems == (MAX_SIZE - 1)){   //cannot fill last one because two by two insertion. therefore queue is considered full even if one space is avail.
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+}
+
 int insert(struct Task newTask){
     ++rear;
     
@@ -55,14 +74,33 @@ int insert(struct Task newTask){
         nItems++;
         return 1;   //success
     }
-    return 0;   //fail
+    else{
+        printf("Insertion Failed.\n");
+        return 0;   //fail
+    }
+
 }
 
+
+int insertTwo(struct Task newTask[]){
+
+    int remaining = MAX_SIZE - nItems;
+    
+    if(remaining >= 2){
+        insert(newTask[0]);
+        insert(newTask[1]);
+    }
+    else{
+        printf("Fails the insertion for 2 tasks\n");
+    }
+}
+
+
 struct Task *pop(){
-    ++front;
+ 
     
     if( isEmpty() == 0 ){   //not empty
-    
+        ++front;
         if(front == (MAX_SIZE - 1))
             front = front % (MAX_SIZE);
      

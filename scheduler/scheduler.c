@@ -18,8 +18,8 @@ int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
     printf("Scheduler started!\n");
 
-    struct Task tasks[100];
-    initialize(tasks, 100);
+    struct Task tasks[4];
+    initialize(tasks, 4);
 
     struct Task ts1;
     ts1.task_number = 44;
@@ -29,14 +29,43 @@ int main(int argc, char** argv) {
     
     struct Task ts3;
     ts3.task_number = 99;
+        
+    struct Task ts4;
+    ts4.task_number = 101;
     
     int a,b,c; 
     
-   // a = insert(ts1);
-   // b = insert(ts2);
-   // c = insert(ts3);
+    struct Task task_1[2];
+    task_1[0] = ts1;
+    task_1[1] = ts2;
     
+    struct Task task_2[2];
+    task_2[0] = ts3;
+    task_2[1] = ts4;
+    
+    struct Task task_3[2];
+    task_3[0] = ts1;
+    task_3[1] = ts3;
 
+    
+    insertTwo(task_1);  //2
+    insertTwo(task_2);  //4
+    pop();
+    struct Task trf;
+    trf.task_number = 6;
+    insert(trf);
+    
+    
+    insertTwo(task_3);  //6
+    
+ 
+    
+    while(isEmpty()==0){
+      struct Task *out = pop();
+         printf("Popped task#= %d\n", out->task_number);
+    }
+   
+/*
     
     for(int i=0; i<52; i++){
         struct Task *task = getNextTwoTasks("task_file");   //returns null on error or EOF else pointer is returned.
@@ -52,7 +81,7 @@ int main(int argc, char** argv) {
              printf("Popped task#= %d\n", out->task_number);
     }
     
-   
+   */
     
    // int *a = (int *)malloc(sizeof(int)*3);
     //generateTaskFile("task_file");  //generates task file.
