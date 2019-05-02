@@ -24,6 +24,8 @@ char *getCurrentTime();
 double  getTimeElapsed();
 int addSimulationLog(struct Task task);
 void cpu();
+int addSimulationLog_Pre_Exec(struct Task task, char *service_time);
+int addSimulationLog_Post_Exec(struct Task task, char *service_time);
 
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
@@ -89,7 +91,7 @@ int main(int argc, char** argv) {
   
     task("task_file");
     
-    sleep(2);
+    //sleep(2);
     
       
     task("task_file");
@@ -294,8 +296,8 @@ int task(char *fileName){
             isSuccess_Add = insertTwo(twoTasks);    //returns 1 if successfully inserted if not, 0
             
             if(isSuccess_Add == 1){
-                addSimulationLog(twoTasks[0]);
-                addSimulationLog(twoTasks[1]);
+                addSimulationLog_Task(twoTasks[0]);
+                addSimulationLog_Task(twoTasks[1]);
             }
             
         }else{
@@ -334,8 +336,8 @@ int task(char *fileName){
             isSuccess_Add = insertTwo(twoTasks);    //returns 1 if successfully inserted if not, 0
             
             if(isSuccess_Add == 1){
-               addSimulationLog(twoTasks[0]);
-               addSimulationLog(twoTasks[1]);
+               addSimulationLog_Task(twoTasks[0]);
+               addSimulationLog_Task(twoTasks[1]);
             }
         }
     }
@@ -407,7 +409,7 @@ void format_time(char *output){
  * Link: https://www.tutorialspoint.com/c_standard_library/c_function_difftime.htm
  * Accessed: 2 May 2019
  */
-//This function is to get the time elapsed when two start and end times of time_t type are given.
+//This function is to get the time elapsed when two start and end times of time_t type are given. 
 double getTimeElapsed( time_t start_t, time_t end_t ){
    double diff_t;
 
@@ -416,8 +418,8 @@ double getTimeElapsed( time_t start_t, time_t end_t ){
    return diff_t;
 }
 
-//Adds record to simulation log containing task info, number and arrival time.
-int addSimulationLog(struct Task task){
+//Adds record to simulation log containing task info, number and arrival time. To be used in task().
+int addSimulationLog_Task(struct Task task){
     
     FILE *pFile = fopen("simulation_log", "a");    //open for writing.        
     
@@ -440,17 +442,102 @@ int addSimulationLog(struct Task task){
     return 1;
 }
     
-int num_tasks = 0, total_waiting_time, total_turnaround_time;   //shared variables, shared across the 3 cpus.
-
+//This function is the function that gets executed by each cpu thread.
+int num_tasks = 0;   //shared variables, shared across the 3 cpus.
+double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
 void cpu(){
     struct Task *task = pop();  //get a task from ready queue.
     
     if(task != NULL){   //task available from ready queue.
         printf("CPU executing task# = %d burst = %d\n", task->task_number, task->cpu_burst);
-        sleep(task->cpu_burst); //sleep for burst time, simulate cpu executing the task.
-        num_tasks++;
+        
+        //Obtaining service time, waiting time.........................................................................
+        time_t arrival_t = task->arrival_t;    //getting arrival time from the task.
+        time_t service_t;   //var that stores service time. Time at which task entered the cpu.
+        time(&service_t);  //sets the service_t to its value i.e. time now.
+
+        char *service_time = getCurrentTime(); //obtaining current time in full format.
+        format_time(service_time); //formatting it down to only contain the time.
+
+        double waiting_time = getTimeElapsed(arrival_t, service_t); //compute waiting time for this task by getting the difference.
+        printf("Waiting TIME ELAPSED: %f\n", waiting_time);
+        //END of obtaining service time, waiting time...................................................................         
+           
+        //strcpy(twoTasks[0].arrival_time, time1);    //for sim logs.
+
+        total_waiting_time = total_waiting_time + waiting_time; //compute total waiting time.
+        addSimulationLog_Pre_Exec(*task, service_time); //adds record to simulation log with service time & other related fields.
+        
+        sleep(task->cpu_burst); //sleep for burst time, simulate cpu EXECUTING the task.
+        
+        //Obtaining completion time.....................................................................................
+        time_t completion_t;  //var that stores completion time.
+        time(&completion_t); //sets the completion_t to its value i.e. time now, which is essentially the completion time.
+        
+        char *completion_time = getCurrentTime(); //obtaining current time in full format.
+        format_time(completion_time); //formatting it down to only contain the time.
+        
+        double turn_around_time = getTimeElapsed(arrival_t, completion_t);      //computes turn around time by getting the difference & other related fields.
+        //End of obtaining completion time.....................................................................................
+        printf("Turn Around Time: %f\n", turn_around_time);
+        
+        total_turnaround_time = total_turnaround_time + turn_around_time;   //computes total turn around time.
+        num_tasks++;    //increment num of tasks executed by one.
+        addSimulationLog_Post_Exec(*task, completion_time); //adds record to simulation log with completion time.
     }
     else{   //task not available, ready queue empty.
         printf("Empty no tasks available\n");
     }
+}
+
+//Adds record to simulation log containing cpu execution info (i.e. cpu num) and task info (i.e. arrival times and task num).
+// To be used in cpu().
+int addSimulationLog_Pre_Exec(struct Task task, char *service_time){
+    int cpuNum = 1;
+    
+    FILE *pFile = fopen("simulation_log", "a");    //open for writing.        
+    
+    if(pFile == NULL){
+        char temp[3];
+        printf("Failed to open file, press any key followed by enter key to exit.");
+        scanf("%s", temp);
+        return 0;
+    }
+    
+    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n", cpuNum, task.task_number, task.arrival_time, service_time);
+    //printf("cpu_burst %d", cpu_burst);
+    if(status < 0){
+        printf("writing to simulation_log file failed\n");
+        return 0;
+    }
+    
+    fclose(pFile);
+    pFile = NULL;
+    return 1;
+}
+
+//Adds record to simulation log containing cpu execution info (i.e. cpu num, completion time) and task info (i.e. arrival times and task num). 
+//To be used in cpu().
+int addSimulationLog_Post_Exec(struct Task task, char *completion_time){
+    int cpuNum = 1;
+    
+    FILE *pFile = fopen("simulation_log", "a");    //open for writing.        
+    
+    if(pFile == NULL){
+        char temp[3];
+        printf("Failed to open file, press any key followed by enter key to exit.");
+        scanf("%s", temp);
+        return 0;
+    }
+    
+    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n", cpuNum, task.task_number, task.arrival_time, completion_time);
+    //printf("cpu_burst %d", cpu_burst);
+    if(status < 0){
+        printf("writing to simulation_log file failed\n");
+        return 0;
+    }
+    
+    fclose(pFile);
+    pFile = NULL;
+    return 1;
 }
