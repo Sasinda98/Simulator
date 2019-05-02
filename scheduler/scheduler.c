@@ -9,13 +9,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "readyqueue.h"
+#include <String.h>
+
 #include <time.h>
+ #include <sys/time.h>
 
 int generateTaskFile(char *fileName);
 int readTaskFile(char *fileName);
 struct Task *getNextTwoTasks(char *fileName);
 int task(char *fileName);
-time_t start_time_seconds; 
+long long timeInMilliseconds(void);
+void format_time(char *output);
+char *getCurrentTime();
 
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
@@ -24,6 +29,9 @@ int main(int argc, char** argv) {
     struct Task tasks[3];
     initialize(tasks, 3);
 
+  char *output = getCurrentTime();
+   format_time(output);
+    
    /* struct Task ts1;
     ts1.task_number = 44;
     
@@ -61,17 +69,6 @@ int main(int argc, char** argv) {
     
     insertTwo(task_3);  //6
     */
-    
-  
-   
-    /*
-     * Referred to the link below to understand how to use time functions in C.
-     * Link: https://www.geeksforgeeks.org/time-function-in-c/
-     * Accessed: 2 May 2019
-     */
-    time(&start_time_seconds); //record start time of program since READY QUEUE CREATION
-    printf("Seconds since January 1, 1970 = %ld\n", start_time_seconds); 
-
     
     task("task_file");
     pop();
@@ -234,7 +231,9 @@ struct Task *getNextTwoTasks(char *fileName){
 
 int isSuccess_Add = 1;      //holds status of the add, 1 for success and 0 for failure.
 struct Task * ptask_array = NULL;   //pointer to the array that holds the 2 tasks.
-//gets two tasks adds to the ready queue if ready.
+/*
+ * Gets two tasks from file and adds it to ready queue if available
+ */
 int task(char *fileName){
     
     if(isSuccess_Add == 1){ //previous add was successful.
@@ -249,10 +248,7 @@ int task(char *fileName){
             isSuccess_Add = insertTwo(twoTasks);    //returns 1 if successfully inserted if not, 0
             
             if(isSuccess_Add == 1){
-                   time_t now_time_seconds;
-                   time(&now_time_seconds);
-                   long delta = now_time_seconds - start_time_seconds;
-                   printf("Elapsed: %ld\n", delta); 
+ 
             }
             
         }else{
@@ -267,10 +263,63 @@ int task(char *fileName){
             twoTasks[1] = *(ptask_array + 1);
 
             isSuccess_Add = insertTwo(twoTasks);    //returns 1 if successfully inserted if not, 0
+            
+            if(isSuccess_Add == 1){
+ 
+            }
         }
     }
     return isSuccess_Add;
 }
 
+/*
+ * Solution to obtain time in milliseconds taken from the given link.
+ * Link: https://stackoverflow.com/questions/10192903/time-in-milliseconds-in-c
+ * Author: zebo zhuang
+ * Accessed: 2 May 2019
+ */
+long long timeInMilliseconds(void) {
+    struct timeval tv;
+
+    gettimeofday(&tv,NULL);
+    return (((long long)tv.tv_sec)*1000)+(tv.tv_usec/1000);
+}
 
 
+/*
+ * Solution to obtain current time taken from the given link. This was modified to suit my needs.
+ * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
+ * Author: mingos
+ * Accessed: 2 May 2019
+ */
+char *getCurrentTime(){
+    time_t rawtime;
+    struct tm * timeinfo;
+    char *ptime = NULL;
+    ptime = malloc(sizeof(char)*50);
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    printf ( "Current local time and date: %s", asctime (timeinfo) );
+    strcpy (ptime, asctime (timeinfo));
+    
+   // printf("The time---------- %s", ptime);
+    return ptime;
+
+}
+
+/*
+ * Solution to format time was taken from the given link. No modifications were done.
+ * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
+ * Author: hexinpeter
+ * Accessed: 2 May 2019
+ */
+void format_time(char *output){
+    time_t rawtime;
+    struct tm * timeinfo;
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+
+    printf(output, "[%d %d %d %d:%d:%d]",timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+}
