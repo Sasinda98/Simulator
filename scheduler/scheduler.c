@@ -62,7 +62,8 @@ int main(int argc, char** argv) {
     
     task("task_file");
     pop();
-    pop();
+    task("task_file");
+    task("task_file");
     task("task_file");
     
     while(isEmpty() == 0){
