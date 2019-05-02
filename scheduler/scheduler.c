@@ -23,6 +23,7 @@ void format_time(char *output);
 char *getCurrentTime();
 double  getTimeElapsed();
 int addSimulationLog(struct Task task);
+void cpu();
 
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
@@ -98,6 +99,8 @@ int main(int argc, char** argv) {
     struct Task tsk;
     tsk.arrival_t = time(&starte);
     
+    cpu();
+    cpu();
 
    
 /*
@@ -252,7 +255,8 @@ struct Task *getNextTwoTasks(char *fileName){
 int isSuccess_Add = 1;      //holds status of the add, 1 for success and 0 for failure.
 struct Task * ptask_array = NULL;   //pointer to the array that holds the 2 tasks.
 /*
- * Gets two tasks from file and adds it to ready queue if available
+ * Gets two tasks from file and adds it to ready queue if available 
+ * and sets appropriate fields in the task to their respective values.
  */
 int task(char *fileName){
     
@@ -359,6 +363,7 @@ long long timeInMilliseconds(void) {
  * Author: mingos
  * Accessed: 2 May 2019
  */
+//Gets the current time in full date time format, refer to format_time() to see how the output could be used to extract time.
 char *getCurrentTime(){
     time_t rawtime;
     struct tm * timeinfo;
@@ -381,6 +386,7 @@ char *getCurrentTime(){
  * Author: hexinpeter
  * Accessed: 2 May 2019
  */
+//Extracts out the time from the full date time format outputted by the getCurrentTime() function.
 void format_time(char *output){
     time_t rawtime;
     struct tm * timeinfo;
@@ -401,6 +407,7 @@ void format_time(char *output){
  * Link: https://www.tutorialspoint.com/c_standard_library/c_function_difftime.htm
  * Accessed: 2 May 2019
  */
+//This function is to get the time elapsed when two start and end times of time_t type are given.
 double getTimeElapsed( time_t start_t, time_t end_t ){
    double diff_t;
 
@@ -409,6 +416,7 @@ double getTimeElapsed( time_t start_t, time_t end_t ){
    return diff_t;
 }
 
+//Adds record to simulation log containing task info, number and arrival time.
 int addSimulationLog(struct Task task){
     
     FILE *pFile = fopen("simulation_log", "a");    //open for writing.        
@@ -432,3 +440,17 @@ int addSimulationLog(struct Task task){
     return 1;
 }
     
+int num_tasks = 0, total_waiting_time, total_turnaround_time;   //shared variables, shared across the 3 cpus.
+
+void cpu(){
+    struct Task *task = pop();  //get a task from ready queue.
+    
+    if(task != NULL){   //task available from ready queue.
+        printf("CPU executing task# = %d burst = %d\n", task->task_number, task->cpu_burst);
+        sleep(task->cpu_burst); //sleep for burst time, simulate cpu executing the task.
+        num_tasks++;
+    }
+    else{   //task not available, ready queue empty.
+        printf("Empty no tasks available\n");
+    }
+}
