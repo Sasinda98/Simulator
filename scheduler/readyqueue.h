@@ -5,12 +5,16 @@
  * Title: Queue data structure to handle the ready queue.
  * Created on 30 April 2019, 7:41 PM
  */
+#include <time.h>
 
 struct Task{
     int task_number;
     int cpu_burst;
     int arrival_time;
     int termination_time;
+    time_t arrival_t;   
+    time_t service_t;   //arrival - service is waiting time
+    time_t termination_t;   //termination - arrival is turn around time.  
 };
 
 int front = -1;

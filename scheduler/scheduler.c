@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "readyqueue.h"
-#include <String.h>
+#include <string.h>
 
 #include <time.h>
  #include <sys/time.h>
@@ -21,6 +21,7 @@ int task(char *fileName);
 long long timeInMilliseconds(void);
 void format_time(char *output);
 char *getCurrentTime();
+double  getTimeElapsed();
 
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
@@ -29,8 +30,21 @@ int main(int argc, char** argv) {
     struct Task tasks[3];
     initialize(tasks, 3);
 
-  char *output = getCurrentTime();
-   format_time(output);
+    char *output = getCurrentTime();
+    
+    format_time(output);
+    printf("from mainnnnnn  %s", output);
+    
+  
+    time_t start, end;
+    
+    time(&start);
+    
+    //sleep(2);
+    
+    time(&end);
+    
+    printf("Time elapsed: %0.3f\n", getTimeElapsed(start, end));
     
    /* struct Task ts1;
     ts1.task_number = 44;
@@ -69,6 +83,11 @@ int main(int argc, char** argv) {
     
     insertTwo(task_3);  //6
     */
+    
+    time_t starte;
+    
+    struct Task tsk;
+    tsk.arrival_t = time(&starte);
     
     task("task_file");
     pop();
@@ -309,7 +328,7 @@ char *getCurrentTime(){
 }
 
 /*
- * Solution to format time was taken from the given link. No modifications were done.
+ * Solution to format time was taken from the given link. Modifications were done to suit the needs.
  * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
  * Author: hexinpeter
  * Accessed: 2 May 2019
@@ -317,9 +336,26 @@ char *getCurrentTime(){
 void format_time(char *output){
     time_t rawtime;
     struct tm * timeinfo;
-
+    
+    char str[50];
+    strcpy(str, output);
+    
     time ( &rawtime );
     timeinfo = localtime ( &rawtime );
 
-    printf(output, "[%d %d %d %d:%d:%d]",timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+    sprintf(output, "[%d:%d:%d]",timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+    printf("format_time %s\n", output);
+}
+
+/*
+ * Refered to the given link to understand the use of difftime() function in c.
+ * Link: https://www.tutorialspoint.com/c_standard_library/c_function_difftime.htm
+ * Accessed: 2 May 2019
+ */
+double getTimeElapsed( time_t start_t, time_t end_t ){
+   double diff_t;
+
+   diff_t = difftime(end_t, start_t);   //getting the difference.
+   
+   return diff_t;
 }
