@@ -22,13 +22,14 @@ long long timeInMilliseconds(void);
 void format_time(char *output);
 char *getCurrentTime();
 double  getTimeElapsed();
+int addSimulationLog(struct Task task);
 
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
     printf("Scheduler started!\n");
 
-    struct Task tasks[3];
-    initialize(tasks, 3);
+    struct Task tasks[4];
+    initialize(tasks, 4);
 
     char *output = getCurrentTime();
     
@@ -45,8 +46,8 @@ int main(int argc, char** argv) {
     time(&end);
     
     printf("Time elapsed: %0.3f\n", getTimeElapsed(start, end));
-    
-   /* struct Task ts1;
+  /*  
+    struct Task ts1;
     ts1.task_number = 44;
     
     struct Task ts2;
@@ -82,24 +83,22 @@ int main(int argc, char** argv) {
     
     
     insertTwo(task_3);  //6
+    
     */
+  
+    task("task_file");
+    
+    sleep(2);
+    
+      
+    task("task_file");
     
     time_t starte;
     
     struct Task tsk;
     tsk.arrival_t = time(&starte);
     
-    task("task_file");
-    pop();
-    task("task_file");
-    task("task_file");
-    task("task_file");
-    
-    while(isEmpty() == 0){
-      struct Task *out = pop();
-      if(out != NULL)
-         printf("Popped task#= %d %d\n", out->task_number, out->cpu_burst);
-    }
+
    
 /*
     
@@ -135,7 +134,7 @@ int generateTaskFile(char *fileName){
         char temp[3];
         printf("Failed to open file, press any key followed by enter key to exit.");
         scanf("%s", temp);
-        return -1;
+        return 0;
     }
     
     int cpu_burst = 0;
@@ -151,8 +150,8 @@ int generateTaskFile(char *fileName){
         int status = fprintf(pFile, "%d %d\n", task_number, cpu_burst);
        //printf("cpu_burst %d", cpu_burst);
         if(status < 0){
-            printf("writing to file failed");
-            return -1;
+            printf("writing to task file failed\n");
+            return 0;
         }
     }
     
@@ -162,7 +161,7 @@ int generateTaskFile(char *fileName){
     return 0;
 }
 
-//Reads the taskfile line by line and adds to two dimensional array.
+//Reads the taskfile line by line.
 int readTaskFile(char *fileName){
     
     FILE *pFile = fopen(fileName, "r");    //open for writing.
@@ -171,7 +170,7 @@ int readTaskFile(char *fileName){
         char temp[3];
         printf("Failed to open file, press any key followed by enter key to exit.");
         scanf("%s", temp);
-        return -1;
+        return 0;
     }
     
     int task_number, cpu_burst;
@@ -187,8 +186,7 @@ int readTaskFile(char *fileName){
     
 }
 
-long fileReadHead;
-struct Task *taskArray = NULL;
+
 
 /*
  * Returns pointer to two tasks from task file per call, if not found or error returns NULL
@@ -196,6 +194,9 @@ struct Task *taskArray = NULL;
  * Link: https://stackoverflow.com/questions/47028165/how-do-i-return-an-array-of-struct-from-a-function
  * Accessed: 1 May 2019
  */
+long fileReadHead;
+struct Task *taskArray = NULL;
+
 struct Task *getNextTwoTasks(char *fileName){
     
     FILE *pFile = fopen(fileName, "r");    //open for writing.
@@ -264,10 +265,33 @@ int task(char *fileName){
             twoTasks[0] = *(ptask_array);
             twoTasks[1] = *(ptask_array + 1);
             
+            
+            //Setting the arrival times....................................................
+            time_t task1_start, task2_start;
+            time(&task1_start);
+            time(&task2_start);
+            
+            twoTasks[0].arrival_t = task1_start;    //setting times that are operator friendly. for calculations.
+            twoTasks[1].arrival_t = task2_start;     //setting times that are operator friendly. for calculations
+            
+            char *time1 = getCurrentTime(); //obtaining current time in full format.
+            format_time(time1);
+            
+            char *time2 = getCurrentTime(); //obtaining current time in full format.
+            format_time(time2);
+            
+            strcpy(twoTasks[0].arrival_time, time1);    //for sim logs.
+            strcpy(twoTasks[1].arrival_time, time2);    //for sim logs.
+            
+            printf("Task number = %d cpu_burst = %d arrival_time = %s\n", twoTasks[0].task_number, twoTasks[0].cpu_burst, twoTasks[0].arrival_time);
+            printf("Task number = %d cpu_burst = %d arrival_time = %s\n", twoTasks[1].task_number, twoTasks[1].cpu_burst, twoTasks[1].arrival_time);
+            //End setting arrival times.....................................................
+            
             isSuccess_Add = insertTwo(twoTasks);    //returns 1 if successfully inserted if not, 0
             
             if(isSuccess_Add == 1){
- 
+                addSimulationLog(twoTasks[0]);
+                addSimulationLog(twoTasks[1]);
             }
             
         }else{
@@ -281,10 +305,33 @@ int task(char *fileName){
             twoTasks[0] = *(ptask_array);
             twoTasks[1] = *(ptask_array + 1);
 
+            //Setting the arrival times....................................................
+            time_t task1_start, task2_start;
+            time(&task1_start);
+            time(&task2_start);
+            
+            twoTasks[0].arrival_t = task1_start;    //setting times that are operator friendly.
+            twoTasks[1].arrival_t = task2_start;     //setting times that are operator friendly.
+            
+            char *time1 = getCurrentTime(); //obtaining current time in full format.
+            format_time(time1);
+            
+            char *time2 = getCurrentTime(); //obtaining current time in full format.
+            format_time(time2);
+        
+            strcpy(twoTasks[0].arrival_time, time1);
+            strcpy(twoTasks[1].arrival_time, time2);
+            
+            printf("Task number = %d cpu_burst = %d arrival_time = %s\n", twoTasks[0].task_number, twoTasks[0].cpu_burst, twoTasks[0].arrival_time);
+            printf("Task number = %d cpu_burst = %d arrival_time = %s\n", twoTasks[1].task_number, twoTasks[1].cpu_burst, twoTasks[1].arrival_time);
+            
+            //End setting arrival times.....................................................
+            
             isSuccess_Add = insertTwo(twoTasks);    //returns 1 if successfully inserted if not, 0
             
             if(isSuccess_Add == 1){
- 
+               addSimulationLog(twoTasks[0]);
+               addSimulationLog(twoTasks[1]);
             }
         }
     }
@@ -305,6 +352,7 @@ long long timeInMilliseconds(void) {
 }
 
 
+ 
 /*
  * Solution to obtain current time taken from the given link. This was modified to suit my needs.
  * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
@@ -319,7 +367,7 @@ char *getCurrentTime(){
 
     time ( &rawtime );
     timeinfo = localtime ( &rawtime );
-    printf ( "Current local time and date: %s", asctime (timeinfo) );
+   // printf ( "Current local time and date: %s", asctime (timeinfo) );
     strcpy (ptime, asctime (timeinfo));
     
    // printf("The time---------- %s", ptime);
@@ -343,9 +391,10 @@ void format_time(char *output){
     time ( &rawtime );
     timeinfo = localtime ( &rawtime );
 
-    sprintf(output, "[%d:%d:%d]",timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
-    printf("format_time %s\n", output);
+    sprintf(output, "%d:%d:%d",timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+    //printf("format_time %s\n", output);
 }
+
 
 /*
  * Refered to the given link to understand the use of difftime() function in c.
@@ -359,3 +408,27 @@ double getTimeElapsed( time_t start_t, time_t end_t ){
    
    return diff_t;
 }
+
+int addSimulationLog(struct Task task){
+    
+    FILE *pFile = fopen("simulation_log", "a");    //open for writing.        
+    
+    if(pFile == NULL){
+        char temp[3];
+        printf("Failed to open file, press any key followed by enter key to exit.");
+        scanf("%s", temp);
+        return 0;
+    }
+    
+    int status = fprintf(pFile, "task #: %d\nArrival time: %s\n", task.task_number, task.arrival_time);
+    //printf("cpu_burst %d", cpu_burst);
+    if(status < 0){
+        printf("writing to simulation_log file failed\n");
+        return 0;
+    }
+    
+    fclose(pFile);
+    pFile = NULL;
+    return 1;
+}
+    

@@ -6,11 +6,13 @@
  * Created on 30 April 2019, 7:41 PM
  */
 #include <time.h>
+#include <string.h>
+
 
 struct Task{
     int task_number;
     int cpu_burst;
-    int arrival_time;
+    char arrival_time[20];  //stores time in character form, human readable.
     int termination_time;
     time_t arrival_t;   
     time_t service_t;   //arrival - service is waiting time
@@ -81,6 +83,7 @@ int insert(struct Task newTask){
         if(rear == (MAX_SIZE - 1))  //if rear at last index
             rear = rear % (MAX_SIZE);
         
+        
         *(pTaskArray + rear) = newTask;
         printf("\n Inserted = %d\n", (pTaskArray + rear)->task_number );
         nItems++;
@@ -125,8 +128,5 @@ struct Task *pop(){
         return NULL;
     }
 }
-
-
-
 
 
