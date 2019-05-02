@@ -23,9 +23,17 @@ int MAX_SIZE = 0;
 struct Task *pTaskArray = NULL; //global pointer
 
 void initialize(struct Task tasks[], int size){   
-   
-    pTaskArray = &tasks[0]; //getting pointer setup to first index of task array.
-    MAX_SIZE = size;
+    
+    /*
+     * Resolved the trap 6 error I got on runtime by using this link. "You are writing memory you do not own"
+     * Author: ryyker
+     * Link: https://stackoverflow.com/questions/26431147/abort-trap-6-error-in-c
+     * Accessed: 2 May 2019
+     */
+    
+    pTaskArray = malloc(sizeof(struct Task) * size);    //Allocating required memory, the fix for trap 6. Forgot to allocate memory as a result got trap 6 error.
+    *pTaskArray = tasks[0]; //getting pointer setup to first index of task array.
+    MAX_SIZE = size;   
     
 }  
 
@@ -89,16 +97,17 @@ int insertTwo(struct Task newTask[]){
     if(remaining >= 2){
         insert(newTask[0]);
         insert(newTask[1]);
+        return 1;   //success
     }
     else{
         printf("Fails the insertion for 2 tasks\n");
+        return 0;   //fail
     }
 }
 
 
 struct Task *pop(){
  
-    
     if( isEmpty() == 0 ){   //not empty
         ++front;
         if(front == (MAX_SIZE - 1))

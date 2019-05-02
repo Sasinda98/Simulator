@@ -13,15 +13,16 @@
 int generateTaskFile(char *fileName);
 int readTaskFile(char *fileName);
 struct Task *getNextTwoTasks(char *fileName);
+int task(char *fileName);
 
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
     printf("Scheduler started!\n");
 
-    struct Task tasks[4];
-    initialize(tasks, 4);
+    struct Task tasks[3];
+    initialize(tasks, 3);
 
-    struct Task ts1;
+   /* struct Task ts1;
     ts1.task_number = 44;
     
     struct Task ts2;
@@ -57,12 +58,17 @@ int main(int argc, char** argv) {
     
     
     insertTwo(task_3);  //6
+    */
     
- 
+    task("task_file");
+    pop();
+    pop();
+    task("task_file");
     
-    while(isEmpty()==0){
+    while(isEmpty() == 0){
       struct Task *out = pop();
-         printf("Popped task#= %d\n", out->task_number);
+      if(out != NULL)
+         printf("Popped task#= %d %d\n", out->task_number, out->cpu_burst);
     }
    
 /*
@@ -209,6 +215,39 @@ struct Task *getNextTwoTasks(char *fileName){
     pFile = NULL; //making sure reference is not there anymore.
     return NULL;
     
+}
+
+
+int isSuccess_Add = 1;      //holds status of the add, 1 for success and 0 for failure.
+struct Task * ptask_array = NULL;
+//gets two tasks adds to the ready queue if ready.
+int task(char *fileName){
+    
+    if(isSuccess_Add == 1){ //previous add was successful.
+         ptask_array = getNextTwoTasks(fileName);
+         printf("Getting next task successful --top\n");
+        
+        if(ptask_array != NULL){    //two tasks available
+            struct Task twoTasks[2];    //holds the tasks to be added to the queue.
+            twoTasks[0] = *(ptask_array);
+            twoTasks[1] = *(ptask_array + 1);
+            
+            isSuccess_Add = insertTwo(twoTasks);    //returns 1 if successfully inserted if not, 0
+        }else{
+            printf("Failed to add -- top \n");
+        }
+    }
+    else{   //previous add was failed, so try again.
+        if(ptask_array != NULL){
+            printf("Adding previous task that failed to add --bottom\n");
+            struct Task twoTasks[2];    //holds the tasks to be added to the queue.
+            twoTasks[0] = *(ptask_array);
+            twoTasks[1] = *(ptask_array + 1);
+
+            isSuccess_Add = insertTwo(twoTasks);    //returns 1 if successfully inserted if not, 0
+        }
+    }
+    return isSuccess_Add;
 }
 
 
