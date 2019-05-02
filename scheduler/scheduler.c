@@ -22,7 +22,7 @@ long long timeInMilliseconds(void);
 void format_time(char *output);
 char *getCurrentTime();
 double  getTimeElapsed();
-int addSimulationLog(struct Task task);
+int addSimulationLog_Task(struct Task task);
 void cpu();
 int addSimulationLog_Pre_Exec(struct Task task, char *service_time);
 int addSimulationLog_Post_Exec(struct Task task, char *service_time);
