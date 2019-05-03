@@ -1,24 +1,28 @@
 task #: 0
-Arrival time: 21:56:46
+Arrival time: 10:52:47
 task #: 1
-Arrival time: 21:56:46
+Arrival time: 10:52:47
 task #: 2
-Arrival time: 21:56:46
+Arrival time: 10:52:47
 task #: 3
-Arrival time: 21:56:46
+Arrival time: 10:52:47
 Statistics for CPU-1:
 Task #0
-Arrival time: 21:56:46
-Service time: 21:56:46
+Arrival time: 10:52:47
+Service time: 10:52:47
 Statistics for CPU-1:
 Task #0
-Arrival time: 21:56:46
-Completion time: 21:56:54
+Arrival time: 10:52:47
+Completion time: 10:52:55
+task #: 4
+Arrival time: 10:52:55
 Statistics for CPU-1:
 Task #1
-Arrival time: 21:56:46
-Service time: 21:56:54
+Arrival time: 10:52:47
+Service time: 10:52:55
 Statistics for CPU-1:
 Task #1
-Arrival time: 21:56:46
-Completion time: 21:57:44
+Arrival time: 10:52:47
+Completion time: 10:53:45
+task #: 5
+Arrival time: 10:53:45

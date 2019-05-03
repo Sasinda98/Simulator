@@ -97,17 +97,23 @@ int insert(struct Task newTask){
 
 }
 
-
+//inserts two tasks if spaces available at one go, if not it'll add only one. else error.
+//returns 1 when 1st task gets inserted.
+//returns 2 when both tasks are inserted.
+//returns 0 when insertion fails.
 int insertTwo(struct Task newTask[]){
 
     int remaining = MAX_SIZE - nItems;
     
-    if(remaining >= 2){
+    if(remaining >= 2){     //two spaces or more available.
         insert(newTask[0]);
         insert(newTask[1]);
-        return 1;   //success
+        return 2;   //both tasks inserted.
     }
-    else{
+    else if(remaining == 1){    //one space available.
+        insert(newTask[0]);
+        return  1;  //first task was inserted.
+    }else{  //no space
         printf("Fails the insertion for 2 tasks\n");
         return 0;   //fail
     }

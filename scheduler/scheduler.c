@@ -101,9 +101,15 @@ int main(int argc, char** argv) {
     struct Task tsk;
     tsk.arrival_t = time(&starte);
     
+    // cpu();
+   // cpu();
     cpu();
+    
+    task("task_file");
+    
     cpu();
-
+    
+    task("task_file");
    
 /*
     
@@ -254,23 +260,23 @@ struct Task *getNextTwoTasks(char *fileName){
 }
 
 
-int isSuccess_Add = 1;      //holds status of the add, 1 for success and 0 for failure.
-struct Task * ptask_array = NULL;   //pointer to the array that holds the 2 tasks.
+int continueInsertionNew = 1;      //determines whether new task insertion is possible or not, NOT possible when there are tasks left over needing insertion.
+int outcome = 0;    //holds outcome of the insertion.
+struct Task *ptask_array = NULL;   //pointer to the array that holds the 2 tasks.
 /*
  * Gets two tasks from file and adds it to ready queue if available 
  * and sets appropriate fields in the task to their respective values.
  */
 int task(char *fileName){
     
-    if(isSuccess_Add == 1){ //previous add was successful.
-         ptask_array = getNextTwoTasks(fileName);
+    if(continueInsertionNew == 1){ //previous add was successful continue with inserting new tasks.
+         ptask_array = getNextTwoTasks(fileName);   //getting the next two tasks.
          printf("Getting next task successful --top\n");
         
         if(ptask_array != NULL){    //two tasks available
             struct Task twoTasks[2];    //holds the tasks to be added to the queue.
             twoTasks[0] = *(ptask_array);
             twoTasks[1] = *(ptask_array + 1);
-            
             
             //Setting the arrival times....................................................
             time_t task1_start, task2_start;
@@ -293,11 +299,21 @@ int task(char *fileName){
             printf("Task number = %d cpu_burst = %d arrival_time = %s\n", twoTasks[1].task_number, twoTasks[1].cpu_burst, twoTasks[1].arrival_time);
             //End setting arrival times.....................................................
             
-            isSuccess_Add = insertTwo(twoTasks);    //returns 1 if successfully inserted if not, 0
+            outcome = insertTwo(twoTasks);    //returns 2 if both tasks were inserted, returns 1 if only first task was inserted & returns 0 if failure.
             
-            if(isSuccess_Add == 1){
+            if(outcome == 1){ //only first task was added see insertTwo() at readyqueue.h
+                addSimulationLog_Task(twoTasks[0]);
+                continueInsertionNew = 0;  //next call direct to else code block
+            }
+            else if(outcome == 2){
                 addSimulationLog_Task(twoTasks[0]);
                 addSimulationLog_Task(twoTasks[1]);
+                continueInsertionNew = 1;  //next call to direct to if code block.(this)
+            }
+            else{
+                //failure to add any, no spaces.
+                continueInsertionNew = 0; //next call direct to else code block
+                //outcome = 0;
             }
             
         }else{
@@ -333,15 +349,41 @@ int task(char *fileName){
             
             //End setting arrival times.....................................................
             
-            isSuccess_Add = insertTwo(twoTasks);    //returns 1 if successfully inserted if not, 0
+         //   outcome = insertTwo(twoTasks);    //returns 2 if both tasks were inserted, returns 1 if only first task was inserted & returns 0 if failure.
             
-            if(isSuccess_Add == 1){
-               addSimulationLog_Task(twoTasks[0]);
-               addSimulationLog_Task(twoTasks[1]);
+            if((outcome == 1) && (continueInsertionNew == 0)){ //only first task was added see insertTwo() at readyqueue.h
+                int res = insert(twoTasks[1]);    //add second task.
+                
+                if(res == 1){   //successful adding of second task.
+                    addSimulationLog_Task(twoTasks[1]);
+                    continueInsertionNew = 1;  //next call direct to if code block to allow for new task insertion, since current insertion is complete.
+                }
+                else{
+                    continueInsertionNew = 0;   //prevent continuation of insertion of new tasks since current insertion is not complete.
+                }
+              
+            }
+            else if((outcome == 0) && (continueInsertionNew == 0)){ //no task were added first time
+                
+                outcome = insertTwo(twoTasks);  //returns 2 if both tasks were inserted, returns 1 if only first task was inserted & returns 0 if failure.
+                
+                if(outcome == 2){   //both tasks were added
+                    addSimulationLog_Task(twoTasks[0]);
+                    addSimulationLog_Task(twoTasks[1]);
+                    continueInsertionNew = 1;  //next call to direct to if code block. To retry insertion.
+                }
+                else if(outcome == 1){
+                     addSimulationLog_Task(twoTasks[0]);
+                }
+                else{
+                     continueInsertionNew = 0;  //prevent continuation of insertion of new tasks since current insertion is not complete.
+                }
+                
+
             }
         }
     }
-    return isSuccess_Add;
+    return continueInsertionNew;
 }
 
 /*
