@@ -1,0 +1,22 @@
+task #: 0
+Arrival time: 16:54:40
+task #: 1
+Arrival time: 16:54:40
+task #: 2
+Arrival time: 16:54:40
+Statistics for CPU-1:
+Task #0
+Arrival time: 16:54:40
+Service time: 16:54:40
+Statistics for CPU-1:
+Task #0
+Arrival time: 16:54:40
+Completion time: 16:54:48
+Statistics for CPU-1:
+Task #1
+Arrival time: 16:54:40
+Service time: 16:54:48
+Statistics for CPU-1:
+Task #1
+Arrival time: 16:54:40
+Completion time: 16:55:38
