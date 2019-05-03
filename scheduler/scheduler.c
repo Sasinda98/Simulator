@@ -37,6 +37,7 @@ int addSimulationLog_Post_Exec(struct Task task, char *service_time);
 struct Task *getNextTask(char *fileName);
 
 int getMaxTaskNumber(char *fileName);
+void setArrivalTimeTask(struct Task *task);
 
 int num = 0;
 
@@ -58,13 +59,16 @@ int main(int argc, char** argv) {
     ts2.cpu_burst = 2;
 
   
- 
- struct Task *temp = NULL;
+    //setArrivalTimeTask(&ts1);
+    
+    //printf("TS1 arrival time %s\n", ts1.arrival_time);
+          
+    struct Task *temp = NULL;
     int eof = 0;
     int *peof = &eof;
     
         
-    for(int i = 0; i < 51; i++){
+    for(int i = 0; i < 3; i++){
       task("task_file"); 
     }
     
@@ -77,8 +81,12 @@ int main(int argc, char** argv) {
         }else{
             printf("NULL DETECTED\n");
         }
-       
     }
+    
+    cpu();
+    cpu();
+    
+          
     
     return 0;
 }
@@ -542,14 +550,22 @@ int* task(char *fileName){
        // printf("Greater than or 2 spaces avail\n");
 
         if(pTask_1 != NULL){    //task available
-            if(isT1_Inserted == 0){      
+            if(isT1_Inserted == 0){  
+                setArrivalTimeTask(&task_1);
                 isT1_Inserted = insert(task_1);
+                if(isT1_Inserted == 1){
+                    addSimulationLog_Task(task_1);
+                }
             }
         }
 
         if(pTask_2 != NULL){    //task available.
             if(isT2_Inserted == 0){
+                setArrivalTimeTask(&task_2);
                 isT2_Inserted = insert(task_2);
+                if(isT2_Inserted == 1){
+                    addSimulationLog_Task(task_2);
+                }
             }
         }
         
@@ -563,13 +579,23 @@ int* task(char *fileName){
         
         if(pTask_1 != NULL){    //task available
             if(isT1_Inserted == 0){
+                setArrivalTimeTask(&task_1);
                 isT1_Inserted = insert(task_1);
+                
+                if(isT1_Inserted == 1){
+                    addSimulationLog_Task(task_1);
+                }
             }
         }
 
         if(pTask_2 != NULL){    //task available.
             if(isT2_Inserted == 0){
+                setArrivalTimeTask(&task_2);
                 isT2_Inserted = insert(task_2);
+                
+                if(isT2_Inserted == 1){
+                    addSimulationLog_Task(task_2);
+                }
             }
         
         }
@@ -589,7 +615,8 @@ int* task(char *fileName){
     //Kill switch
     if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
         printf("ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE!\n");
-        exit(0); //KILLLL
+       // exit(0); //KILLLL
+        return 0;
     }
     
     
@@ -792,4 +819,19 @@ int addSimulationLog_Post_Exec(struct Task task, char *completion_time){
     fclose(pFile);
     pFile = NULL;
     return 1;
+} 
+
+//sets the arrival time of task, to be used just before insertion.
+void setArrivalTimeTask(struct Task *task){
+    time_t task1_start;
+    time(&task1_start);
+
+    task->arrival_t = task1_start;    //setting times that are operator friendly. for calculations.
+
+    char *time1 = getCurrentTime(); //obtaining current time in full format.
+    format_time(time1); //getting only the time
+
+    strcpy(task->arrival_time, time1);    //for sim logs.
+
+    printf("Task number = %d cpu_burst = %d arrival_time = %s\n", task->task_number, task->cpu_burst, task->arrival_time);
 }
