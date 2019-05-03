@@ -24,7 +24,8 @@ int readTaskFile(char *fileName);
 struct Task *getNextTwoTasks(char *fileName);
 //int task(char *fileName);
 
-int *task(char *fileName);
+//int *task(char *fileName);
+void *task(void *fileName);
 
 long long timeInMilliseconds(void);
 void format_time(char *output);
@@ -59,11 +60,23 @@ int main(int argc, char** argv) {
     ts2.cpu_burst = 2;
 
   
+    pthread_t tid;//thread id 
+    pthread_attr_t attr;    //attributes
+    pthread_attr_init(&attr);
+    
+    pthread_create(&tid, &attr, task, "task_file"); //sending task file as param to the thread.
+    
+    pthread_join(tid, NULL);    //main thread wait till task is done.
+    
+    struct Task *ts44 = pop();
+    
+    printf("Popping the first task %d %d\n", ts44->task_number, ts44->cpu_burst);
+    
     //setArrivalTimeTask(&ts1);
     
     //printf("TS1 arrival time %s\n", ts1.arrival_time);
-          
-    struct Task *temp = NULL;
+     /*
+      struct Task *temp = NULL;
     int eof = 0;
     int *peof = &eof;
     
@@ -82,10 +95,10 @@ int main(int argc, char** argv) {
             printf("NULL DETECTED\n");
         }
     }
+      */     
     
-    cpu();
-    cpu();
-    cpu();
+    
+
     
           
     
@@ -523,103 +536,106 @@ int eofFlag=0;
 }
 */
 
-
-int* task(char *fileName){
-   // char *pFileName = fileName;
+//Task function.
+void *task(void *fileName){
+    char *pFileName = (char *)fileName; //casting void * to char *
     
-    if(continueInsertionNew == 1){
-        continueInsertionNew = 0;
-        num++;
-        pTask_1 = NULL;
-        pTask_2 = NULL;
+    while(1){
         
-        pTask_1 = getNextTask("task_file"); //read from task_file
-        pTask_2 = getNextTask("task_file"); //read from task_file
-       
-        if(pTask_1 != NULL)
-            task_1 = *pTask_1;  //deref to get rid of a bug...
-        
-        if(pTask_2 != NULL)
-            task_2 = *pTask_2;
-        
-        isT1_Inserted = 0;
-        isT2_Inserted = 0;
-    }
-    
-    if(getRemainingSpaces() >= 2){  //two spaces avail for insertion in the queue
-        
-       // printf("Greater than or 2 spaces avail\n");
+        if(continueInsertionNew == 1){
+            continueInsertionNew = 0;
+            num++;
+            pTask_1 = NULL;
+            pTask_2 = NULL;
 
-        if(pTask_1 != NULL){    //task available
-            if(isT1_Inserted == 0){  
-                setArrivalTimeTask(&task_1);
-                isT1_Inserted = insert(task_1);
-                if(isT1_Inserted == 1){
-                    addSimulationLog_Task(task_1);
-                }
-            }
+            pTask_1 = getNextTask("task_file"); //read from task_file
+            pTask_2 = getNextTask("task_file"); //read from task_file
+
+            if(pTask_1 != NULL)
+                task_1 = *pTask_1;  //deref to get rid of a bug...
+
+            if(pTask_2 != NULL)
+                task_2 = *pTask_2;
+
+            isT1_Inserted = 0;
+            isT2_Inserted = 0;
         }
 
-        if(pTask_2 != NULL){    //task available.
-            if(isT2_Inserted == 0){
-                setArrivalTimeTask(&task_2);
-                isT2_Inserted = insert(task_2);
-                if(isT2_Inserted == 1){
-                    addSimulationLog_Task(task_2);
+        if(getRemainingSpaces() >= 2){  //two spaces avail for insertion in the queue
+
+           // printf("Greater than or 2 spaces avail\n");
+
+            if(pTask_1 != NULL){    //task available
+                if(isT1_Inserted == 0){  
+                    setArrivalTimeTask(&task_1);
+                    isT1_Inserted = insert(task_1);
+                    if(isT1_Inserted == 1){
+                        addSimulationLog_Task(task_1);
+                    }
                 }
             }
-        }
-        
-        int res = isT1_Inserted - isT2_Inserted;
-        if(res == 0){
-            continueInsertionNew = 1;
-        }
-    }
-    else if(getRemainingSpaces() == 1){
-      //  printf("\n1 space available\n");
-        
-        if(pTask_1 != NULL){    //task available
-            if(isT1_Inserted == 0){
-                setArrivalTimeTask(&task_1);
-                isT1_Inserted = insert(task_1);
-                
-                if(isT1_Inserted == 1){
-                    addSimulationLog_Task(task_1);
+
+            if(pTask_2 != NULL){    //task available.
+                if(isT2_Inserted == 0){
+                    setArrivalTimeTask(&task_2);
+                    isT2_Inserted = insert(task_2);
+                    if(isT2_Inserted == 1){
+                        addSimulationLog_Task(task_2);
+                    }
                 }
             }
+
+            int res = isT1_Inserted - isT2_Inserted;
+            if(res == 0){
+                continueInsertionNew = 1;
+            }
+        }
+        else if(getRemainingSpaces() == 1){
+          //  printf("\n1 space available\n");
+
+            if(pTask_1 != NULL){    //task available
+                if(isT1_Inserted == 0){
+                    setArrivalTimeTask(&task_1);
+                    isT1_Inserted = insert(task_1);
+
+                    if(isT1_Inserted == 1){
+                        addSimulationLog_Task(task_1);
+                    }
+                }
+            }
+
+            if(pTask_2 != NULL){    //task available.
+                if(isT2_Inserted == 0){
+                    setArrivalTimeTask(&task_2);
+                    isT2_Inserted = insert(task_2);
+
+                    if(isT2_Inserted == 1){
+                        addSimulationLog_Task(task_2);
+                    }
+                }
+
+            }
+
+            int res = isT1_Inserted - isT2_Inserted;
+            if(res == 0){
+                continueInsertionNew = 1;
+            }
+
+
+        }
+        else{
+            printf("READY QUEUE IS FULL CANNOT INSERT\n");
+            continueInsertionNew = 0; //insertion cannot happen, so wait till space is avail.
         }
 
-        if(pTask_2 != NULL){    //task available.
-            if(isT2_Inserted == 0){
-                setArrivalTimeTask(&task_2);
-                isT2_Inserted = insert(task_2);
-                
-                if(isT2_Inserted == 1){
-                    addSimulationLog_Task(task_2);
-                }
-            }
-        
+        //Kill switch
+        if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
+            printf("ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE!\n");
+           // exit(0); //KILLLL
+            return 0;
         }
-        
-        int res = isT1_Inserted - isT2_Inserted;
-        if(res == 0){
-            continueInsertionNew = 1;
-        }
-     
-       
+        sleep(1);
     }
-    else{
-        printf("READY QUEUE IS FULL CANNOT INSERT\n");
-        continueInsertionNew = 0; //insertion cannot happen, so wait till space is avail.
-    }
-    
-    //Kill switch
-    if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
-        printf("ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE!\n");
-       // exit(0); //KILLLL
-        return 0;
-    }
-    
     
     return 0;
 }
