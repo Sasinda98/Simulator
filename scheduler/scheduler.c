@@ -10,10 +10,12 @@
 #include <stdlib.h>
 #include "readyqueue.h"
 #include <string.h>
- #include <pthread.h>
+
+#include <pthread.h>
+#include <unistd.h>
 
 #include <time.h>
- #include <sys/time.h>
+#include <sys/time.h>
 
 int INVALID_TASK_NUM_CODE = -99;
 
@@ -32,9 +34,9 @@ void format_time(char *output);
 char *getCurrentTime();
 double  getTimeElapsed();
 int addSimulationLog_Task(struct Task task);
-void cpu();
-int addSimulationLog_Pre_Exec(struct Task task, char *service_time);
-int addSimulationLog_Post_Exec(struct Task task, char *service_time);
+void *cpu( void *arg);
+int addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId);
+int addSimulationLog_Post_Exec(struct Task task, char *service_time, int *cpuId);
 struct Task *getNextTask(char *fileName);
 
 int getMaxTaskNumber(char *fileName);
@@ -46,8 +48,8 @@ int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
     printf("Scheduler started!\n\n");
 
-    struct Task tasks[100];
-    initialize(tasks, 100);
+    struct Task tasks[3];
+    initialize(tasks, 3);
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
     //generateTaskFile("task_file");
     
@@ -59,17 +61,35 @@ int main(int argc, char** argv) {
     ts2.task_number = 77;
     ts2.cpu_burst = 2;
 
-  
+    /*
+     * task thread spawning
+     */
     pthread_t tid;//thread id 
     pthread_attr_t attr;    //attributes
     pthread_attr_init(&attr);
     
     pthread_create(&tid, &attr, task, "task_file"); //sending task file as param to the thread.
     
+   
+    
+    /*
+     * cpu thread spawning
+     */
+    pthread_t tid_cpu;//thread id 
+    pthread_attr_t attr_cpu;    //attributes
+    pthread_attr_init(&attr_cpu);
+    
+    int cpuid_ = 1;
+    pthread_create(&tid_cpu, &attr_cpu, cpu, &cpuid_); //sending cpu id as param
+
+ 
+    
+    pthread_join(tid_cpu, NULL);    //main thread wait till task is done.    
+
     pthread_join(tid, NULL);    //main thread wait till task is done.
     
+    sleep(5);
     struct Task *ts44 = pop();
-    
     printf("Popping the first task %d %d\n", ts44->task_number, ts44->cpu_burst);
     
     //setArrivalTimeTask(&ts1);
@@ -312,7 +332,9 @@ struct Task *getNextTask(char *fileName){
         
         struct Task invalidTask;
         invalidTask.task_number = INVALID_TASK_NUM_CODE;
+        exit(-1);   //quit entire application.
         return NULL; 
+            
     }
     
     fseek(pFile, 0, SEEK_END);  //moving file position indicator to the end.
@@ -548,8 +570,8 @@ void *task(void *fileName){
             pTask_1 = NULL;
             pTask_2 = NULL;
 
-            pTask_1 = getNextTask("task_file"); //read from task_file
-            pTask_2 = getNextTask("task_file"); //read from task_file
+            pTask_1 = getNextTask(pFileName); //read from task_file
+            pTask_2 = getNextTask(pFileName); //read from task_file
 
             if(pTask_1 != NULL)
                 task_1 = *pTask_1;  //deref to get rid of a bug...
@@ -624,7 +646,7 @@ void *task(void *fileName){
 
         }
         else{
-            printf("READY QUEUE IS FULL CANNOT INSERT\n");
+           // printf("READY QUEUE IS FULL CANNOT INSERT\n");
             continueInsertionNew = 0; //insertion cannot happen, so wait till space is avail.
         }
 
@@ -738,10 +760,63 @@ int addSimulationLog_Task(struct Task task){
     return 1;
 }
     
-//This function is the function that gets executed by each cpu thread.
 int num_tasks = 0;   //shared variables, shared across the 3 cpus.
 double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
-void cpu(){
+//This function is the function that gets executed by each cpu thread.
+void* cpu( void *arg){
+    int *pcpuId = (int *)arg;
+    
+    printf("CPU ID: %d\n", *pcpuId);
+    
+    while(1){
+        struct Task *task = pop();  //get a task from ready queue.
+
+        if(task != NULL){   //task available from ready queue.
+            printf("CPU executing task# = %d burst = %d\n", task->task_number, task->cpu_burst);
+
+            //Obtaining service time, waiting time.........................................................................
+            time_t arrival_t = task->arrival_t;    //getting arrival time from the task.
+            time_t service_t;   //var that stores service time. Time at which task entered the cpu.
+            time(&service_t);  //sets the service_t to its value i.e. time now.
+
+            char *service_time = getCurrentTime(); //obtaining current time in full format.
+            format_time(service_time); //formatting it down to only contain the time.
+
+            double waiting_time = getTimeElapsed(arrival_t, service_t); //compute waiting time for this task by getting the difference.
+            printf("Waiting TIME ELAPSED: %f\n", waiting_time);
+            //END of obtaining service time, waiting time...................................................................         
+
+            //strcpy(twoTasks[0].arrival_time, time1);    //for sim logs.
+
+            total_waiting_time = total_waiting_time + waiting_time; //compute total waiting time.
+            addSimulationLog_Pre_Exec(*task, service_time, pcpuId); //adds record to simulation log with service time & other related fields.
+
+            sleep(task->cpu_burst); //sleep for burst time, simulate cpu EXECUTING the task.
+
+            //Obtaining completion time.....................................................................................
+            time_t completion_t;  //var that stores completion time.
+            time(&completion_t); //sets the completion_t to its value i.e. time now, which is essentially the completion time.
+
+            char *completion_time = getCurrentTime(); //obtaining current time in full format.
+            format_time(completion_time); //formatting it down to only contain the time.
+
+            double turn_around_time = getTimeElapsed(arrival_t, completion_t);      //computes turn around time by getting the difference & other related fields.
+            //End of obtaining completion time.....................................................................................
+            printf("Turn Around Time: %f\n", turn_around_time);
+
+            total_turnaround_time = total_turnaround_time + turn_around_time;   //computes total turn around time.
+            num_tasks++;    //increment num of tasks executed by one.
+            addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
+        }
+        else{   //task not available, ready queue empty.
+            printf("Empty no tasks available\n");
+        }
+        sleep(1); //to ease the load on my laptop.
+    }
+}
+
+/*
+ void cpu(){
     struct Task *task = pop();  //get a task from ready queue.
     
     if(task != NULL){   //task available from ready queue.
@@ -786,10 +861,12 @@ void cpu(){
     }
 }
 
+ */
+
 //Adds record to simulation log containing cpu execution info (i.e. cpu num) and task info (i.e. arrival times and task num).
 // To be used in cpu().
-int addSimulationLog_Pre_Exec(struct Task task, char *service_time){
-    int cpuNum = 1;
+int addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId){
+    //int cpuId = 1;
     
     FILE *pFile = fopen("simulation_log", "a");    //open for writing.        
     
@@ -800,7 +877,7 @@ int addSimulationLog_Pre_Exec(struct Task task, char *service_time){
         return 0;
     }
     
-    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n", cpuNum, task.task_number, task.arrival_time, service_time);
+    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n", *cpuId, task.task_number, task.arrival_time, service_time);
     //printf("cpu_burst %d", cpu_burst);
     if(status < 0){
         printf("writing to simulation_log file failed\n");
@@ -814,8 +891,8 @@ int addSimulationLog_Pre_Exec(struct Task task, char *service_time){
 
 //Adds record to simulation log containing cpu execution info (i.e. cpu num, completion time) and task info (i.e. arrival times and task num). 
 //To be used in cpu().
-int addSimulationLog_Post_Exec(struct Task task, char *completion_time){
-    int cpuNum = 1;
+int addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cpuId){
+    //int cpuId = 1;
     
     FILE *pFile = fopen("simulation_log", "a");    //open for writing.        
     
@@ -826,7 +903,7 @@ int addSimulationLog_Post_Exec(struct Task task, char *completion_time){
         return 0;
     }
     
-    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n", cpuNum, task.task_number, task.arrival_time, completion_time);
+    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n", *cpuId, task.task_number, task.arrival_time, completion_time);
     //printf("cpu_burst %d", cpu_burst);
     if(status < 0){
         printf("writing to simulation_log file failed\n");
@@ -852,3 +929,4 @@ void setArrivalTimeTask(struct Task *task){
 
     printf("Task number = %d cpu_burst = %d arrival_time = %s\n", task->task_number, task->cpu_burst, task->arrival_time);
 }
+
