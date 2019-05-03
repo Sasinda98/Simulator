@@ -54,8 +54,10 @@ int isEmpty(){
 int isFull(){
     if(nItems == MAX_SIZE){
         return 1;
+    }else{
+        return 0;
     }
-    return 0;
+   
 }
 
 int isFullTwo(){
@@ -78,23 +80,28 @@ int isFullTwo(){
 }
 
 int insert(struct Task newTask){
-    ++rear;
+
     
     if(isFull() == 0){    //not full
+        ++rear;
         if(rear == (MAX_SIZE - 1))  //if rear at last index
             rear = rear % (MAX_SIZE);
         
         
         *(pTaskArray + rear) = newTask;
-        printf("\n Inserted = %d\n", (pTaskArray + rear)->task_number );
+        printf("\n INSERTION SUCCESSFUL = %d %d\n", (pTaskArray + rear)->task_number, (pTaskArray + rear)->cpu_burst );
         nItems++;
         return 1;   //success
     }
     else{
-        printf("Insertion Failed.\n");
+        printf("\n INSERTION FAILED = %d %d\n", newTask.task_number, newTask.cpu_burst );
         return 0;   //fail
     }
 
+}
+
+int getRemainingSpaces(){
+    return  MAX_SIZE - nItems;
 }
 
 //inserts two tasks if spaces available at one go, if not it'll add only one. else error.
@@ -106,11 +113,14 @@ int insertTwo(struct Task newTask[]){
     int remaining = MAX_SIZE - nItems;
     
     if(remaining >= 2){     //two spaces or more available.
-        insert(newTask[0]);
-        insert(newTask[1]);
+        if(newTask[0].task_number != -99)
+            insert(newTask[0]);
+        if(newTask[1].task_number != -99)
+            insert(newTask[1]);
         return 2;   //both tasks inserted.
     }
     else if(remaining == 1){    //one space available.
+        if(newTask[0].task_number != -99)
         insert(newTask[0]);
         return  1;  //first task was inserted.
     }else{  //no space
