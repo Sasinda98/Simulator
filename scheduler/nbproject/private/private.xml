@@ -9,6 +9,7 @@
         <group>
             <file>file:/Users/sasinda/GitHub/OS/Simulator/scheduler/readyqueue.h</file>
             <file>file:/Users/sasinda/GitHub/OS/Simulator/scheduler/scheduler.c</file>
+            <file>file:/Users/sasinda/GitHub/OS/Simulator/scheduler/Makefile</file>
         </group>
     </open-files>
 </project-private>
