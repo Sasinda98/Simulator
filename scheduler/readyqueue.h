@@ -24,6 +24,7 @@ int front = -1;
 int rear = -1;
 
 int nItems = 0; //unread items
+int successful_insertions = 0;  //stores how many times queue was inserted with tasks.
 
 int MAX_SIZE = 0;
 
@@ -89,6 +90,7 @@ int insert(struct Task newTask){
         
         
         *(pTaskArray + rear) = newTask;
+        successful_insertions++;
         printf("\n INSERTION SUCCESSFUL = %d %d\n", (pTaskArray + rear)->task_number, (pTaskArray + rear)->cpu_burst );
         nItems++;
         return 1;   //success
@@ -104,6 +106,9 @@ int getRemainingSpaces(){
     return  MAX_SIZE - nItems;
 }
 
+int getSuccessfulInsertions(){
+    return successful_insertions;
+}
 //inserts two tasks if spaces available at one go, if not it'll add only one. else error.
 //returns 1 when 1st task gets inserted.
 //returns 2 when both tasks are inserted.

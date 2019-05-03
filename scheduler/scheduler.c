@@ -17,6 +17,8 @@
 
 int INVALID_TASK_NUM_CODE = -99;
 
+int NUMBER_OF_TASKS_TASK_FILE = 0; 
+
 int generateTaskFile(char *fileName);
 int readTaskFile(char *fileName);
 struct Task *getNextTwoTasks(char *fileName);
@@ -34,12 +36,17 @@ int addSimulationLog_Pre_Exec(struct Task task, char *service_time);
 int addSimulationLog_Post_Exec(struct Task task, char *service_time);
 struct Task *getNextTask(char *fileName);
 
+int getMaxTaskNumber(char *fileName);
+
+int num = 0;
+
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
     printf("Scheduler started!\n\n");
 
     struct Task tasks[100];
     initialize(tasks, 100);
+    NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
     //generateTaskFile("task_file");
     
     struct Task ts1;
@@ -50,7 +57,7 @@ int main(int argc, char** argv) {
     ts2.task_number = 77;
     ts2.cpu_burst = 2;
 
-
+  
  
  struct Task *temp = NULL;
     int eof = 0;
@@ -61,6 +68,7 @@ int main(int argc, char** argv) {
       task("task_file"); 
     }
     
+    printf("counting %d", num);
     
     for(int i = 0; i < 0; i++){
         temp = pop();
@@ -304,6 +312,7 @@ struct Task *getNextTask(char *fileName){
         
         if(status == EOF){
           //  printf("EOF REACHED\n");
+            
             return NULL;
         }
         
@@ -323,6 +332,48 @@ struct Task *getNextTask(char *fileName){
     pFile = NULL; //making sure reference is not there anymore.
     
     return NULL; 
+}
+
+
+//Returns number of tasks available in task file.
+long readHead;
+int getMaxTaskNumber(char *fileName){
+    int numberOfTasks = 0;
+    FILE *pFile = fopen(fileName, "r");    //open for writing.
+    
+    if(pFile == NULL){
+        char temp[3];
+        printf("Failed to open file, press any key followed by enter key to exit.");
+        scanf("%s", temp);
+      
+        return 0; 
+    }
+    
+    fseek(pFile, 0, SEEK_END);  //moving file position indicator to the end.
+
+    long endOfFile = ftell(pFile);  //current position (i.e. eof) of file position indicator.
+    
+    int task_number, cpu_burst;
+    while(readHead != endOfFile){      //if file position indicatior 'fileReadHead' is not at the end of file.
+
+        fseek(pFile, readHead, SEEK_SET);  //move file position indicator to last left off position.         
+
+        int status = fscanf(pFile, "%d %d\n", &task_number, &cpu_burst);  //moves file position indicator by 2 lines, (for loop).
+        
+        if(status != EOF){
+            numberOfTasks++;
+        }
+        else{
+            //  printf("EOF REACHED\n");
+            return 0;
+        }
+        readHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
+    }
+    printf("TASK FILE HAS %d tasks.\n", numberOfTasks);
+   
+    fclose(pFile);  //closing opened file
+    pFile = NULL; //making sure reference is not there anymore.
+    return numberOfTasks;
 }
 
 
@@ -462,11 +513,14 @@ int eofFlag=0;
     pthread_exit(0);    //exit the thread.
 }
 */
+
+
 int* task(char *fileName){
    // char *pFileName = fileName;
     
     if(continueInsertionNew == 1){
         continueInsertionNew = 0;
+        num++;
         pTask_1 = NULL;
         pTask_2 = NULL;
         
@@ -532,15 +586,12 @@ int* task(char *fileName){
         continueInsertionNew = 0; //insertion cannot happen, so wait till space is avail.
     }
     
-    if((pTask_1 == NULL) && (pTask_2 == NULL)){
-        //empty file.
-        printf("EMPTY TASK FILE DETECTED!\n");
+    //Kill switch
+    if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
+        printf("ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE!\n");
+        exit(0); //KILLLL
     }
     
-    if((pTask_1 != NULL) && (pTask_2 == NULL)){
-        //end of file.
-        printf("END OF TASK FILE DETECTED all items in queue!\n");
-    }
     
     return 0;
 }
