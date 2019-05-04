@@ -612,7 +612,7 @@ void *task(void *fileName){
                         
                         pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
 
-                        isTaskInserted = 1; //task inserted.
+                        isTaskInserted++; //task inserted.
                         pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
 
                         pthread_cond_signal(&taskCpuCondition); //to the end
@@ -629,7 +629,7 @@ void *task(void *fileName){
                         
                         pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
 
-                        isTaskInserted = 1; //task inserted.
+                        isTaskInserted++; //task inserted.
                         pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
 
                         pthread_cond_signal(&taskCpuCondition); //to the end
@@ -655,7 +655,7 @@ void *task(void *fileName){
                         
                         pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
 
-                        isTaskInserted = 1; //task inserted.
+                        isTaskInserted++; //task inserted.
                         pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
 
                         pthread_cond_signal(&taskCpuCondition); //to the end
@@ -673,7 +673,7 @@ void *task(void *fileName){
                         
                         pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
 
-                        isTaskInserted = 1; //task inserted.
+                        isTaskInserted++; //task inserted.
                         pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
 
                         pthread_cond_signal(&taskCpuCondition); //to the end
@@ -820,13 +820,13 @@ void* cpu( void *arg){
         
         pthread_mutex_lock(&isTaskInsertedMutex);
         
-        while(isTaskInserted != 1){
+        while(isTaskInserted == 0){
             printf("CPU-%d going to blocking state.\n", *pcpuId);
           
             pthread_cond_wait(&taskCpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
         }
         
-        isTaskInserted = 0; //is task taken.
+        isTaskInserted--; //is task taken.
         pthread_mutex_unlock(&isTaskInsertedMutex);
         
         struct Task *task = pop();  //get a task from ready queue.
