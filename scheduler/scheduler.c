@@ -866,6 +866,9 @@ void* cpu( void *arg){
 
             total_turnaround_time = total_turnaround_time + turn_around_time;   //computes total turn around time.
             num_tasks++;    //increment num of tasks executed by one.
+            
+            printf("number of tasks executed all together %d\n", num_tasks);
+            
             addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
         }
         else{   //task not available, ready queue empty.
