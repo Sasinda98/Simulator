@@ -318,3 +318,469 @@ Arrival time: 18:35:29
 Service time: 18:35:39
 task #: 4
 Arrival time: 18:35:39
+task #: 0
+Arrival time: 18:36:44
+task #: 1
+Arrival time: 18:36:44
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:36:44
+Service time: 18:36:45
+task #: 2
+Arrival time: 18:36:45
+task #: 3
+Arrival time: 18:36:45
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:36:44
+Completion time: 18:36:53
+Statistics for CPU-1:
+Task #1
+Arrival time: 18:36:44
+Service time: 18:36:54
+task #: 0
+Arrival time: 18:37:41
+task #: 1
+Arrival time: 18:37:41
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:37:41
+Service time: 18:37:42
+task #: 2
+Arrival time: 18:37:42
+task #: 3
+Arrival time: 18:37:42
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:37:41
+Completion time: 18:37:50
+task #: 0
+Arrival time: 18:41:32
+task #: 1
+Arrival time: 18:41:32
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:41:32
+Service time: 18:41:33
+task #: 2
+Arrival time: 18:41:33
+task #: 3
+Arrival time: 18:41:33
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:41:32
+Completion time: 18:41:41
+task #: 0
+Arrival time: 18:43:46
+task #: 1
+Arrival time: 18:43:46
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:43:46
+Service time: 18:43:47
+task #: 2
+Arrival time: 18:43:47
+task #: 3
+Arrival time: 18:43:47
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:43:46
+Completion time: 18:43:55
+Statistics for CPU-1:
+Task #1
+Arrival time: 18:43:46
+Service time: 18:43:56
+Statistics for CPU-1:
+Task #1
+Arrival time: 18:43:46
+Completion time: 18:44:46
+Statistics for CPU-1:
+Task #2
+Arrival time: 18:43:47
+Service time: 18:44:47
+Statistics for CPU-1:
+Task #2
+Arrival time: 18:43:47
+Completion time: 18:45:11
+Statistics for CPU-1:
+Task #3
+Arrival time: 18:43:47
+Service time: 18:45:12
+task #: 0
+Arrival time: 18:45:17
+task #: 1
+Arrival time: 18:45:17
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:45:17
+Service time: 18:45:18
+task #: 2
+Arrival time: 18:45:18
+task #: 3
+Arrival time: 18:45:18
+Statistics for CPU-1:
+Task #3
+Arrival time: 18:43:47
+Completion time: 18:45:21
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:45:17
+Completion time: 18:45:26
+Statistics for CPU-1:
+Task #1
+Arrival time: 18:45:17
+Service time: 18:45:27
+Statistics for CPU-1:
+Task #1
+Arrival time: 18:45:17
+Completion time: 18:46:17
+Statistics for CPU-1:
+Task #2
+Arrival time: 18:45:18
+Service time: 18:46:18
+Statistics for CPU-1:
+Task #2
+Arrival time: 18:45:18
+Completion time: 18:46:42
+Statistics for CPU-1:
+Task #3
+Arrival time: 18:45:18
+Service time: 18:46:43
+Statistics for CPU-1:
+Task #3
+Arrival time: 18:45:18
+Completion time: 18:46:52
+task #: 0
+Arrival time: 18:47:26
+task #: 1
+Arrival time: 18:47:26
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:47:26
+Service time: 18:47:27
+task #: 2
+Arrival time: 18:47:27
+task #: 3
+Arrival time: 18:47:27
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:47:26
+Completion time: 18:47:35
+Statistics for CPU-1:
+Task #1
+Arrival time: 18:47:26
+Service time: 18:47:36
+task #: 4
+Arrival time: 18:47:36
+Statistics for CPU-1:
+Task #1
+Arrival time: 18:47:26
+Completion time: 18:48:26
+Statistics for CPU-1:
+Task #2
+Arrival time: 18:47:27
+Service time: 18:48:27
+task #: 5
+Arrival time: 18:48:27
+Statistics for CPU-1:
+Task #2
+Arrival time: 18:47:27
+Completion time: 18:48:51
+Statistics for CPU-1:
+Task #3
+Arrival time: 18:47:27
+Service time: 18:48:52
+task #: 6
+Arrival time: 18:48:52
+Statistics for CPU-1:
+Task #3
+Arrival time: 18:47:27
+Completion time: 18:49:1
+Statistics for CPU-1:
+Task #4
+Arrival time: 18:47:36
+Service time: 18:49:2
+task #: 7
+Arrival time: 18:49:2
+Statistics for CPU-1:
+Task #4
+Arrival time: 18:47:36
+Completion time: 18:49:33
+Statistics for CPU-1:
+Task #2
+Arrival time: 
+Service time: 18:49:34
+task #: 8
+Arrival time: 18:49:34
+Statistics for CPU-1:
+Task #34
+Arrival time: 
+Completion time: 18:50:23
+Statistics for CPU-1:
+Task #6
+Arrival time: 18:48:52
+Service time: 18:50:24
+task #: 9
+Arrival time: 18:50:24
+Statistics for CPU-1:
+Task #12
+Arrival time: 18:48:52
+Completion time: 18:51:9
+Statistics for CPU-1:
+Task #7
+Arrival time: 18:49:2
+Service time: 18:51:10
+Statistics for CPU-1:
+Task #7
+Arrival time: 18:49:2
+Completion time: 18:51:39
+Statistics for CPU-1:
+Task #8
+Arrival time: 18:49:
+Service time: 18:51:40
+Statistics for CPU-1:
+Task #8
+Arrival time: 18:49:
+Completion time: 18:52:4
+Statistics for CPU-1:
+Task #9
+Arrival time: 18:50:24
+Service time: 18:52:5
+Statistics for CPU-1:
+Task #9
+Arrival time: 18:50:24
+Completion time: 18:52:15
+task #: 0
+Arrival time: 18:55:6
+task #: 1
+Arrival time: 18:55:6
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:55:6
+Service time: 18:55:6
+task #: 2
+Arrival time: 18:55:7
+task #: 3
+Arrival time: 18:55:7
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:55:6
+Completion time: 18:55:14
+Statistics for CPU-1:
+Task #1
+Arrival time: 18:55:6
+Service time: 18:55:15
+task #: 4
+Arrival time: 18:55:15
+task #: 0
+Arrival time: 18:57:18
+task #: 1
+Arrival time: 18:57:18
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:57:18
+Service time: 18:57:18
+task #: 2
+Arrival time: 18:57:19
+task #: 3
+Arrival time: 18:57:19
+Statistics for CPU-1:
+Task #0
+Arrival time: 18:57:18
+Completion time: 18:57:26
+Statistics for CPU-1:
+Task #1
+Arrival time: 18:57:18
+Service time: 18:57:27
+task #: 4
+Arrival time: 18:57:27
+Statistics for CPU-1:
+Task #1
+Arrival time: 18:57:18
+Completion time: 18:58:17
+Statistics for CPU-1:
+Task #2
+Arrival time: 18:57:19
+Service time: 18:58:18
+task #: 5
+Arrival time: 18:58:19
+Statistics for CPU-1:
+Task #2
+Arrival time: 18:57:19
+Completion time: 18:58:42
+Statistics for CPU-1:
+Task #3
+Arrival time: 18:57:19
+Service time: 18:58:43
+task #: 6
+Arrival time: 18:58:44
+Statistics for CPU-1:
+Task #3
+Arrival time: 18:57:19
+Completion time: 18:58:52
+Statistics for CPU-1:
+Task #53
+Arrival time: 
+Service time: 18:58:53
+task #: 7
+Arrival time: 18:58:54
+Statistics for CPU-1:
+Task #51
+Arrival time: 
+Completion time: 18:59:51
+Statistics for CPU-1:
+Task #5
+Arrival time: 18:58:19
+Service time: 18:59:52
+task #: 8
+Arrival time: 18:59:53
+Statistics for CPU-1:
+Task #5
+Arrival time: 18:58:19
+Completion time: 19:0:15
+Statistics for CPU-1:
+Task #6
+Arrival time: 18:58:44
+Service time: 19:0:16
+task #: 9
+Arrival time: 19:0:17
+Statistics for CPU-1:
+Task #6
+Arrival time: 18:58:44
+Completion time: 19:1:1
+Statistics for CPU-1:
+Task #7
+Arrival time: 18:58:54
+Service time: 19:1:2
+Statistics for CPU-1:
+Task #7
+Arrival time: 18:58:54
+Completion time: 19:1:31
+task #: 0
+Arrival time: 19:3:16
+task #: 1
+Arrival time: 19:3:16
+Statistics for CPU-1:
+Task #0
+Arrival time: 19:3:16
+Service time: 19:3:16
+task #: 2
+Arrival time: 19:3:17
+task #: 3
+Arrival time: 19:3:17
+Statistics for CPU-1:
+Task #0
+Arrival time: 19:3:16
+Completion time: 19:3:24
+Statistics for CPU-1:
+Task #1
+Arrival time: 19:3:16
+Service time: 19:3:25
+task #: 4
+Arrival time: 19:3:25
+Statistics for CPU-1:
+Task #1
+Arrival time: 19:3:16
+Completion time: 19:4:15
+Statistics for CPU-1:
+Task #2
+Arrival time: 19:3:17
+Service time: 19:4:16
+task #: 5
+Arrival time: 19:4:16
+Statistics for CPU-1:
+Task #2
+Arrival time: 19:3:17
+Completion time: 19:4:40
+Statistics for CPU-1:
+Task #3
+Arrival time: 19:3:17
+Service time: 19:4:41
+task #: 6
+Arrival time: 19:4:41
+Statistics for CPU-1:
+Task #3
+Arrival time: 19:3:17
+Completion time: 19:4:50
+Statistics for CPU-1:
+Task #4
+Arrival time: 19:3:25
+Service time: 19:4:51
+task #: 7
+Arrival time: 19:4:51
+Statistics for CPU-1:
+Task #4
+Arrival time: 19:3:25
+Completion time: 19:5:22
+Statistics for CPU-1:
+Task #5
+Arrival time: 19:4:16
+Service time: 19:5:23
+task #: 8
+Arrival time: 19:5:23
+Statistics for CPU-1:
+Task #5
+Arrival time: 19:4:16
+Completion time: 19:5:46
+Statistics for CPU-1:
+Task #6
+Arrival time: 19:4:41
+Service time: 19:5:47
+task #: 9
+Arrival time: 19:5:47
+task #: 0
+Arrival time: 19:9:40
+task #: 1
+Arrival time: 19:9:40
+Statistics for CPU-1:
+Task #0
+Arrival time: 19:9:40
+Service time: 19:9:40
+task #: 2
+Arrival time: 19:9:41
+task #: 3
+Arrival time: 19:9:41
+task #: 0
+Arrival time: 19:56:2
+task #: 1
+Arrival time: 19:56:2
+Statistics for CPU-1:
+Task #0
+Arrival time: 19:56:2
+Service time: 19:56:2
+task #: 2
+Arrival time: 19:56:3
+task #: 3
+Arrival time: 19:56:3
+Statistics for CPU-1:
+Task #0
+Arrival time: 19:56:2
+Completion time: 19:56:10
+Statistics for CPU-1:
+Task #1
+Arrival time: 19:56:2
+Service time: 19:56:11
+task #: 4
+Arrival time: 19:56:11
+task #: 0
+Arrival time: 19:57:0
+task #: 1
+Arrival time: 19:57:0
+Statistics for CPU-1:
+Task #0
+Arrival time: 19:57:0
+Service time: 19:57:0
+task #: 2
+Arrival time: 19:57:1
+task #: 3
+Arrival time: 19:57:1
+Statistics for CPU-1:
+Task #0
+Arrival time: 19:57:0
+Completion time: 19:57:8
+Statistics for CPU-1:
+Task #1
+Arrival time: 19:57:0
+Service time: 19:57:9
+task #: 4
+Arrival time: 19:57:9

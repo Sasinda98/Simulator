@@ -97,9 +97,9 @@ int main(int argc, char** argv) {
 
     pthread_join(tid, NULL);    //main thread wait till task is done.
     
-    sleep(5);
-    struct Task *ts44 = pop();
-    printf("Popping the first task %d %d\n", ts44->task_number, ts44->cpu_burst);
+   // sleep(5);
+   // struct Task *ts44 = pop();
+    //printf("Popping the first task %d %d\n", ts44->task_number, ts44->cpu_burst);
     
     //setArrivalTimeTask(&ts1);
     
@@ -573,12 +573,12 @@ void *task(void *fileName){
     
     while(1){
         
-        pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
+       // pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
             
-        isTaskInserted = 1; //task inserted.
-        pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
-        
-        pthread_cond_signal(&taskCpuCondition); //to the end
+      //  isTaskInserted = 1; //task inserted.
+       // pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
+       
+       // pthread_cond_signal(&taskCpuCondition); //to the end
         
         if(continueInsertionNew == 1){
             continueInsertionNew = 0;
@@ -609,6 +609,13 @@ void *task(void *fileName){
                     isT1_Inserted = insert(task_1);
                     if(isT1_Inserted == 1){
                         addSimulationLog_Task(task_1);
+                        
+                        pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
+
+                        isTaskInserted = 1; //task inserted.
+                        pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
+
+                        pthread_cond_signal(&taskCpuCondition); //to the end
                     }
                 }
             }
@@ -619,6 +626,13 @@ void *task(void *fileName){
                     isT2_Inserted = insert(task_2);
                     if(isT2_Inserted == 1){
                         addSimulationLog_Task(task_2);
+                        
+                        pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
+
+                        isTaskInserted = 1; //task inserted.
+                        pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
+
+                        pthread_cond_signal(&taskCpuCondition); //to the end
                     }
                 }
             }
@@ -638,6 +652,13 @@ void *task(void *fileName){
 
                     if(isT1_Inserted == 1){
                         addSimulationLog_Task(task_1);
+                        
+                        pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
+
+                        isTaskInserted = 1; //task inserted.
+                        pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
+
+                        pthread_cond_signal(&taskCpuCondition); //to the end
                     }
                 }
             }
@@ -649,6 +670,13 @@ void *task(void *fileName){
 
                     if(isT2_Inserted == 1){
                         addSimulationLog_Task(task_2);
+                        
+                        pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
+
+                        isTaskInserted = 1; //task inserted.
+                        pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
+
+                        pthread_cond_signal(&taskCpuCondition); //to the end
                     }
                 }
 
@@ -669,7 +697,7 @@ void *task(void *fileName){
         //Kill switch
         if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
             printf("ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE!\n");
-           // pthread_exit(0);    //terminate the thread.
+            pthread_exit(0);    //terminate the thread.
           //  return 0;
         }
         sleep(1);
@@ -794,7 +822,7 @@ void* cpu( void *arg){
         
         while(isTaskInserted != 1){
             printf("CPU-%d going to blocking state.\n", *pcpuId);
-            
+          
             pthread_cond_wait(&taskCpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
         }
         

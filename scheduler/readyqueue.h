@@ -7,6 +7,7 @@
  */
 #include <time.h>
 #include <string.h>
+#include <pthread.h>
 
 
 struct Task{
@@ -30,6 +31,10 @@ int MAX_SIZE = 0;
 
 struct Task *pTaskArray = NULL; //global pointer
 
+pthread_mutex_t queueMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t nItemMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t remainingMutex = PTHREAD_MUTEX_INITIALIZER;
+
 void initialize(struct Task tasks[], int size){   
     
     /*
@@ -46,16 +51,21 @@ void initialize(struct Task tasks[], int size){
 }  
 
 int isEmpty(){
+    pthread_mutex_lock(&nItemMutex);
     if(nItems == 0){
         return 1;
     }
+    pthread_mutex_unlock(&nItemMutex);
     return 0;
 }
 
 int isFull(){
+    pthread_mutex_lock(&nItemMutex);
     if(nItems == MAX_SIZE){
+        pthread_mutex_unlock(&nItemMutex);
         return 1;
     }else{
+        pthread_mutex_unlock(&nItemMutex);
         return 0;
     }
    
@@ -82,6 +92,7 @@ int isFullTwo(){
 
 int insert(struct Task newTask){
 
+    pthread_mutex_lock(&queueMutex);
     
     if(isFull() == 0){    //not full
         ++rear;
@@ -92,11 +103,17 @@ int insert(struct Task newTask){
         *(pTaskArray + rear) = newTask;
         successful_insertions++;
         printf("\n INSERTION SUCCESSFUL = %d %d\n", (pTaskArray + rear)->task_number, (pTaskArray + rear)->cpu_burst );
-        nItems++;
+        
+        pthread_mutex_lock(&nItemMutex);
+            nItems++;
+        pthread_mutex_unlock(&nItemMutex);
+   
+        pthread_mutex_unlock(&queueMutex);
         return 1;   //success
     }
     else{
         printf("\n INSERTION FAILED = %d %d\n", newTask.task_number, newTask.cpu_burst );
+        pthread_mutex_unlock(&queueMutex);
         return 0;   //fail
     }
 
@@ -136,17 +153,20 @@ int insertTwo(struct Task newTask[]){
 
 
 struct Task *pop(){
- 
+     pthread_mutex_lock(&queueMutex);
     if( isEmpty() == 0 ){   //not empty
         ++front;
         if(front == (MAX_SIZE - 1))
             front = front % (MAX_SIZE);
-     
+        pthread_mutex_lock(&nItemMutex);
         nItems--;
+        pthread_mutex_unlock(&nItemMutex);
+    pthread_mutex_unlock(&queueMutex);
         return (pTaskArray + front);
     }
     else{
         printf("Nothing left to pop!\n");
+    pthread_mutex_unlock(&queueMutex);
         return NULL;
     }
 }
