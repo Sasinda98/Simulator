@@ -969,3 +969,25 @@ Statistics for CPU-1:
 Task #4
 Arrival time: 21:43:11
 Service time: 21:43:18
+task #: 0
+Arrival time: 22:0:46
+task #: 1
+Arrival time: 22:0:46
+Statistics for CPU-1:
+Task #0
+Arrival time: 22:0:46
+Service time: 22:0:46
+task #: 2
+Arrival time: 22:0:46
+task #: 3
+Arrival time: 22:0:46
+Statistics for CPU-1:
+Task #0
+Arrival time: 22:0:46
+Completion time: 22:0:50
+Statistics for CPU-1:
+Task #1
+Arrival time: 22:0:46
+Service time: 22:0:50
+task #: 4
+Arrival time: 22:0:50

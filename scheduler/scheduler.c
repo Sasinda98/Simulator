@@ -810,6 +810,12 @@ int addSimulationLog_Task(struct Task task){
     
 int num_tasks = 0;   //shared variables, shared across the 3 cpus.
 double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
+
+//mutexes for the shared variables. mutex per variable to increase performance .
+pthread_mutex_t num_tasks_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t total_waiting_time_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t total_turnaround_time_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 //This function is the function that gets executed by each cpu thread.
 void* cpu( void *arg){
     int *pcpuId = (int *)arg;
@@ -848,8 +854,13 @@ void* cpu( void *arg){
             //END of obtaining service time, waiting time...................................................................         
 
             //strcpy(twoTasks[0].arrival_time, time1);    //for sim logs.
-
+            
+            pthread_mutex_lock(&total_waiting_time_mutex);  //obtaining lock to modify total_waiting_time [shared resource]
+            
             total_waiting_time = total_waiting_time + waiting_time; //compute total waiting time.
+            
+            pthread_mutex_unlock(&total_waiting_time_mutex);    //release the lock so another thread can have its go at it.
+            
             addSimulationLog_Pre_Exec(*task, service_time, pcpuId); //adds record to simulation log with service time & other related fields.
 
             sleep(task->cpu_burst); //sleep for burst time, simulate cpu EXECUTING the task.
@@ -865,8 +876,17 @@ void* cpu( void *arg){
             //End of obtaining completion time.....................................................................................
             printf("Turn Around Time: %f\n", turn_around_time);
 
+            pthread_mutex_lock(&total_turnaround_time_mutex);   ////getting the lock for modification of total_turnaround_time var. [shared resource].
+            
             total_turnaround_time = total_turnaround_time + turn_around_time;   //computes total turn around time.
-            num_tasks++;    //increment num of tasks executed by one.
+            
+            pthread_mutex_unlock(&total_turnaround_time_mutex); //release the lock so another thread can have its go at it.
+            
+            pthread_mutex_lock(&num_tasks_mutex);    //getting the lock for modification of num_tasks var [shared resource].
+            
+            num_tasks++;    //increment num of tasks executed by one. [shared resource]
+            
+            pthread_mutex_unlock(&num_tasks_mutex); //release the lock so another thread can have its go at it.
             
             printf("number of tasks executed all together %d\n", num_tasks);
             
