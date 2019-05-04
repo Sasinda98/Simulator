@@ -813,15 +813,16 @@ double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars ac
 //This function is the function that gets executed by each cpu thread.
 void* cpu( void *arg){
     int *pcpuId = (int *)arg;
+    int cpuId = *pcpuId;
     
-    printf("CPU ID: %d\n", *pcpuId);
+    printf("CPU ID: %d\n", cpuId);
     
     while(1){
         
         pthread_mutex_lock(&isTaskInsertedMutex);
         
         while(isTaskInserted == 0){
-            printf("CPU-%d going to blocking state.\n", *pcpuId);
+            printf("CPU-%d going to blocking state.\n", cpuId);
           
             pthread_cond_wait(&taskCpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
         }
@@ -832,7 +833,7 @@ void* cpu( void *arg){
         struct Task *task = pop();  //get a task from ready queue.
 
         if(task != NULL){   //task available from ready queue.
-            printf("CPU executing task# = %d burst = %d\n", task->task_number, task->cpu_burst);
+            printf("CPU-%d executing task# = %d burst = %d\n", cpuId, task->task_number, task->cpu_burst);
 
             //Obtaining service time, waiting time.........................................................................
             time_t arrival_t = task->arrival_t;    //getting arrival time from the task.
@@ -872,12 +873,12 @@ void* cpu( void *arg){
             addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
         }
         else{   //task not available, ready queue empty.
-            printf("Empty/no tasks available for cpu - %d execution.\n", *pcpuId);
+            printf("Empty/no tasks available for cpu - %d execution.\n", cpuId);
         }
        // sleep(1); disabling sleep here as not needed
         
         if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){
-            printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", *pcpuId);
+            printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
             pthread_exit(0);
         }
     }

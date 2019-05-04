@@ -863,3 +863,109 @@ Statistics for CPU-1:
 Task #1
 Arrival time: 20:34:42
 Completion time: 20:34:49
+task #: 0
+Arrival time: 21:42:2
+task #: 1
+Arrival time: 21:42:2
+Statistics for CPU-1:
+Task #0
+Arrival time: 21:42:2
+Service time: 21:42:2
+task #: 2
+Arrival time: 21:42:2
+task #: 3
+Arrival time: 21:42:2
+Statistics for CPU-1:
+Task #0
+Arrival time: 21:42:2
+Completion time: 21:42:6
+task #: 4
+Arrival time: 21:42:6
+Statistics for CPU-1:
+Task #1
+Arrival time: 21:42:2
+Service time: 21:42:6
+Statistics for CPU-1:
+Task #1
+Arrival time: 21:42:2
+Completion time: 21:42:8
+Statistics for CPU-1:
+Task #2
+Arrival time: 21:42:2
+Service time: 21:42:8
+task #: 5
+Arrival time: 21:42:8
+task #: 0
+Arrival time: 21:42:29
+task #: 1
+Arrival time: 21:42:29
+Statistics for CPU-1:
+Task #0
+Arrival time: 21:42:29
+Service time: 21:42:29
+task #: 2
+Arrival time: 21:42:29
+task #: 3
+Arrival time: 21:42:29
+Statistics for CPU-1:
+Task #0
+Arrival time: 21:42:29
+Completion time: 21:42:33
+task #: 4
+Arrival time: 21:42:33
+Statistics for CPU-1:
+Task #1
+Arrival time: 21:42:29
+Service time: 21:42:33
+task #: 0
+Arrival time: 21:43:7
+task #: 1
+Arrival time: 21:43:7
+Statistics for CPU-1:
+Task #0
+Arrival time: 21:43:7
+Service time: 21:43:7
+task #: 2
+Arrival time: 21:43:7
+task #: 3
+Arrival time: 21:43:7
+Statistics for CPU-1:
+Task #0
+Arrival time: 21:43:7
+Completion time: 21:43:11
+task #: 4
+Arrival time: 21:43:11
+Statistics for CPU-1:
+Task #1
+Arrival time: 21:43:7
+Service time: 21:43:11
+Statistics for CPU-1:
+Task #1
+Arrival time: 21:43:7
+Completion time: 21:43:13
+Statistics for CPU-1:
+Task #2
+Arrival time: 21:43:7
+Service time: 21:43:13
+task #: 5
+Arrival time: 21:43:13
+Statistics for CPU-1:
+Task #2
+Arrival time: 21:43:7
+Completion time: 21:43:15
+Statistics for CPU-1:
+Task #3
+Arrival time: 21:43:7
+Service time: 21:43:15
+task #: 6
+Arrival time: 21:43:15
+Statistics for CPU-1:
+Task #3
+Arrival time: 21:43:7
+Completion time: 21:43:18
+task #: 7
+Arrival time: 21:43:18
+Statistics for CPU-1:
+Task #4
+Arrival time: 21:43:11
+Service time: 21:43:18
