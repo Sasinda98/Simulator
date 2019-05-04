@@ -850,6 +850,11 @@ void* cpu( void *arg){
     
     while(1){
         
+        if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){
+            printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+            pthread_exit(0);
+        }
+        
         pthread_mutex_lock(&isTaskInsertedMutex);
         
         while(isTaskInserted == 0){
@@ -922,10 +927,7 @@ void* cpu( void *arg){
         }
        // sleep(1); disabling sleep here as not needed
         
-        if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){
-            printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-            pthread_exit(0);
-        }
+     
     }
 }
 
