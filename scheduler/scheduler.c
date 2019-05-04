@@ -858,6 +858,12 @@ void* cpu( void *arg){
         pthread_mutex_lock(&isTaskInsertedMutex);
         
         while(isTaskInserted == 0){     //no new tasks in ready queue to execute.
+            
+            if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){ //terminate the cpu threads on completion of execution of all task.
+                printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+                pthread_exit(0);
+            }  
+            
             printf("CPU-%d going to blocking state.\n", cpuId);
             pthread_cond_wait(&taskCpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
             printf("CPU-%d going to UNBLOCKED state.\n", cpuId);
@@ -935,27 +941,9 @@ void* cpu( void *arg){
                     
         if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){ //terminate the cpu threads on completion of execution of all task.
 
-            printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+            printf("CPU-%d THREAD BREAKS WHILE : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
             break;
             
-   /*         //Thread cancellation order is set in such away that the executing thread doesn't cancel itself to not cancel remaining ones.
-            //see the ordering of tid_cpu# variable to see what is meant.
-            if(cpuId == 1){     //thread in execution is cpu 1
-                pthread_cancel(tid_cpu3);
-                pthread_cancel(tid_cpu2);
-                printf("CPU-1 = %d CPU-2 = %d CPU-3 %d", cpu1_task_count, cpu2_task_count ,cpu3_task_count);
-                pthread_cancel(tid_cpu1);
-            }else if(cpuId == 2){   //thhread in execution is cpu 2
-                pthread_cancel(tid_cpu3);
-                pthread_cancel(tid_cpu1);
-               printf("CPU-1 = %d CPU-2 = %d CPU-3 %d", cpu1_task_count, cpu2_task_count ,cpu3_task_count);
-                pthread_cancel(tid_cpu2);
-            }else{
-                pthread_cancel(tid_cpu1);
-                pthread_cancel(tid_cpu2);
-                printf("CPU-1 = %d CPU-2 = %d CPU-3 %d", cpu1_task_count, cpu2_task_count ,cpu3_task_count);
-                pthread_cancel(tid_cpu3);
-            }*/
            // pthread_exit(0);
         }  
             
