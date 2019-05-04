@@ -942,24 +942,22 @@ void* cpu( void *arg){
         }  
         */
         if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 0){
-            if(cpuId == 1){
-                 printf("CPU-%d THREAD TERMINATES: ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-                pthread_exit(0);
-            }
-                
+            
+            printf("CPU-%d THREAD TERMINATES: ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+            //pthread_cancel(tid_cpu1);
+            pthread_exit(0);  
         }
         else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 1){
-            if(cpuId == 2){
-                 printf("CPU-%d THREAD TERMINATES : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-                 pthread_exit(0);
-            }
-               
+            printf("CPU-%d THREAD TERMINATES : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+            //pthread_cancel(tid_cpu1);
+            pthread_exit(0);
             
         }else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 2){
-            if(cpuId == 3){
-                 printf("CPU-%d THREAD TERMINATES : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-                pthread_exit(0);
-            }
+            
+            printf("CPU-%d THREAD TERMINATES : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+            //pthread_cancel(tid_cpu1);
+            pthread_exit(0);
+            
                 
         }
             
