@@ -190,3 +190,109 @@ Arrival time: 21:20:5
 Service time: 21:21:10
 task #: 21
 Arrival time: 21:21:10
+task #: 0
+Arrival time: 13:6:50
+task #: 1
+Arrival time: 13:6:50
+Statistics for CPU-1:
+Task #0
+Arrival time: 13:6:50
+Service time: 13:6:51
+task #: 2
+Arrival time: 13:6:51
+task #: 3
+Arrival time: 13:6:51
+task #: 0
+Arrival time: 13:7:45
+task #: 1
+Arrival time: 13:7:45
+Statistics for CPU-1:
+Task #0
+Arrival time: 13:7:45
+Service time: 13:7:46
+task #: 2
+Arrival time: 13:7:46
+task #: 3
+Arrival time: 13:7:46
+task #: 0
+Arrival time: 13:18:57
+task #: 1
+Arrival time: 13:18:57
+Statistics for CPU-1:
+Task #0
+Arrival time: 13:18:57
+Service time: 13:18:58
+task #: 2
+Arrival time: 13:18:58
+task #: 3
+Arrival time: 13:18:58
+Statistics for CPU-1:
+Task #0
+Arrival time: 13:18:57
+Completion time: 13:19:6
+Statistics for CPU-1:
+Task #1
+Arrival time: 13:18:57
+Service time: 13:19:7
+task #: 4
+Arrival time: 13:19:7
+task #: 0
+Arrival time: 13:28:50
+task #: 1
+Arrival time: 13:28:50
+Statistics for CPU-1:
+Task #0
+Arrival time: 13:28:50
+Service time: 13:28:51
+task #: 2
+Arrival time: 13:28:51
+task #: 3
+Arrival time: 13:28:51
+Statistics for CPU-1:
+Task #0
+Arrival time: 13:28:50
+Completion time: 13:28:59
+Statistics for CPU-1:
+Task #1
+Arrival time: 13:28:50
+Service time: 13:29:0
+task #: 4
+Arrival time: 13:29:0
+task #: 0
+Arrival time: 13:31:4
+task #: 1
+Arrival time: 13:31:4
+Statistics for CPU-1:
+Task #0
+Arrival time: 13:31:4
+Service time: 13:31:5
+task #: 0
+Arrival time: 13:32:47
+task #: 1
+Arrival time: 13:32:47
+Statistics for CPU-1:
+Task #0
+Arrival time: 13:32:47
+Service time: 13:32:48
+task #: 0
+Arrival time: 13:48:15
+task #: 1
+Arrival time: 13:48:15
+Statistics for CPU-1:
+Task #0
+Arrival time: 13:48:15
+Service time: 13:48:16
+task #: 2
+Arrival time: 13:48:16
+task #: 3
+Arrival time: 13:48:16
+Statistics for CPU-1:
+Task #0
+Arrival time: 13:48:15
+Completion time: 13:48:24
+Statistics for CPU-1:
+Task #1
+Arrival time: 13:48:15
+Service time: 13:48:25
+task #: 4
+Arrival time: 13:48:25

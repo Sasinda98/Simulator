@@ -17,18 +17,12 @@
 #include <time.h>
 #include <sys/time.h>
 
-int INVALID_TASK_NUM_CODE = -99;
 
-int NUMBER_OF_TASKS_TASK_FILE = 0; 
-
+//FUNCTION PROTOTYPES...........................................................
 int generateTaskFile(char *fileName);
 int readTaskFile(char *fileName);
 struct Task *getNextTwoTasks(char *fileName);
-//int task(char *fileName);
-
-//int *task(char *fileName);
 void *task(void *fileName);
-
 long long timeInMilliseconds(void);
 void format_time(char *output);
 char *getCurrentTime();
@@ -38,11 +32,19 @@ void *cpu( void *arg);
 int addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId);
 int addSimulationLog_Post_Exec(struct Task task, char *service_time, int *cpuId);
 struct Task *getNextTask(char *fileName);
-
 int getMaxTaskNumber(char *fileName);
 void setArrivalTimeTask(struct Task *task);
 
+//GLOBAL VARIABLES..............................................................
+int INVALID_TASK_NUM_CODE = -99;    //deprecated
+int NUMBER_OF_TASKS_TASK_FILE = 0;
 int num = 0;
+
+//The variables declared below allow blocking of cpu threads until task has inserted tasks for cpu to take. 
+pthread_cond_t taskCpuCondition;    //condition variable associated with task() and cpu().
+pthread_mutex_t isTaskInsertedMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isInserted variable.
+int isTaskInserted = 0; //condition variable that requires the mutex to be managed.
+
 
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
@@ -60,6 +62,13 @@ int main(int argc, char** argv) {
     struct Task ts2;
     ts2.task_number = 77;
     ts2.cpu_burst = 2;
+    
+    /*
+     * Initializing condition and mutex variables
+     */
+    pthread_cond_init(&taskCpuCondition, NULL); //null for default initialization.
+    
+    
 
     /*
      * task thread spawning
@@ -564,6 +573,13 @@ void *task(void *fileName){
     
     while(1){
         
+        pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
+            
+        isTaskInserted = 1; //task inserted.
+        pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
+        
+        pthread_cond_signal(&taskCpuCondition); //to the end
+        
         if(continueInsertionNew == 1){
             continueInsertionNew = 0;
             num++;
@@ -653,10 +669,14 @@ void *task(void *fileName){
         //Kill switch
         if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
             printf("ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE!\n");
-           // exit(0); //KILLLL
-            return 0;
+           // pthread_exit(0);    //terminate the thread.
+          //  return 0;
         }
         sleep(1);
+       
+      // pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the 
+        
+      // pthread_cond_signal(&taskCpuCondition); //to the end
     }
     
     return 0;
@@ -769,6 +789,18 @@ void* cpu( void *arg){
     printf("CPU ID: %d\n", *pcpuId);
     
     while(1){
+        
+        pthread_mutex_lock(&isTaskInsertedMutex);
+        
+        while(isTaskInserted != 1){
+            printf("CPU-%d going to blocking state.\n", *pcpuId);
+            
+            pthread_cond_wait(&taskCpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
+        }
+        
+        isTaskInserted = 0; //is task taken.
+        pthread_mutex_unlock(&isTaskInsertedMutex);
+        
         struct Task *task = pop();  //get a task from ready queue.
 
         if(task != NULL){   //task available from ready queue.
@@ -809,7 +841,7 @@ void* cpu( void *arg){
             addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
         }
         else{   //task not available, ready queue empty.
-            printf("Empty no tasks available\n");
+            printf("Empty/no tasks available for cpu - %d execution.\n", *pcpuId);
         }
         sleep(1); //to ease the load on my laptop.
     }
