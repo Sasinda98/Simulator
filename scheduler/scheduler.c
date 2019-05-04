@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
     struct Task tasks[3];
     initialize(tasks, 3);
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
-    //generateTaskFile("task_file");
+   // generateTaskFile("task_file");
     
     struct Task ts1;
     ts1.task_number = 44;
@@ -155,7 +155,7 @@ int generateTaskFile(char *fileName){
          * Link: https://www.programmingsimplified.com/c-program-generate-random-numbers
          * Accessed: 30 April 2019
         */
-        cpu_burst = rand() % 4 + 1;    
+        cpu_burst = rand() % 50 + 1;    
         int status = fprintf(pFile, "%d %d\n", task_number, cpu_burst);
        //printf("cpu_burst %d", cpu_burst);
         if(status < 0){

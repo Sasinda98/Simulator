@@ -837,3 +837,29 @@ Arrival time:  4 20:02:32 2019
 Service time: 20:3:58
 task #: 7
 Arrival time: 20:3:58
+task #: 0
+Arrival time: 20:34:42
+task #: 1
+Arrival time: 20:34:42
+Statistics for CPU-1:
+Task #0
+Arrival time: 20:34:42
+Service time: 20:34:42
+task #: 2
+Arrival time: 20:34:43
+task #: 3
+Arrival time: 20:34:43
+Statistics for CPU-1:
+Task #0
+Arrival time: 20:34:42
+Completion time: 20:34:46
+Statistics for CPU-1:
+Task #1
+Arrival time: 20:34:42
+Service time: 20:34:47
+task #: 4
+Arrival time: 20:34:47
+Statistics for CPU-1:
+Task #1
+Arrival time: 20:34:42
+Completion time: 20:34:49
