@@ -111,7 +111,7 @@ int main(int argc, char** argv) {
     pthread_attr_t attr_cpu3;    //attributes
     pthread_attr_init(&attr_cpu3);
     
-    int cpuid3 = 1;
+    int cpuid3 = 3;
     pthread_create(&tid_cpu3, &attr_cpu3, cpu, &cpuid3); //sending cpu id as param
 
  
