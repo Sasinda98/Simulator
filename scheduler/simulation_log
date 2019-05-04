@@ -784,3 +784,56 @@ Arrival time: 19:57:0
 Service time: 19:57:9
 task #: 4
 Arrival time: 19:57:9
+task #: 0
+Arrival time: 20:2:23
+task #: 1
+Arrival time: 20:2:23
+Statistics for CPU-1:
+Task #0
+Arrival time: 20:2:23
+Service time: 20:2:23
+task #: 2
+Arrival time: 20:2:24
+task #: 3
+Arrival time: 20:2:24
+Statistics for CPU-1:
+Task #0
+Arrival time: 20:2:23
+Completion time: 20:2:31
+Statistics for CPU-1:
+Task #1
+Arrival time: 20:2:23
+Service time: 20:2:32
+task #: 4
+Arrival time: 20:2:32
+Statistics for CPU-1:
+Task #1
+Arrival time: 20:2:23
+Completion time: 20:3:22
+Statistics for CPU-1:
+Task #2
+Arrival time: 20:2:24
+Service time: 20:3:23
+task #: 5
+Arrival time: 20:3:23
+Statistics for CPU-1:
+Task #2
+Arrival time: 20:2:24
+Completion time: 20:3:47
+Statistics for CPU-1:
+Task #3
+Arrival time: 20:2:24
+Service time: 20:3:48
+task #: 6
+Arrival time: 20:3:48
+Statistics for CPU-1:
+Task #3
+Arrival time: 20:2:24
+Completion time: 20:3:57
+Statistics for CPU-1:
+Task #842674226
+Arrival time:  4 20:02:32 2019
+
+Service time: 20:3:58
+task #: 7
+Arrival time: 20:3:58

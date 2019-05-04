@@ -51,21 +51,17 @@ void initialize(struct Task tasks[], int size){
 }  
 
 int isEmpty(){
-    pthread_mutex_lock(&nItemMutex);
     if(nItems == 0){
         return 1;
     }
-    pthread_mutex_unlock(&nItemMutex);
     return 0;
 }
 
 int isFull(){
-    pthread_mutex_lock(&nItemMutex);
+
     if(nItems == MAX_SIZE){
-        pthread_mutex_unlock(&nItemMutex);
         return 1;
     }else{
-        pthread_mutex_unlock(&nItemMutex);
         return 0;
     }
    
