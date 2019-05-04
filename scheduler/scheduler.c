@@ -850,15 +850,17 @@ void* cpu( void *arg){
     
     while(1){
         
-        if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){
-            printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-            pthread_exit(0);
-        }
-        
         pthread_mutex_lock(&isTaskInsertedMutex);
         
-        while(isTaskInserted == 0){
+        while(isTaskInserted == 0){     //no new tasks in ready queue to execute.
             printf("CPU-%d going to blocking state.\n", cpuId);
+            
+            if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){
+                //print cpu1 log here
+                //print cpu2 log here
+                printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+                pthread_exit(0);
+            }
           
             pthread_cond_wait(&taskCpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
         }
@@ -926,7 +928,8 @@ void* cpu( void *arg){
             printf("Empty/no tasks available for cpu - %d execution.\n", cpuId);
         }
        // sleep(1); disabling sleep here as not needed
-        
+                
+
      
     }
 }
