@@ -696,7 +696,7 @@ void *task(void *fileName){
 
         //Kill switch
         if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
-            printf("ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE!\n");
+            printf("TASK THREAD QUITTING : ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE.\n");
             pthread_exit(0);    //terminate the thread.
           //  return 0;
         }
@@ -877,7 +877,7 @@ void* cpu( void *arg){
        // sleep(1); disabling sleep here as not needed
         
         if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){
-            printf("no more tasks left to execute, all tasks in task_file has been executed\n.");
+            printf("CPU THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.");
             pthread_exit(0);
         }
     }
