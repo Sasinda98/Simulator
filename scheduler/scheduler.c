@@ -700,7 +700,7 @@ void *task(void *fileName){
             pthread_exit(0);    //terminate the thread.
           //  return 0;
         }
-        sleep(1);
+        //sleep(1); disabling sleep to make it fast
        
       // pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the 
         
@@ -871,7 +871,7 @@ void* cpu( void *arg){
         else{   //task not available, ready queue empty.
             printf("Empty/no tasks available for cpu - %d execution.\n", *pcpuId);
         }
-        sleep(1); //to ease the load on my laptop.
+       // sleep(1); disabling sleep here as not needed
         
         if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){
             printf("no more tasks left to execute, all tasks in task_file has been executed\n.");
