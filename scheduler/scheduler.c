@@ -844,12 +844,14 @@ pthread_mutex_t num_tasks_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t total_waiting_time_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t total_turnaround_time_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-int cpu1_task_count = 0, cpu2_task_count = 0, cpu3_task_count = 0;  //holds the number of tasks executed by each.
+//int cpu1_task_count = 0, cpu2_task_count = 0, cpu3_task_count = 0;  //holds the number of tasks executed by each.
 
 //This function is the function that gets executed by each cpu thread.
 void* cpu( void *arg){
     int *pcpuId = (int *)arg;
     int cpuId = *pcpuId;
+    
+    int task_exec_count_individual = 0;
 
     printf("CPU ID: %d\n", cpuId);
     
@@ -921,44 +923,24 @@ void* cpu( void *arg){
             printf("number of tasks executed all together %d\n", num_tasks);
             
             addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
+            task_exec_count_individual++;
             
-            switch(cpuId){  //record how many tasks each thread executed.
-                case 1: cpu1_task_count++; break;
-                case 2: cpu2_task_count++; break;
-                case 3: cpu3_task_count++; break;
-            }
         }
         else{   //task not available, ready queue empty.
             printf("Empty/no tasks available for cpu - %d execution. GOING TO EXIT PHASE\n", cpuId);
         }
-       // sleep(1); disabling sleep here as not needed
-        /*            
-        if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){ //terminate the cpu threads on completion of execution of all task.
-
-            printf("CPU-%d THREAD BREAKS WHILE : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-           // break;
-            
-            pthread_exit(0);
-        }  
-        */
-        if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 0){
-            
-            printf("CPU-%d THREAD TERMINATES: ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-            //pthread_cancel(tid_cpu1);
+       
+        if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 0){   //add logs!!!
+            printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             pthread_exit(0);  
         }
         else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 1){
-            printf("CPU-%d THREAD TERMINATES : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-            //pthread_cancel(tid_cpu1);
+            printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             pthread_exit(0);
             
         }else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 2){
-            
-            printf("CPU-%d THREAD TERMINATES : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-            //pthread_cancel(tid_cpu1);
-            pthread_exit(0);
-            
-                
+            printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
+            pthread_exit(0);    
         }
             
     }
