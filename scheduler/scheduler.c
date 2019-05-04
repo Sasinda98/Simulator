@@ -37,7 +37,7 @@ void setArrivalTimeTask(struct Task *task);
 
 //GLOBAL VARIABLES..............................................................
 int INVALID_TASK_NUM_CODE = -99;    //deprecated
-int NUMBER_OF_TASKS_TASK_FILE = 0;
+int NUMBER_OF_TASKS_TASK_FILE = 0;  //number of tasks in task file.
 int num = 0;
 
 //The variables declared below allow blocking of cpu threads until task has inserted tasks for cpu to take. 
@@ -872,6 +872,11 @@ void* cpu( void *arg){
             printf("Empty/no tasks available for cpu - %d execution.\n", *pcpuId);
         }
         sleep(1); //to ease the load on my laptop.
+        
+        if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){
+            printf("no more tasks left to execute, all tasks in task_file has been executed\n.");
+            pthread_exit(0);
+        }
     }
 }
 
