@@ -939,20 +939,20 @@ void* cpu( void *arg){
             //Thread cancellation order is set in such away that the executing thread doesn't cancel itself to not cancel remaining ones.
             //see the ordering of tid_cpu# variable to see what is meant.
             if(cpuId == 1){     //thread in execution is cpu 1
-                pthread_cancel(&tid_cpu3);
-                pthread_cancel(&tid_cpu2);
+                pthread_cancel(tid_cpu3);
+                pthread_cancel(tid_cpu2);
                 printf("CPU-1 = %d CPU-2 = %d CPU-3 %d", cpu1_task_count, cpu2_task_count ,cpu3_task_count);
-                pthread_cancel(&tid_cpu1);
+                pthread_cancel(tid_cpu1);
             }else if(cpuId == 2){   //thhread in execution is cpu 2
-                pthread_cancel(&tid_cpu3);
-                pthread_cancel(&tid_cpu1);
+                pthread_cancel(tid_cpu3);
+                pthread_cancel(tid_cpu1);
                printf("CPU-1 = %d CPU-2 = %d CPU-3 %d", cpu1_task_count, cpu2_task_count ,cpu3_task_count);
-                pthread_cancel(&tid_cpu2);
+                pthread_cancel(tid_cpu2);
             }else{
-                pthread_cancel(&tid_cpu1);
-                pthread_cancel(&tid_cpu2);
+                pthread_cancel(tid_cpu1);
+                pthread_cancel(tid_cpu2);
                 printf("CPU-1 = %d CPU-2 = %d CPU-3 %d", cpu1_task_count, cpu2_task_count ,cpu3_task_count);
-                pthread_cancel(&tid_cpu3);
+                pthread_cancel(tid_cpu3);
             }
             pthread_exit(0);
         }  
