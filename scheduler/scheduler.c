@@ -846,14 +846,29 @@ void* cpu( void *arg){
     int *pcpuId = (int *)arg;
     int cpuId = *pcpuId;
     
+    int num_tasks_serviced_individual = 0;  //stores how many tasks cpu executed.
+    
     printf("CPU ID: %d\n", cpuId);
     
     while(1){
         
         pthread_mutex_lock(&isTaskInsertedMutex);
         
+        //DEBUG TIP, LOOK OUT, ANALYZE THIS WHILE LOOP FUTHER TO INVESTIGATE HOW CPU THREAD TERMINATE
         while(isTaskInserted == 0){     //no new tasks in ready queue to execute.
             printf("CPU-%d going to blocking state.\n", cpuId);
+            
+            if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){ //terminate the cpu thread on completion of execution of all task.
+                
+                pthread_cond_broadcast(&taskCpuCondition);  //bring other cpu threads out of block state to exit.
+                //the above line unblocks all threads waiting on a condition var.
+                //if there isn't a broadcast i.e. the line above, one cpu thread terminates while others indefinitely block
+               
+                isTaskInserted = 1; //to force run the loop, may introduce bug
+                
+                printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+                pthread_exit(0);
+            }  
             
             pthread_cond_wait(&taskCpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
         }
@@ -913,23 +928,17 @@ void* cpu( void *arg){
             
             pthread_mutex_unlock(&num_tasks_mutex); //release the lock so another thread can have its go at it.
             
+            num_tasks_serviced_individual++; //var to be used in logs.
+            
             printf("number of tasks executed all together %d\n", num_tasks);
             
             addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
         }
         else{   //task not available, ready queue empty.
-            printf("Empty/no tasks available for cpu - %d execution.\n", cpuId);
+            printf("Empty/no tasks available for cpu - %d execution. GOING TO EXIT PHASE\n", cpuId);
         }
        // sleep(1); disabling sleep here as not needed
         
-        if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){
-           //print cpu1 log here
-           //print cpu2 log here
-           printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-           pthread_exit(0);
-        }   
-
-     
     }
 }
 
