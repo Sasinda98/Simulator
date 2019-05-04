@@ -836,7 +836,7 @@ int addSimulationLog_Task(struct Task task){
     return 1;
 }
     
-int num_tasks = 0;   //shared variables, shared across the 3 cpus.
+int num_tasks = 0;   //shared variables, shared across the 3 cpus. stores number of tasks executed.
 double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
 
 //mutexes for the shared variables. mutex per variable to increase performance .
@@ -858,12 +858,6 @@ void* cpu( void *arg){
         pthread_mutex_lock(&isTaskInsertedMutex);
         
         while(isTaskInserted == 0){     //no new tasks in ready queue to execute.
-            
-            if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){ //terminate the cpu threads on completion of execution of all task.
-                printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-                pthread_exit(0);
-            }  
-            
             printf("CPU-%d going to blocking state.\n", cpuId);
             pthread_cond_wait(&taskCpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
             printf("CPU-%d going to UNBLOCKED state.\n", cpuId);
@@ -938,19 +932,38 @@ void* cpu( void *arg){
             printf("Empty/no tasks available for cpu - %d execution. GOING TO EXIT PHASE\n", cpuId);
         }
        // sleep(1); disabling sleep here as not needed
-                    
+        /*            
         if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){ //terminate the cpu threads on completion of execution of all task.
 
             printf("CPU-%d THREAD BREAKS WHILE : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-            break;
+           // break;
             
-           // pthread_exit(0);
+            pthread_exit(0);
         }  
+        */
+        if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 0){
+            if(cpuId == 1){
+                 printf("CPU-%d THREAD TERMINATES: ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+                pthread_exit(0);
+            }
+                
+        }
+        else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 1){
+            if(cpuId == 2){
+                 printf("CPU-%d THREAD TERMINATES : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+                 pthread_exit(0);
+            }
+               
+            
+        }else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 2){
+            if(cpuId == 3){
+                 printf("CPU-%d THREAD TERMINATES : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+                pthread_exit(0);
+            }
+                
+        }
             
     }
-    
-    pthread_cond_broadcast(&taskCpuCondition);  //unblock.
-    printf("Unblock signal broadcasted\n");
     
     pthread_exit(0);
 }
