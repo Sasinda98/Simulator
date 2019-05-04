@@ -45,6 +45,11 @@ pthread_cond_t taskCpuCondition;    //condition variable associated with task() 
 pthread_mutex_t isTaskInsertedMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isInserted variable.
 int isTaskInserted = 0; //condition variable that requires the mutex to be managed.
 
+//The variables declared below are for thread id.
+//Declared global so it is possible to cancel the thread by using these vars.
+pthread_t tid_cpu1; //thread id cpu 1
+pthread_t tid_cpu2; //thread id cpu 2
+pthread_t tid_cpu3; //thread id cpu 3
 
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
@@ -84,7 +89,6 @@ int main(int argc, char** argv) {
     /*
      * cpu-1 thread spawning
      */
-    pthread_t tid_cpu1; //thread id 
     pthread_attr_t attr_cpu1;    //attributes
     pthread_attr_init(&attr_cpu1);
     
@@ -96,7 +100,6 @@ int main(int argc, char** argv) {
     /*
      * cpu-2 thread spawning
      */
-    pthread_t tid_cpu2; //thread id 
     pthread_attr_t attr_cpu2;    //attributes
     pthread_attr_init(&attr_cpu2);
     
@@ -107,7 +110,7 @@ int main(int argc, char** argv) {
     /*
      * cpu-3 thread spawning
      */
-    pthread_t tid_cpu3; //thread id 
+
     pthread_attr_t attr_cpu3;    //attributes
     pthread_attr_init(&attr_cpu3);
     
@@ -841,35 +844,21 @@ pthread_mutex_t num_tasks_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t total_waiting_time_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t total_turnaround_time_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+int cpu1_task_count = 0, cpu2_task_count = 0, cpu3_task_count = 0;  //holds the number of tasks executed by each.
+
 //This function is the function that gets executed by each cpu thread.
 void* cpu( void *arg){
     int *pcpuId = (int *)arg;
     int cpuId = *pcpuId;
-    
-    int num_tasks_serviced_individual = 0;  //stores how many tasks cpu executed.
-    
+
     printf("CPU ID: %d\n", cpuId);
     
     while(1){
         
         pthread_mutex_lock(&isTaskInsertedMutex);
         
-        //DEBUG TIP, LOOK OUT, ANALYZE THIS WHILE LOOP FUTHER TO INVESTIGATE HOW CPU THREAD TERMINATE
         while(isTaskInserted == 0){     //no new tasks in ready queue to execute.
             printf("CPU-%d going to blocking state.\n", cpuId);
-            
-            if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){ //terminate the cpu thread on completion of execution of all task.
-                
-                pthread_cond_broadcast(&taskCpuCondition);  //bring other cpu threads out of block state to exit.
-                //the above line unblocks all threads waiting on a condition var.
-                //if there isn't a broadcast i.e. the line above, one cpu thread terminates while others indefinitely block
-               
-                isTaskInserted = 1; //to force run the loop, may introduce bug
-                
-                printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
-                pthread_exit(0);
-            }  
-            
             pthread_cond_wait(&taskCpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
         }
         
@@ -928,17 +917,46 @@ void* cpu( void *arg){
             
             pthread_mutex_unlock(&num_tasks_mutex); //release the lock so another thread can have its go at it.
             
-            num_tasks_serviced_individual++; //var to be used in logs.
-            
             printf("number of tasks executed all together %d\n", num_tasks);
             
             addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
+            
+            switch(cpuId){  //record how many tasks each thread executed.
+                case 1: cpu1_task_count++; break;
+                case 2: cpu2_task_count++; break;
+                case 3: cpu3_task_count++; break;
+            }
         }
         else{   //task not available, ready queue empty.
             printf("Empty/no tasks available for cpu - %d execution. GOING TO EXIT PHASE\n", cpuId);
         }
        // sleep(1); disabling sleep here as not needed
-        
+                    
+        if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){ //terminate the cpu threads on completion of execution of all task.
+
+            printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId);
+            
+            //Thread cancellation order is set in such away that the executing thread doesn't cancel itself to not cancel remaining ones.
+            //see the ordering of tid_cpu# variable to see what is meant.
+            if(cpuId == 1){     //thread in execution is cpu 1
+                pthread_cancel(&tid_cpu3);
+                pthread_cancel(&tid_cpu2);
+                printf("CPU-1 = %d CPU-2 = %d CPU-3 %d", cpu1_task_count, cpu2_task_count ,cpu3_task_count);
+                pthread_cancel(&tid_cpu1);
+            }else if(cpuId == 2){   //thhread in execution is cpu 2
+                pthread_cancel(&tid_cpu3);
+                pthread_cancel(&tid_cpu1);
+               printf("CPU-1 = %d CPU-2 = %d CPU-3 %d", cpu1_task_count, cpu2_task_count ,cpu3_task_count);
+                pthread_cancel(&tid_cpu2);
+            }else{
+                pthread_cancel(&tid_cpu1);
+                pthread_cancel(&tid_cpu2);
+                printf("CPU-1 = %d CPU-2 = %d CPU-3 %d", cpu1_task_count, cpu2_task_count ,cpu3_task_count);
+                pthread_cancel(&tid_cpu3);
+            }
+            pthread_exit(0);
+        }  
+            
     }
 }
 
