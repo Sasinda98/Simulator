@@ -877,7 +877,7 @@ void* cpu( void *arg){
        // sleep(1); disabling sleep here as not needed
         
         if(num_tasks == NUMBER_OF_TASKS_TASK_FILE){
-            printf("CPU THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.");
+            printf("CPU-%d THREAD EXIT : ALL TASKS IN TASK FILE EXECUTED.\n.", *pcpuId);
             pthread_exit(0);
         }
     }
