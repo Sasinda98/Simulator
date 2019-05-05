@@ -34,6 +34,7 @@ int addSimulationLog_Post_Exec(struct Task task, char *service_time, int *cpuId)
 struct Task *getNextTask(char *fileName);
 int getMaxTaskNumber(char *fileName);
 void setArrivalTimeTask(struct Task *task);
+void addTaskTerminationLog(int num_tasks_inserted);
 
 //GLOBAL VARIABLES..............................................................
 int INVALID_TASK_NUM_CODE = -99;    //deprecated
@@ -820,7 +821,7 @@ double getTimeElapsed( time_t start_t, time_t end_t ){
 //Adds record to simulation log containing task info, number and arrival time. To be used in task().
 int addSimulationLog_Task(struct Task task){
     
-    FILE *pFile = fopen("simulation_log", "a");    //open for writing.        
+    FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.        .        
     
     if(pFile == NULL){
         char temp[3];
@@ -1006,7 +1007,7 @@ void* cpu( void *arg){
 int addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId){
     //int cpuId = 1;
     
-    FILE *pFile = fopen("simulation_log", "a");    //open for writing.        
+    FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.          
     
     if(pFile == NULL){
         char temp[3];
@@ -1032,7 +1033,7 @@ int addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId){
 int addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cpuId){
     //int cpuId = 1;
     
-    FILE *pFile = fopen("simulation_log", "a");    //open for writing.        
+    FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.        
     
     if(pFile == NULL){
         char temp[3];
@@ -1053,8 +1054,30 @@ int addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cpu
     return 1;
 } 
 
-void addTaskTerminationLog(){
+//gets time of task thread termination, number of tasks executed by task thread and logs it to simulation log file.
+void addTaskTerminationLog(int num_tasks_inserted){
+
+    char *currentTime = getCurrentTime(); //obtaining current time in full format.
+    format_time(currentTime); //getting only the time
+
+    //strcpy(task->arrival_time, currentTime);    //for sim logs.
     
+    FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.        
+    
+    if(pFile == NULL){
+        char temp[3];
+        printf("Failed to open file, press any key followed by enter key to exit.");
+        scanf("%s", temp);
+    }
+    
+    int status = fprintf(pFile, "Number of asks put in to Ready-Queue: %d\nTerminate at time: %s\n", num_tasks_inserted, currentTime);
+    //printf("cpu_burst %d", cpu_burst);
+    if(status < 0){
+        printf("writing to simulation_log file failed\n");
+    }
+    
+    fclose(pFile);
+    pFile = NULL;
 }
 
 //sets the arrival time of task, to be used just before insertion.
