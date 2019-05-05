@@ -975,7 +975,7 @@ void* cpu( void *arg){
 
         pthread_mutex_lock(&num_tasks_mutex);
         int remainingTasks = NUMBER_OF_TASKS_TASK_FILE - num_tasks;
-        pthread_mutex_unlock(&num_tasks_mutex);
+      
                 
         if(remainingTasks == 0){   //add logs!!!
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
@@ -993,7 +993,7 @@ void* cpu( void *arg){
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);    
         }
-
+        pthread_mutex_unlock(&num_tasks_mutex);
             
     }
     
