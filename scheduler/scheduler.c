@@ -62,8 +62,8 @@ int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
     printf("Scheduler started!\n\n");
 
-    struct Task tasks[3];
-    initialize(tasks, 3);
+    struct Task tasks[10];
+    initialize(tasks, 10);
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
    // generateTaskFile("task_file");
     
