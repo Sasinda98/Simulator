@@ -976,42 +976,7 @@ void* cpu( void *arg){
         pthread_mutex_lock(&num_tasks_mutex);
         remainingTasks = NUMBER_OF_TASKS_TASK_FILE - num_tasks;
         pthread_mutex_unlock(&num_tasks_mutex);
-        
-        
-        if(remainingTasks == 0){
-            if(cpuId == 1){
-                printf("CPU-%d is the TERMINATOR\n.", cpuId);
-                pthread_mutex_unlock(&fullSpacesMutex);
-                pthread_cancel(tid_cpu3);
-                pthread_mutex_unlock(&fullSpacesMutex);
-                pthread_cancel(tid_cpu2);
-                pthread_mutex_unlock(&fullSpacesMutex);
-                 printf("CPU-%d is the POST CANCELLATIOn\n.", cpuId);
-                pthread_exit(0);
-            }
-            else if(cpuId == 2){
-                printf("CPU-%d is the TERMINATOR\n.", cpuId);
-                pthread_mutex_unlock(&fullSpacesMutex);
-                pthread_cancel(tid_cpu3);
-                pthread_mutex_unlock(&fullSpacesMutex);
-                pthread_cancel(tid_cpu1);
-                pthread_mutex_unlock(&fullSpacesMutex);
-                printf("CPU-%d is the POST CANCELLATIOn\n.", cpuId);
-                pthread_exit(0);
-            }
-            else if(cpuId == 3){
-                printf("CPU-%d is the TERMINATOR\n.", cpuId);
-                pthread_mutex_unlock(&fullSpacesMutex);
-                pthread_cancel(tid_cpu2);
-                pthread_mutex_unlock(&fullSpacesMutex);
-                pthread_cancel(tid_cpu1);
-                pthread_mutex_unlock(&fullSpacesMutex);
-                printf("CPU-%d is the POST CANCELLATIOn\n.", cpuId);
-                pthread_exit(0);
-            }
-        }
-      
-        /*        
+               
         if(remainingTasks == 0){   //add logs!!!
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
@@ -1030,8 +995,6 @@ void* cpu( void *arg){
         }else{
             printf("remaining tasks varible out of bounds cpu thread fail!\n");
         }
-       
-          */  
     }
     
     pthread_exit(0);
