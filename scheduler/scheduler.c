@@ -12,6 +12,7 @@
 #include <string.h>
 
 #include <pthread.h>
+#include <semaphore.h>
 #include <unistd.h>
 
 #include <time.h>
@@ -58,6 +59,9 @@ pthread_t tid_cpu1; //thread id cpu 1
 pthread_t tid_cpu2; //thread id cpu 2
 pthread_t tid_cpu3; //thread id cpu 3
 
+sem_t emptySemaphore;
+sem_t fullSemaphore;
+
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
     printf("Scheduler started!\n\n");
@@ -66,6 +70,10 @@ int main(int argc, char** argv) {
     initialize(tasks, 10);
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
    // generateTaskFile("task_file");
+    sem_init(&emptySemaphore, 0, 10); //empty initialize to n, 0 to indicate semaphore being shared across threads of same process.
+    sem_init(&fullSemaphore, 0, 0);  //full initialize to 0, 0 to indicate semaphore being shared across threads of same process.
+    
+    
     
     struct Task ts1;
     ts1.task_number = 44;
