@@ -972,9 +972,10 @@ void* cpu( void *arg){
             printf("Empty/no tasks available for cpu - %d execution. GOING TO EXIT PHASE\n", cpuId);
         }
        
-
+        int remainingTasks = -9;
         pthread_mutex_lock(&num_tasks_mutex);
-        int remainingTasks = NUMBER_OF_TASKS_TASK_FILE - num_tasks;
+        remainingTasks = NUMBER_OF_TASKS_TASK_FILE - num_tasks;
+        pthread_mutex_unlock(&num_tasks_mutex);
       
                 
         if(remainingTasks == 0){   //add logs!!!
@@ -992,8 +993,10 @@ void* cpu( void *arg){
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);    
+        }else{
+            printf("remaining tasks varible out of bounds cpu thread fail!\n");
         }
-        pthread_mutex_unlock(&num_tasks_mutex);
+       
             
     }
     
