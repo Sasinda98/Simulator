@@ -29,12 +29,13 @@ char *getCurrentTime();
 double  getTimeElapsed();
 int addSimulationLog_Task(struct Task task);
 void *cpu( void *arg);
-int addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId);
-int addSimulationLog_Post_Exec(struct Task task, char *service_time, int *cpuId);
+void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId);
+void addSimulationLog_Post_Exec(struct Task task, char *service_time, int *cpuId);
 struct Task *getNextTask(char *fileName);
 int getMaxTaskNumber(char *fileName);
 void setArrivalTimeTask(struct Task *task);
 void addTaskTerminationLog(int num_tasks_inserted);
+void addCpuTerminationLog(int num_tasks_inserted, int cpuId);
 
 //GLOBAL VARIABLES..............................................................
 int INVALID_TASK_NUM_CODE = -99;    //deprecated
@@ -939,14 +940,17 @@ void* cpu( void *arg){
        
         if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 0){   //add logs!!!
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
+            addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);  
         }
         else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 1){
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
+            addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
             
         }else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 2){
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
+            addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);    
         }
             
@@ -1005,70 +1009,67 @@ void* cpu( void *arg){
 
 //Adds record to simulation log containing cpu execution info (i.e. cpu num) and task info (i.e. arrival times and task num).
 // To be used in cpu().
-int addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId){
+void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId){
     //int cpuId = 1;
     
     FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.          
     
     if(pFile == NULL){
         char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
+        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.");
         scanf("%s", temp);
-        return 0;
+        exit(0);
     }
     
     int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n", *cpuId, task.task_number, task.arrival_time, service_time);
     //printf("cpu_burst %d", cpu_burst);
     if(status < 0){
         printf("writing to simulation_log file failed\n");
-        return 0;
     }
     
     fclose(pFile);
     pFile = NULL;
-    return 1;
 }
 
-//Adds record to simulation log containing cpu execution info (i.e. cpu num, completion time) and task info (i.e. arrival times and task num). 
+//Adds record to simulation_log containing cpu execution info (i.e. cpu num, completion time) and task info (i.e. arrival times and task num). 
 //To be used in cpu().
-int addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cpuId){
+void addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cpuId){
     //int cpuId = 1;
     
     FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.        
     
     if(pFile == NULL){
         char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
+        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.");
         scanf("%s", temp);
-        return 0;
+        exit(0);
     }
     
     int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n", *cpuId, task.task_number, task.arrival_time, completion_time);
     //printf("cpu_burst %d", cpu_burst);
     if(status < 0){
         printf("writing to simulation_log file failed\n");
-        return 0;
+        
     }
     
     fclose(pFile);
     pFile = NULL;
-    return 1;
+
 } 
 
-//gets time of task thread termination, number of tasks executed by task thread and logs it to simulation log file.
+//gets time of task thread termination, number of tasks executed by task thread and logs it to simulation_log file.
 void addTaskTerminationLog(int num_tasks_inserted){
 
     char *currentTime = getCurrentTime(); //obtaining current time in full format.
     format_time(currentTime); //getting only the time
-
-    //strcpy(task->arrival_time, currentTime);    //for sim logs.
     
     FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.        
     
     if(pFile == NULL){
         char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
+        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.");
         scanf("%s", temp);
+        exit(0);
     }
     
     int status = fprintf(pFile, "Number of asks put in to Ready-Queue: %d\nTerminate at time: %s\n", num_tasks_inserted, currentTime);
@@ -1080,6 +1081,29 @@ void addTaskTerminationLog(int num_tasks_inserted){
     fclose(pFile);
     pFile = NULL;
 }
+
+//adds how many tasks each cpu thread executed in to the simulation_log file.
+void addCpuTerminationLog(int num_tasks_inserted, int cpuId){
+    
+    FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.        
+    
+    if(pFile == NULL){
+        char temp[3];
+        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.");
+        scanf("%s", temp);
+        exit(0);
+    }
+    
+    int status = fprintf(pFile, "CPU-%d terminates after servicing %d tasks\n", cpuId, num_tasks_inserted);
+    //printf("cpu_burst %d", cpu_burst);
+    if(status < 0){
+        printf("writing to simulation_log file failed\n");
+    }
+    
+    fclose(pFile);
+    pFile = NULL;
+}
+
 
 //sets the arrival time of task, to be used just before insertion.
 void setArrivalTimeTask(struct Task *task){
