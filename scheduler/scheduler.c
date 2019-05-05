@@ -885,6 +885,7 @@ void* cpu( void *arg){
             
             if(NUMBER_OF_TASKS_TASK_FILE == num_tasks){
                 printf("CPU-%d going to terminateddddd state.\n", cpuId);
+                  pthread_mutex_consistent(&fullSpacesMutex);
                 pthread_mutex_unlock(&fullSpacesMutex);
                 pthread_cond_broadcast(&cpuCondition); //signal cpu thread to wake up.
                 pthread_exit(0);
