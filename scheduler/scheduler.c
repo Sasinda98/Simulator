@@ -43,9 +43,14 @@ int NUMBER_OF_TASKS_TASK_FILE = 0;  //number of tasks in task file.
 int num = 0;
 
 //The variables declared below allow blocking of cpu threads until task has inserted tasks for cpu to take. 
-pthread_cond_t taskCpuCondition;    //condition variable associated with task() and cpu().
+pthread_cond_t cpuCondition;    //condition variable associated with blocking the cpu threads.
+pthread_cond_t taskCondition;   //condition variable associated with blocking the task thread.
+
 pthread_mutex_t isTaskInsertedMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isInserted variable.
+pthread_mutex_t isFullMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isFull variable.
+
 int isTaskInserted = 0; //condition variable that requires the mutex to be managed.
+int isFulle = 0; 
 
 //The variables declared below are for thread id.
 //Declared global so it is possible to cancel the thread by using these vars.
@@ -71,10 +76,10 @@ int main(int argc, char** argv) {
     ts2.cpu_burst = 2;
     
     /*
-     * Initializing condition and mutex variables
+     * Initializing condition vars
      */
-    pthread_cond_init(&taskCpuCondition, NULL); //null for default initialization.
-    
+    pthread_cond_init(&cpuCondition, NULL); //null for default initialization.
+    pthread_cond_init(&taskCondition, NULL); //null for default initialization.
     
 
     /*
@@ -604,12 +609,26 @@ void *task(void *fileName){
     
     while(1){
         
+        pthread_mutex_lock(&isFullMutex);
+        
+        while(isFull() == 1){     //queue is full
+            printf("TASK THREAD going to BLOCKING state.\n");
+            pthread_cond_wait(&taskCondition, &isFullMutex);  //releases mutex waits on condition (signal).
+            printf("TASK THREAD going to UNBLOCKED state.\n");
+        }
+        
+       // isTaskInserted--; //is task taken.
+        pthread_mutex_unlock(&isFullMutex);
+        
+        
        // pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
             
       //  isTaskInserted = 1; //task inserted.
        // pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
        
        // pthread_cond_signal(&taskCpuCondition); //to the end
+        
+        //TASK THREAD SHOULD BLOCK WHEN QUEUE IS FULL, AND UNBLOCK WHEN POP/CPU EXEC
         
         if(continueInsertionNew == 1){
             continueInsertionNew = 0;
@@ -637,8 +656,9 @@ void *task(void *fileName){
             if(pTask_1 != NULL){    //task available
                 if(isT1_Inserted == 0){  
                     setArrivalTimeTask(&task_1);
-                    isT1_Inserted = insert(task_1);
-                    if(isT1_Inserted == 1){
+                    isT1_Inserted = insert(task_1); //returns 1 on successful insertion, ready queue not full.
+                    
+                    if(isT1_Inserted == 1){ //successfully inserted
                         total_num_tasks_inserted++;
                         addSimulationLog_Task(task_1);
                         
@@ -647,7 +667,7 @@ void *task(void *fileName){
                         isTaskInserted++; //task inserted.
                         pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
 
-                        pthread_cond_signal(&taskCpuCondition); //to the end
+                        pthread_cond_signal(&cpuCondition); //to the end
                     }
                 }
             }
@@ -656,6 +676,7 @@ void *task(void *fileName){
                 if(isT2_Inserted == 0){
                     setArrivalTimeTask(&task_2);
                     isT2_Inserted = insert(task_2);
+                    
                     if(isT2_Inserted == 1){
                         total_num_tasks_inserted++;
                         addSimulationLog_Task(task_2);
@@ -665,7 +686,7 @@ void *task(void *fileName){
                         isTaskInserted++; //task inserted.
                         pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
 
-                        pthread_cond_signal(&taskCpuCondition); //to the end
+                        pthread_cond_signal(&cpuCondition); //to the end
                     }
                 }
             }
@@ -692,7 +713,7 @@ void *task(void *fileName){
                         isTaskInserted++; //task inserted.
                         pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
 
-                        pthread_cond_signal(&taskCpuCondition); //to the end
+                        pthread_cond_signal(&cpuCondition); //to the end
                     }
                 }
             }
@@ -711,7 +732,7 @@ void *task(void *fileName){
                         isTaskInserted++; //task inserted.
                         pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
 
-                        pthread_cond_signal(&taskCpuCondition); //to the end
+                        pthread_cond_signal(&cpuCondition); //to the end
                     }
                 }
 
@@ -869,7 +890,7 @@ void* cpu( void *arg){
         
         while(isTaskInserted == 0){     //no new tasks in ready queue to execute.
             printf("CPU-%d going to blocking state.\n", cpuId);
-            pthread_cond_wait(&taskCpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
+            pthread_cond_wait(&cpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
             printf("CPU-%d going to UNBLOCKED state.\n", cpuId);
         }
         
@@ -879,8 +900,9 @@ void* cpu( void *arg){
         struct Task *task = pop();  //get a task from ready queue.
 
         if(task != NULL){   //task available from ready queue.
+            pthread_cond_signal(&taskCondition); //signal TASK thread to wake up (if blocked)as item from queue was taken in for execution.
+            
             printf("CPU-%d executing task# = %d burst = %d\n", cpuId, task->task_number, task->cpu_burst);
-
             //Obtaining service time, waiting time.........................................................................
             time_t arrival_t = task->arrival_t;    //getting arrival time from the task.
             time_t service_t;   //var that stores service time. Time at which task entered the cpu.
