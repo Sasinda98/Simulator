@@ -103,7 +103,6 @@ int main(int argc, char** argv) {
     pthread_attr_init(&attr);
     
     pthread_create(&tid, &attr, task, "task_file"); //sending task file as param to the thread.
-    
    
     
     /*
@@ -883,6 +882,12 @@ void* cpu( void *arg){
             printf("CPU-%d going to blocking state.\n", cpuId);
             pthread_cond_wait(&cpuCondition, &fullSpacesMutex);  //releases mutex waits on condition (signal).
             printf("CPU-%d going to UNBLOCKED state.\n", cpuId);
+            
+            if(NUMBER_OF_TASKS_TASK_FILE == num_tasks){
+                printf("CPU-%d going to terminateddddd state.\n", cpuId);
+                pthread_mutex_unlock(&fullSpacesMutex);
+                pthread_exit(0);
+            }
         }
         
         
@@ -964,6 +969,10 @@ void* cpu( void *arg){
             printf("Empty/no tasks available for cpu - %d execution. GOING TO EXIT PHASE\n", cpuId);
         }
        
+        if(NUMBER_OF_TASKS_TASK_FILE == num_tasks){
+           
+            pthread_cond_broadcast(&cpuCondition); //signal cpu thread to wake up.
+        }
         /*
         if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 0){   //add logs!!!
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
