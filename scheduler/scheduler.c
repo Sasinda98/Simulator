@@ -973,18 +973,22 @@ void* cpu( void *arg){
         }
        
 
-
-        if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 0){   //add logs!!!
+        pthread_mutex_lock(&num_tasks_mutex);
+        int remainingTasks = NUMBER_OF_TASKS_TASK_FILE - num_tasks;
+        pthread_mutex_unlock(&num_tasks_mutex);
+                
+        if(remainingTasks == 0){   //add logs!!!
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);  
         }
-        else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 1){
+        else if(remainingTasks == 1){
+            
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
         }
-        else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 2){
+        else if(remainingTasks == 2){
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);    
