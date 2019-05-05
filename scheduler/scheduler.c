@@ -37,6 +37,7 @@ int getMaxTaskNumber(char *fileName);
 void setArrivalTimeTask(struct Task *task);
 void addTaskTerminationLog(int num_tasks_inserted);
 void addCpuTerminationLog(int num_tasks_inserted, int cpuId);
+void *cpuRoutine(void *arg);
 
 //GLOBAL VARIABLES..............................................................
 int INVALID_TASK_NUM_CODE = -99;    //deprecated
@@ -854,6 +855,11 @@ int addSimulationLog_Task(struct Task task){
     pFile = NULL;
     return 1;
 }
+
+void *cpuRoutine(void *arg){
+    pthread_mutex_unlock(&fullSpacesMutex);
+    return NULL;
+}
     
 int num_tasks = 0;   //shared variables, shared across the 3 cpus. stores number of tasks executed.
 double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
@@ -874,6 +880,8 @@ void* cpu( void *arg){
 
     printf("CPU ID: %d\n", cpuId);
     
+    pthread_cleanup_push((void *)pthread_mutex_unlock, &fullSpacesMutex);
+     pthread_cleanup_pop(1);
     while(1){
         
         pthread_mutex_lock(&fullSpacesMutex);
@@ -890,7 +898,7 @@ void* cpu( void *arg){
         
         //sem_wait(&fullSemaphore);
         
-        struct Task *task = pop();  //get a task from ready queue.
+        struct Task *task = pop();  //get a task from ready queue. pthread_cleanup_push() an
         
        // sem_post(&emptySemaphore);
 
@@ -987,7 +995,10 @@ void* cpu( void *arg){
     }
     
     pthread_exit(0);
+
 }
+
+
 
 /*
  void cpu(){
