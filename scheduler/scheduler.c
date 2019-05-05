@@ -679,9 +679,9 @@ void *task(void *fileName){
                         total_num_tasks_inserted++;
                         addSimulationLog_Task(task_1);  
                     
-                        //pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
                         emptySpaces--;
-                       // pthread_mutex_unlock(&emptySpacesMutex);    //release lock
+                        pthread_mutex_unlock(&emptySpacesMutex);    //release lock
 
                         pthread_mutex_lock(&fullSpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
                         fullSpaces++; //task inserted.
@@ -701,9 +701,9 @@ void *task(void *fileName){
                         total_num_tasks_inserted++;
                         addSimulationLog_Task(task_2);
          
-                        //pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
                         emptySpaces--;
-                        //pthread_mutex_unlock(&emptySpacesMutex);    //release lock
+                        pthread_mutex_unlock(&emptySpacesMutex);    //release lock
 
                         pthread_mutex_lock(&fullSpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
                         fullSpaces++; //task inserted.
@@ -731,9 +731,9 @@ void *task(void *fileName){
                         total_num_tasks_inserted++;
                         addSimulationLog_Task(task_1);
                         
-                        //pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
                         emptySpaces--;
-                       // pthread_mutex_unlock(&emptySpacesMutex);    //release lock
+                        pthread_mutex_unlock(&emptySpacesMutex);    //release lock
 
                         pthread_mutex_lock(&fullSpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
                         fullSpaces++; //task inserted.
@@ -753,9 +753,9 @@ void *task(void *fileName){
                         total_num_tasks_inserted++;
                         addSimulationLog_Task(task_2);
                         
-                       // pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
                         emptySpaces--;
-                       // pthread_mutex_unlock(&emptySpacesMutex);    //release lock
+                        pthread_mutex_unlock(&emptySpacesMutex);    //release lock
 
                         pthread_mutex_lock(&fullSpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
                         fullSpaces++; //task inserted.
