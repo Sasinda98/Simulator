@@ -60,8 +60,8 @@ pthread_t tid_cpu1; //thread id cpu 1
 pthread_t tid_cpu2; //thread id cpu 2
 pthread_t tid_cpu3; //thread id cpu 3
 
-sem_t emptySemaphore;
-sem_t fullSemaphore;
+//sem_t emptySemaphore;
+//sem_t fullSemaphore;
 
 int queueSize = 0;
 
@@ -664,7 +664,7 @@ void *task(void *fileName){
             isT2_Inserted = 0;
         }
 
-        sem_wait(&emptySemaphore);  //decrement semaphore / wait if the semaphore is zero, no empty spaces.
+//        sem_wait(&emptySemaphore);  //decrement semaphore / wait if the semaphore is zero, no empty spaces.
         
         if(getRemainingSpaces() >= 2){  //two spaces avail for insertion in the queue
 
