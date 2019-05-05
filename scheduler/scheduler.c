@@ -881,13 +881,6 @@ void* cpu( void *arg){
         while(fullSpaces == 0){     //no new tasks in ready queue to execute so go block the thread.
             printf("CPU-%d going to blocking state.\n", cpuId);
             
-            if(NUMBER_OF_TASKS_TASK_FILE == num_tasks){
-                printf("CPU-%d going to terminateddddd state.\n", cpuId);
-                pthread_cond_broadcast(&cpuCondition); //signal cpu thread to wake up.
-                fullSpaces = 1;
-                pthread_exit(0);
-            }
-            
             pthread_cond_wait(&cpuCondition, &fullSpacesMutex);  //releases mutex waits on condition (signal).
             printf("CPU-%d going to UNBLOCKED state.\n", cpuId);
         }
@@ -971,11 +964,8 @@ void* cpu( void *arg){
             printf("Empty/no tasks available for cpu - %d execution. GOING TO EXIT PHASE\n", cpuId);
         }
        
-        if(NUMBER_OF_TASKS_TASK_FILE == num_tasks){
-                   pthread_mutex_unlock(&fullSpacesMutex);
-            //pthread_cond_broadcast(&cpuCondition); //signal cpu thread to wake up.
-        }
-        /*
+
+
         if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 0){   //add logs!!!
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
@@ -991,7 +981,7 @@ void* cpu( void *arg){
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);    
         }
-        */
+
             
     }
     
