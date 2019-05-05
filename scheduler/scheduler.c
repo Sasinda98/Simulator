@@ -976,7 +976,8 @@ void* cpu( void *arg){
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
             
-        }else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 2){
+        }
+        else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 2){
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);    
