@@ -47,11 +47,12 @@ int num = 0;
 pthread_cond_t cpuCondition;    //condition variable associated with blocking the cpu threads.
 pthread_cond_t taskCondition;   //condition variable associated with blocking the task thread.
 
-pthread_mutex_t isTaskInsertedMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isInserted variable.
-pthread_mutex_t isFullMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isFull variable.
+pthread_mutex_t fullSpacesMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isInserted variable.
+pthread_mutex_t emptySpacesMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isFull variable.
 
 int isTaskInserted = 0; //condition variable that requires the mutex to be managed.
-int isFulle = 0; 
+int fullSpaces = 0; 
+int emptySpaces = 0;
 
 //The variables declared below are for thread id.
 //Declared global so it is possible to cancel the thread by using these vars.
@@ -62,18 +63,22 @@ pthread_t tid_cpu3; //thread id cpu 3
 sem_t emptySemaphore;
 sem_t fullSemaphore;
 
+int queueSize = 0;
+
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
     printf("Scheduler started!\n\n");
-
-    struct Task tasks[10];
-    initialize(tasks, 10);
+    queueSize = 10;
+    
+    struct Task tasks[queueSize];
+    initialize(tasks, queueSize);
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
    // generateTaskFile("task_file");
-    sem_init(&emptySemaphore, 0, 10); //empty initialize to n, 0 to indicate semaphore being shared across threads of same process.
-    sem_init(&fullSemaphore, 0, 0);  //full initialize to 0, 0 to indicate semaphore being shared across threads of same process.
+ //   sem_init(&emptySemaphore, 0, 10); //empty initialize to n, 0 to indicate semaphore being shared across threads of same process.
+   // sem_init(&fullSemaphore, 0, 0);  //full initialize to 0, 0 to indicate semaphore being shared across threads of same process.
     
-    
+    emptySpaces = queueSize;
+    fullSpaces = 0;
     
     struct Task ts1;
     ts1.task_number = 44;
@@ -140,8 +145,8 @@ int main(int argc, char** argv) {
 
     pthread_join(tid, NULL);    //main thread wait till task is done.
     
-    sem_destroy(&fullSemaphore);
-    sem_destroy(&emptySemaphore);
+  //  sem_destroy(&fullSemaphore);
+    //sem_destroy(&emptySemaphore);
    // sleep(5);
    // struct Task *ts44 = pop();
     //printf("Popping the first task %d %d\n", ts44->task_number, ts44->cpu_burst);
@@ -619,16 +624,16 @@ void *task(void *fileName){
     
     while(1){
         
-        pthread_mutex_lock(&isFullMutex);
+        pthread_mutex_lock(&emptySpacesMutex);
         
-        while(isFull() == 1){     //queue is full
+        while(emptySpaces == 0){     //queue is full
             printf("TASK THREAD going to BLOCKING state.\n");
-            pthread_cond_wait(&taskCondition, &isFullMutex);  //releases mutex waits on condition (signal).
+            pthread_cond_wait(&taskCondition, &emptySpacesMutex);  //releases mutex waits on condition (signal).
             printf("TASK THREAD going to UNBLOCKED state.\n");
         }
         
        // isTaskInserted--; //is task taken.
-        pthread_mutex_unlock(&isFullMutex);
+        pthread_mutex_unlock(&emptySpacesMutex);
         
         
        // pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
@@ -673,14 +678,16 @@ void *task(void *fileName){
                     if(isT1_Inserted == 1){ //successfully inserted
                         total_num_tasks_inserted++;
                         addSimulationLog_Task(task_1);  
-                        
-                        sem_post(&fullSemaphore);   //increment fullSemaphore, represents # of full spaces.
+                    
+                        pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        emptySpaces--;
+                        pthread_mutex_unlock(&emptySpacesMutex);    //release lock
 
-                        pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
-                        isTaskInserted++; //task inserted.
-                        pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
+                        pthread_mutex_lock(&fullSpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        fullSpaces++; //task inserted.
+                        pthread_mutex_unlock(&fullSpacesMutex); //release the lock
 
-                        pthread_cond_signal(&cpuCondition); //to the end
+                        pthread_cond_signal(&cpuCondition); //signal cpu thread to wake up.
                     }
                 }
             }
@@ -693,14 +700,16 @@ void *task(void *fileName){
                     if(isT2_Inserted == 1){
                         total_num_tasks_inserted++;
                         addSimulationLog_Task(task_2);
-                        
-                        sem_post(&fullSemaphore);   //increment fullSemaphore, represents # of full spaces.
-                        
-                        pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
-                        isTaskInserted++; //task inserted.
-                        pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
+         
+                        pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        emptySpaces--;
+                        pthread_mutex_unlock(&emptySpacesMutex);    //release lock
 
-                        pthread_cond_signal(&cpuCondition); //to the end
+                        pthread_mutex_lock(&fullSpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        fullSpaces++; //task inserted.
+                        pthread_mutex_unlock(&fullSpacesMutex); //release the lock
+
+                        pthread_cond_signal(&cpuCondition); //signal cpu thread to wake up.
                     }
                 }
             }
@@ -722,13 +731,15 @@ void *task(void *fileName){
                         total_num_tasks_inserted++;
                         addSimulationLog_Task(task_1);
                         
-                        sem_post(&fullSemaphore);   //increment fullSemaphore, represents # of full spaces.
-                        
-                        pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
-                        isTaskInserted++; //task inserted.
-                        pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
+                        pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        emptySpaces--;
+                        pthread_mutex_unlock(&emptySpacesMutex);    //release lock
 
-                        pthread_cond_signal(&cpuCondition); //to the end
+                        pthread_mutex_lock(&fullSpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        fullSpaces++; //task inserted.
+                        pthread_mutex_unlock(&fullSpacesMutex); //release the lock
+
+                        pthread_cond_signal(&cpuCondition); //signal cpu thread to wake up.
                     }
                 }
             }
@@ -742,13 +753,15 @@ void *task(void *fileName){
                         total_num_tasks_inserted++;
                         addSimulationLog_Task(task_2);
                         
-                        sem_post(&fullSemaphore);   //increment fullSemaphore, represents # of full spaces.
-                        
-                        pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
-                        isTaskInserted++; //task inserted.
-                        pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
+                        pthread_mutex_lock(&emptySpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        emptySpaces--;
+                        pthread_mutex_unlock(&emptySpacesMutex);    //release lock
 
-                        pthread_cond_signal(&cpuCondition); //to the end
+                        pthread_mutex_lock(&fullSpacesMutex); //aquire lock to modify the var. [not really required since 1 thread runs this, but added anyway]
+                        fullSpaces++; //task inserted.
+                        pthread_mutex_unlock(&fullSpacesMutex); //release the lock
+
+                        pthread_cond_signal(&cpuCondition); //signal cpu thread to wake up.
                     }
                 }
 
@@ -902,24 +915,33 @@ void* cpu( void *arg){
     
     while(1){
         
-        pthread_mutex_lock(&isTaskInsertedMutex);
+        pthread_mutex_lock(&fullSpacesMutex);
         
-        while(isTaskInserted == 0){     //no new tasks in ready queue to execute.
+        while(fullSpaces == 0){     //no new tasks in ready queue to execute so go block the thread.
             printf("CPU-%d going to blocking state.\n", cpuId);
-            pthread_cond_wait(&cpuCondition, &isTaskInsertedMutex);  //releases mutex waits on condition (signal).
+            pthread_cond_wait(&cpuCondition, &fullSpacesMutex);  //releases mutex waits on condition (signal).
             printf("CPU-%d going to UNBLOCKED state.\n", cpuId);
         }
         
-        isTaskInserted--; //is task taken.
-        pthread_mutex_unlock(&isTaskInsertedMutex);
         
-        sem_wait(&fullSemaphore);
+        pthread_mutex_unlock(&fullSpacesMutex);
+        
+        //sem_wait(&fullSemaphore);
         
         struct Task *task = pop();  //get a task from ready queue.
         
-        sem_post(&emptySemaphore);
+       // sem_post(&emptySemaphore);
 
         if(task != NULL){   //task available from ready queue.
+            
+            pthread_mutex_lock(&emptySpacesMutex);
+            emptySpaces++;
+            pthread_mutex_unlock(&emptySpacesMutex);
+            
+            pthread_mutex_lock(&fullSpacesMutex);
+            fullSpaces--;
+            pthread_mutex_unlock(&fullSpacesMutex);
+            
             pthread_cond_signal(&taskCondition); //signal TASK thread to wake up (if blocked)as item from queue was taken in for execution.
             
             printf("CPU-%d executing task# = %d burst = %d\n", cpuId, task->task_number, task->cpu_burst);
