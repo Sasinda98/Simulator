@@ -598,6 +598,7 @@ int eofFlag=0;
 //Task function.
 void *task(void *fileName){
     char *pFileName = (char *)fileName; //casting void * to char *
+    int total_num_tasks_inserted = 0;
     
     while(1){
         
@@ -636,6 +637,7 @@ void *task(void *fileName){
                     setArrivalTimeTask(&task_1);
                     isT1_Inserted = insert(task_1);
                     if(isT1_Inserted == 1){
+                        total_num_tasks_inserted++;
                         addSimulationLog_Task(task_1);
                         
                         pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
@@ -653,6 +655,7 @@ void *task(void *fileName){
                     setArrivalTimeTask(&task_2);
                     isT2_Inserted = insert(task_2);
                     if(isT2_Inserted == 1){
+                        total_num_tasks_inserted++;
                         addSimulationLog_Task(task_2);
                         
                         pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
@@ -679,6 +682,7 @@ void *task(void *fileName){
                     isT1_Inserted = insert(task_1);
 
                     if(isT1_Inserted == 1){
+                        total_num_tasks_inserted++;
                         addSimulationLog_Task(task_1);
                         
                         pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
@@ -697,6 +701,7 @@ void *task(void *fileName){
                     isT2_Inserted = insert(task_2);
 
                     if(isT2_Inserted == 1){
+                        total_num_tasks_inserted++;
                         addSimulationLog_Task(task_2);
                         
                         pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
@@ -724,7 +729,7 @@ void *task(void *fileName){
 
         //Kill switch
         if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
-            printf("TASK THREAD QUITTING : ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE.\n");
+            printf("TASK THREAD QUITTING : ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE. %d tasks were added to ready queue\n",   total_num_tasks_inserted);
             pthread_exit(0);    //terminate the thread.
           //  return 0;
         }
@@ -1048,6 +1053,10 @@ int addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cpu
     return 1;
 } 
 
+void addTaskTerminationLog(){
+    
+}
+
 //sets the arrival time of task, to be used just before insertion.
 void setArrivalTimeTask(struct Task *task){
     time_t task1_start;
@@ -1062,4 +1071,5 @@ void setArrivalTimeTask(struct Task *task){
 
     printf("Task number = %d cpu_burst = %d arrival_time = %s\n", task->task_number, task->cpu_burst, task->arrival_time);
 }
+
 
