@@ -731,6 +731,7 @@ void *task(void *fileName){
         //Kill switch
         if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
             printf("TASK THREAD QUITTING : ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE. %d tasks were added to ready queue\n",   total_num_tasks_inserted);
+            addTaskTerminationLog(total_num_tasks_inserted);
             pthread_exit(0);    //terminate the thread.
           //  return 0;
         }
