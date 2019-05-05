@@ -877,7 +877,7 @@ void* cpu( void *arg){
     int cpuId = *pcpuId;
     
     int task_exec_count_individual = 0;
-
+    //sp
     printf("CPU ID: %d\n", cpuId);
     
     //pthread_cleanup_push((void *)pthread_mutex_unlock, &fullSpacesMutex);
