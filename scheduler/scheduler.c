@@ -880,8 +880,8 @@ void* cpu( void *arg){
 
     printf("CPU ID: %d\n", cpuId);
     
-    pthread_cleanup_push((void *)pthread_mutex_unlock, &fullSpacesMutex);
-     pthread_cleanup_pop(1);
+    //pthread_cleanup_push((void *)pthread_mutex_unlock, &fullSpacesMutex);
+    //pthread_cleanup_pop(1);
     while(1){
         
         pthread_mutex_lock(&fullSpacesMutex);
@@ -983,7 +983,6 @@ void* cpu( void *arg){
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
-            
         }
         else if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 2){
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
