@@ -136,51 +136,13 @@ int main(int argc, char** argv) {
     
     int cpuid3 = 3;
     pthread_create(&tid_cpu3, &attr_cpu3, cpu, &cpuid3); //sending cpu id as param
-
- 
     
     pthread_join(tid_cpu1, NULL);    //main thread wait till cpu1 is done.    
     pthread_join(tid_cpu2, NULL);    //main thread wait till cpu2 is done.   
     pthread_join(tid_cpu3, NULL);    //main thread wait till cpu3 is done.   
 
     pthread_join(tid, NULL);    //main thread wait till task is done.
-    
-  //  sem_destroy(&fullSemaphore);
-    //sem_destroy(&emptySemaphore);
-   // sleep(5);
-   // struct Task *ts44 = pop();
-    //printf("Popping the first task %d %d\n", ts44->task_number, ts44->cpu_burst);
-    
-    //setArrivalTimeTask(&ts1);
-    
-    //printf("TS1 arrival time %s\n", ts1.arrival_time);
-     /*
-      struct Task *temp = NULL;
-    int eof = 0;
-    int *peof = &eof;
-    
-        
-    for(int i = 0; i < 3; i++){
-      task("task_file"); 
-    }
-    
-    printf("counting %d", num);
-    
-    for(int i = 0; i < 0; i++){
-        temp = pop();
-        if(temp != NULL){
-            printf("%d %d\n", temp->task_number, temp->cpu_burst );
-        }else{
-            printf("NULL DETECTED\n");
-        }
-    }
-      */     
-    
-    
 
-    
-          
-    
     return 0;
 }
 
@@ -1002,6 +964,7 @@ void* cpu( void *arg){
             printf("Empty/no tasks available for cpu - %d execution. GOING TO EXIT PHASE\n", cpuId);
         }
        
+        /*
         if((NUMBER_OF_TASKS_TASK_FILE - num_tasks) == 0){   //add logs!!!
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
@@ -1017,6 +980,7 @@ void* cpu( void *arg){
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);    
         }
+        */
             
     }
     
