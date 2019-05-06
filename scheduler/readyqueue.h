@@ -13,8 +13,8 @@
 struct Task{
     int task_number;
     int cpu_burst;
-    char arrival_time[20];  //stores time in character form, human readable.
-    char service_time[20];  //stores time in character form, human readable.
+    char arrival_time[50];  //stores time in character form, human readable.
+    char service_time[50];  //stores time in character form, human readable.
     int termination_time;
     time_t arrival_t;   
     time_t service_t;   //arrival - service is waiting time
