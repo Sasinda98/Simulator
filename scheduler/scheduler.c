@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
     
     printf("Number of TASKS SERVICED %d, AVG wait Time %f, AVG TAT %f\n", num_tasks_executed,total_waiting_time / (double) num_tasks_executed, total_turnaround_time / (double) num_tasks_executed );
     addMainTerminationLog(num_tasks_executed, total_waiting_time, total_turnaround_time);
-    destroy_queue();
+    //destroy_queue();
     
     return 0;
 }
