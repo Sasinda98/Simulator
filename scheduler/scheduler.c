@@ -79,7 +79,6 @@ int main(int argc, char** argv) {
     emptySpaces = queueSize;
     fullSpaces = 0;
     
-
     /*
      * Initializing condition vars
      */
