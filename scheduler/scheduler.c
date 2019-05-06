@@ -593,11 +593,9 @@ void* cpu( void *arg){
             char *completion_time = getCurrentTime(); //obtaining current time in full format.
             format_time(completion_time); //formatting it down to only contain the time.
 
-            free(completion_time);
-            
             addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
             task_exec_count_individual++;
-            
+            free(completion_time);
             double turn_around_time = getTimeElapsed(arrival_t, completion_t);      //computes turn around time by getting the difference & other related fields.
             //End of obtaining completion time.....................................................................................
             printf("Turn Around Time: %f\n", turn_around_time);
