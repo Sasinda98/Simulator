@@ -39,9 +39,7 @@ void addCpuTerminationLog(int num_tasks_inserted, int cpuId);
 
 
 //GLOBAL VARIABLES..............................................................
-int INVALID_TASK_NUM_CODE = -99;    //deprecated
 int NUMBER_OF_TASKS_TASK_FILE = 0;  //number of tasks in task file.
-int num = 0;
 
 //The variables declared below allow blocking of cpu threads until task has inserted tasks for cpu to take. 
 pthread_cond_t cpuCondition;    //condition variable associated with blocking the cpu threads.
@@ -50,7 +48,7 @@ pthread_cond_t taskCondition;   //condition variable associated with blocking th
 pthread_mutex_t fullSpacesMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isInserted variable.
 pthread_mutex_t emptySpacesMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isFull variable.
 
-int isTaskInserted = 0; //condition variable that requires the mutex to be managed.
+//int isTaskInserted = 0; //condition variable that requires the mutex to be managed.
 int fullSpaces = 0; 
 int emptySpaces = 0;
 
@@ -202,8 +200,6 @@ int readTaskFile(char *fileName){
     
 }
 
-
-
 /*
  * Returns pointer to two tasks from task file per call, if not found or error returns NULL
  * Referred to the link below to get an idea on how to return array of struct.
@@ -341,7 +337,7 @@ void *task(void *fileName){
         
         if(continueInsertionNew == 1){
             continueInsertionNew = 0;
-            num++;
+           
             
             if(pTask_1 != NULL)
                 free(pTask_1);

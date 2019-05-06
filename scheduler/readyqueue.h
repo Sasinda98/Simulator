@@ -67,7 +67,6 @@ int isFull(){
    
 }
 
-
 int insert(struct Task newTask){
 
     pthread_mutex_lock(&queue_mutex);
