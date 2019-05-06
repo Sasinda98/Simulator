@@ -75,20 +75,14 @@ int main(int argc, char** argv) {
     initialize(tasks, queueSize);
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
    // generateTaskFile("task_file");
- //   sem_init(&emptySemaphore, 0, 10); //empty initialize to n, 0 to indicate semaphore being shared across threads of same process.
-   // sem_init(&fullSemaphore, 0, 0);  //full initialize to 0, 0 to indicate semaphore being shared across threads of same process.
+
+    printf("Sleeping 5 secs\n");
+    sleep(5);
     
     emptySpaces = queueSize;
     fullSpaces = 0;
     
-    struct Task ts1;
-    ts1.task_number = 44;
-    ts1.cpu_burst = 1;
-    
-    struct Task ts2;
-    ts2.task_number = 77;
-    ts2.cpu_burst = 2;
-    
+
     /*
      * Initializing condition vars
      */
