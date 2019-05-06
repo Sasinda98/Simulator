@@ -48,7 +48,6 @@ pthread_cond_t taskCondition;   //condition variable associated with blocking th
 pthread_mutex_t fullSpacesMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isInserted variable.
 pthread_mutex_t emptySpacesMutex = PTHREAD_MUTEX_INITIALIZER;  //mutex that controls access to isFull variable.
 
-//int isTaskInserted = 0; //condition variable that requires the mutex to be managed.
 int fullSpaces = 0; 
 int emptySpaces = 0;
 
@@ -58,10 +57,10 @@ pthread_t tid_cpu1; //thread id cpu 1
 pthread_t tid_cpu2; //thread id cpu 2
 pthread_t tid_cpu3; //thread id cpu 3
 
-//sem_t emptySemaphore;
-//sem_t fullSemaphore;
-
 int queueSize = 0;
+
+int num_tasks = 0;   //shared variables, shared across the 3 cpus. stores number of tasks executed.
+double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
 
 int main(int argc, char** argv) {
     //File name and amount of tasks m is taken here.
@@ -135,6 +134,8 @@ int main(int argc, char** argv) {
 
     pthread_join(tid, NULL);    //main thread wait till task is done.
     destroy_queue();
+    
+    printf("Number of TASKS SERVICED %d, AVG wait Time %f, AVG TAT %f\n", num_tasks,total_waiting_time / (double) num_tasks, total_turnaround_time / (double) num_tasks );
     
     return 0;
 }
@@ -240,7 +241,7 @@ struct Task *getNextTask(char *fileName){
         task.cpu_burst = cpu_burst;
         
         if(status == EOF){
-          //  printf("EOF REACHED\n");
+  
             
             return NULL;
         }
@@ -491,9 +492,6 @@ void *task(void *fileName){
     return 0;
 }
 
-int num_tasks = 0;   //shared variables, shared across the 3 cpus. stores number of tasks executed.
-double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
-
 //mutexes for the shared variables. mutex per variable to increase performance .
 pthread_mutex_t num_tasks_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t total_waiting_time_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -623,7 +621,7 @@ void* cpu( void *arg){
         }
     }
     
-    pthread_exit(0);
+ //   pthread_exit(0);
 
 }
 
