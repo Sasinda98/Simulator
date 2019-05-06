@@ -3688,3 +3688,101 @@ CPU-1 terminates after servicing 36 tasks
 Number of tasks: 100
 Average waiting time: 7.300
 Average turn around time: 9.630
+task #: 0
+Arrival time: 9:33:58
+task #: 1
+Arrival time: 9:33:58
+Statistics for CPU-1:
+Task #0
+Arrival time: 9:33:58
+Service time: 9:33:58
+Statistics for CPU-2:
+Task #1
+Arrival time: 9:33:58
+Service time: 9:33:58
+task #: 2
+Arrival time: 9:33:58
+task #: 3
+Arrival time: 9:33:58
+Statistics for CPU-3:
+Task #2
+Arrival time: 9:33:58
+Service time: 9:33:58
+task #: 4
+Arrival time: 9:33:58
+task #: 5
+Arrival time: 9:33:58
+task #: 6
+Arrival time: 9:33:58
+task #: 7
+Arrival time: 9:33:58
+task #: 8
+Arrival time: 9:33:58
+task #: 9
+Arrival time: 9:33:58
+task #: 10
+Arrival time: 9:33:58
+task #: 11
+Arrival time: 9:33:58
+task #: 12
+Arrival time: 9:33:58
+Statistics for CPU-3:
+Task #2
+Arrival time: 9:33:58
+Completion time: 9:34:0
+Statistics for CPU-2:
+Task #1
+Arrival time: 9:33:58
+Completion time: 9:34:0
+Statistics for CPU-3:
+Task #3
+Arrival time: 9:33:58
+Service time: 9:34:0
+task #: 13
+Arrival time: 9:34:0
+Statistics for CPU-2:
+Task #4
+Arrival time: 9:33:58
+Service time: 9:34:0
+task #: 14
+Arrival time: 9:34:0
+Statistics for CPU-1:
+Task #0
+Arrival time: 9:33:58
+Completion time: 9:34:2
+Statistics for CPU-1:
+Task #5
+Arrival time: 9:33:58
+Service time: 9:34:2
+task #: 15
+Arrival time: 9:34:2
+Statistics for CPU-1:
+Task #5
+Arrival time: 9:33:58
+Completion time: 9:34:3
+Statistics for CPU-1:
+Task #6
+Arrival time: 9:33:58
+Service time: 9:34:3
+task #: 16
+Arrival time: 9:34:3
+Statistics for CPU-3:
+Task #3
+Arrival time: 9:33:58
+Completion time: 9:34:3
+Statistics for CPU-2:
+Task #4
+Arrival time: 9:33:58
+Completion time: 9:34:3
+Statistics for CPU-3:
+Task #7
+Arrival time: 9:33:58
+Service time: 9:34:3
+task #: 17
+Arrival time: 9:34:3
+Statistics for CPU-2:
+Task #8
+Arrival time: 9:33:58
+Service time: 9:34:3
+task #: 18
+Arrival time: 9:34:3
