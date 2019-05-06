@@ -136,7 +136,8 @@ int main(int argc, char** argv) {
     pthread_join(tid_cpu3, NULL);    //main thread wait till cpu3 is done.   
 
     pthread_join(tid, NULL);    //main thread wait till task is done.
-
+    destroy_queue();
+    
     return 0;
 }
 
@@ -310,142 +311,15 @@ int getMaxTaskNumber(char *fileName){
 
 
 int continueInsertionNew = 1;      //determines whether new task insertion is possible or not, NOT possible when there are tasks left over needing insertion.
-int outcome = 0;    //holds outcome of the insertion.
-struct Task *ptask_array = NULL;   //pointer to the array that holds the 2 tasks.
-struct Task tasks[2];
 
 int isT1_Inserted = 0, isT2_Inserted = 0;
 struct Task *pTask_1 = NULL;
 struct Task *pTask_2 = NULL; 
 struct Task task_1, task_2;
-int eofFlag=0;
+
 /*
- * Gets two tasks from file and adds it to ready queue if available 
- * and sets appropriate fields in the task to their respective values.
+ * Populate the queue with tasks.
  */
-/*int task1(char *fileName){
-   // char *pFileName = fileName;
-    
-    if(continueInsertionNew == 1){ //previous add was successful continue with inserting new tasks.
-         ptask_array = getNextTwoTasks(fileName);   //getting the next two tasks from task file.
-         printf("Getting next task successful --top\n");
-        
-        if(ptask_array != NULL){    //two tasks available
-            struct Task twoTasks[2];    //holds the tasks to be added to the queue.
-            twoTasks[0] = *(ptask_array);
-            twoTasks[1] = *(ptask_array + 1);
-            
-            //Setting the arrival times....................................................
-            time_t task1_start, task2_start;
-            time(&task1_start);
-            time(&task2_start);
-            
-            twoTasks[0].arrival_t = task1_start;    //setting times that are operator friendly. for calculations.
-            twoTasks[1].arrival_t = task2_start;     //setting times that are operator friendly. for calculations
-            
-            char *time1 = getCurrentTime(); //obtaining current time in full format.
-            format_time(time1);
-            
-            char *time2 = getCurrentTime(); //obtaining current time in full format.
-            format_time(time2);
-            
-            strcpy(twoTasks[0].arrival_time, time1);    //for sim logs.
-            strcpy(twoTasks[1].arrival_time, time2);    //for sim logs.
-            
-            printf("Task number = %d cpu_burst = %d arrival_time = %s\n", twoTasks[0].task_number, twoTasks[0].cpu_burst, twoTasks[0].arrival_time);
-            printf("Task number = %d cpu_burst = %d arrival_time = %s\n", twoTasks[1].task_number, twoTasks[1].cpu_burst, twoTasks[1].arrival_time);
-            //End setting arrival times.....................................................
-            
-            outcome = insertTwo(twoTasks);    //returns 2 if both tasks were inserted, returns 1 if only first task was inserted & returns 0 if failure.
-            
-            if(outcome == 1){ //only first task was added see insertTwo() at readyqueue.h
-                addSimulationLog_Task(twoTasks[0]);
-                continueInsertionNew = 0;  //next call direct to else code block
-            }
-            else if(outcome == 2){
-                addSimulationLog_Task(twoTasks[0]);
-                addSimulationLog_Task(twoTasks[1]);
-                continueInsertionNew = 1;  //next call to direct to if code block.(this)
-            }
-            else{
-                //failure to add any, no spaces.
-                continueInsertionNew = 0; //next call direct to else code block
-                //outcome = 0;
-            }
-            
-        }else{
-            printf("No tasks available, thread exit -- top \n");
-            pthread_exit(0);    //nothing available to add.
-        }
-    }
-    else{   //previous add was failed, so try again.
-        if(ptask_array != NULL){
-            printf("Adding previous task that failed to add --bottom\n");
-            struct Task twoTasks[2];    //holds the tasks to be added to the queue.
-            twoTasks[0] = *(ptask_array);
-            twoTasks[1] = *(ptask_array + 1);
-
-            //Setting the arrival times....................................................
-            time_t task1_start, task2_start;
-            time(&task1_start);
-            time(&task2_start);
-            
-            twoTasks[0].arrival_t = task1_start;    //setting times that are operator friendly.
-            twoTasks[1].arrival_t = task2_start;     //setting times that are operator friendly.
-            
-            char *time1 = getCurrentTime(); //obtaining current time in full format.
-            format_time(time1);
-            
-            char *time2 = getCurrentTime(); //obtaining current time in full format.
-            format_time(time2);
-        
-            strcpy(twoTasks[0].arrival_time, time1);
-            strcpy(twoTasks[1].arrival_time, time2);
-            
-            printf("Task number = %d cpu_burst = %d arrival_time = %s\n", twoTasks[0].task_number, twoTasks[0].cpu_burst, twoTasks[0].arrival_time);
-            printf("Task number = %d cpu_burst = %d arrival_time = %s\n", twoTasks[1].task_number, twoTasks[1].cpu_burst, twoTasks[1].arrival_time);
-            
-            //End setting arrival times.....................................................
-            
-         //   outcome = insertTwo(twoTasks);    //returns 2 if both tasks were inserted, returns 1 if only first task was inserted & returns 0 if failure.
-            
-            if((outcome == 1) && (continueInsertionNew == 0)){ //only first task was added see insertTwo() at readyqueue.h
-                int res = insert(twoTasks[1]);    //add second task.
-                
-                if(res == 1){   //successful adding of second task.
-                    addSimulationLog_Task(twoTasks[1]);
-                    continueInsertionNew = 1;  //next call direct to if code block to allow for new task insertion, since current insertion is complete.
-                }
-                else{
-                    continueInsertionNew = 0;   //prevent continuation of insertion of new tasks since current insertion is not complete.
-                }
-              
-            }
-            else if((outcome == 0) && (continueInsertionNew == 0)){ //no task were added first time
-                
-                outcome = insertTwo(twoTasks);  //returns 2 if both tasks were inserted, returns 1 if only first task was inserted & returns 0 if failure.
-                
-                if(outcome == 2){   //both tasks were added
-                    addSimulationLog_Task(twoTasks[0]);
-                    addSimulationLog_Task(twoTasks[1]);
-                    continueInsertionNew = 1;  //next call to direct to if code block. To retry insertion.
-                }
-                else if(outcome == 1){
-                     addSimulationLog_Task(twoTasks[0]);
-                }
-                else{
-                     continueInsertionNew = 0;  //prevent continuation of insertion of new tasks since current insertion is not complete.
-                }
-                
-
-            }
-        }
-    }
-    return  continueInsertionNew;  //no and op before.. debug purpose
-    pthread_exit(0);    //exit the thread.
-}
-*/
-
 //Task function.
 void *task(void *fileName){
     char *pFileName = (char *)fileName; //casting void * to char *
@@ -491,11 +365,8 @@ void *task(void *fileName){
             isT2_Inserted = 0;
         }
 
-//        sem_wait(&emptySemaphore);  //decrement semaphore / wait if the semaphore is zero, no empty spaces.
         
         if(getRemainingSpaces() >= 2){  //two spaces avail for insertion in the queue
-
-           // printf("Greater than or 2 spaces avail\n");
 
             if(pTask_1 != NULL){    //task available
                 if(isT1_Inserted == 0){  

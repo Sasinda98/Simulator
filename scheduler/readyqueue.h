@@ -67,24 +67,6 @@ int isFull(){
    
 }
 
-int isFullTwo(){
-    if(( MAX_SIZE % 2 ) == 0){
-        if(nItems == MAX_SIZE){
-            return 1;
-        }
-        else{
-            return 0;
-        }
-    }
-    else{   //if max size is odd
-        if(nItems == (MAX_SIZE - 1)){   //cannot fill last one because two by two insertion. therefore queue is considered full even if one space is avail.
-            return 1;
-        }
-        else{
-            return 0;
-        }
-    }
-}
 
 int insert(struct Task newTask){
 
@@ -122,31 +104,6 @@ int getRemainingSpaces(){
 int getSuccessfulInsertions(){
     return successful_insertions;
 }
-//inserts two tasks if spaces available at one go, if not it'll add only one. else error.
-//returns 1 when 1st task gets inserted.
-//returns 2 when both tasks are inserted.
-//returns 0 when insertion fails.
-int insertTwo(struct Task newTask[]){
-
-    int remaining = MAX_SIZE - nItems;
-    
-    if(remaining >= 2){     //two spaces or more available.
-        if(newTask[0].task_number != -99)
-            insert(newTask[0]);
-        if(newTask[1].task_number != -99)
-            insert(newTask[1]);
-        return 2;   //both tasks inserted.
-    }
-    else if(remaining == 1){    //one space available.
-        if(newTask[0].task_number != -99)
-        insert(newTask[0]);
-        return  1;  //first task was inserted.
-    }else{  //no space
-        printf("Fails the insertion for 2 tasks\n");
-        return 0;   //fail
-    }
-}
-
 
 struct Task *pop(){
      pthread_mutex_lock(&queue_mutex);
@@ -165,6 +122,10 @@ struct Task *pop(){
     pthread_mutex_unlock(&queue_mutex);
         return NULL;
     }
+}
+
+void destroy_queue(){
+    free(pTaskArray);
 }
 
 
