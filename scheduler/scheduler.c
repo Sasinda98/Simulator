@@ -1,7 +1,7 @@
 
 /* 
  * File:   main.c
- * Author: sasinda
+ * Author: W.A.A.D Gayal Sasinda Rupasinghe
  *
  * Created on 30 April 2019, 6:10 PM
  */
@@ -29,13 +29,14 @@ char *getCurrentTime();
 double  getTimeElapsed();
 int addSimulationLog_Task(struct Task task);
 void *cpu( void *arg);
-void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId);
-void addSimulationLog_Post_Exec(struct Task task, char *service_time, int *cpuId);
 struct Task *getNextTask(char *fileName);
 int getMaxTaskNumber(char *fileName);
 void setArrivalTimeTask(struct Task *task);
 void addTaskTerminationLog(int num_tasks_inserted);
+void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId);
+void addSimulationLog_Post_Exec(struct Task task, char *service_time, int *cpuId);
 void addCpuTerminationLog(int num_tasks_inserted, int cpuId);
+void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double turnaroundTime);
 
 
 //GLOBAL VARIABLES..............................................................
@@ -165,6 +166,7 @@ int main(int argc, char** argv) {
     destroy_queue();
     
     printf("Number of TASKS SERVICED %d, AVG wait Time %f, AVG TAT %f\n", num_tasks,total_waiting_time / (double) num_tasks, total_turnaround_time / (double) num_tasks );
+    addMainTerminationLog(num_tasks, total_waiting_time, total_turnaround_time);
     
     return 0;
 }
