@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 
         queueSizeChar = argv[2];    //queue size
         
-        printf("Filename = %s, Queue size = %s", fileName, queueSizeChar);
+        printf("Filename = %s, Queue size = %s", argv[1], argv[2]);
         sleep(10);
     }else{
         printf("Provide required command-line arguments. Filename of task file followed by queuesize\n");
