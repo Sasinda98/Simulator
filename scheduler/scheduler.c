@@ -60,7 +60,7 @@ pthread_t tid_cpu3; //thread id cpu 3
 
 int queueSize = 0;
 
-int num_tasks = 0;   //shared variables, shared across the 3 cpus. stores number of tasks executed.
+int num_tasks_executed = 0;   //shared variables, shared across the 3 cpus. stores number of tasks executed.
 double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
 
 int main(int argc, char** argv) {
@@ -165,8 +165,8 @@ int main(int argc, char** argv) {
     pthread_join(tid, NULL);    //main thread wait till task is done.
     destroy_queue();
     
-    printf("Number of TASKS SERVICED %d, AVG wait Time %f, AVG TAT %f\n", num_tasks,total_waiting_time / (double) num_tasks, total_turnaround_time / (double) num_tasks );
-    addMainTerminationLog(num_tasks, total_waiting_time, total_turnaround_time);
+    printf("Number of TASKS SERVICED %d, AVG wait Time %f, AVG TAT %f\n", num_tasks_executed,total_waiting_time / (double) num_tasks_executed, total_turnaround_time / (double) num_tasks_executed );
+    addMainTerminationLog(num_tasks_executed, total_waiting_time, total_turnaround_time);
     
     return 0;
 }
@@ -608,13 +608,13 @@ void* cpu( void *arg){
             
             pthread_mutex_unlock(&total_turnaround_time_mutex); //release the lock so another thread can have its go at it.
             
-            pthread_mutex_lock(&num_tasks_mutex);    //getting the lock for modification of num_tasks var [shared resource].
+            pthread_mutex_lock(&num_tasks_mutex);    //getting the lock for modification of num_tasks_executed var [shared resource].
             
-            num_tasks++;    //increment num of tasks executed by one. [shared resource]
+            num_tasks_executed++;    //increment num of tasks executed by one. [shared resource]
             
             pthread_mutex_unlock(&num_tasks_mutex); //release the lock so another thread can have its go at it.
             
-            printf("number of tasks executed all together %d\n", num_tasks);
+            printf("number of tasks executed all together %d\n", num_tasks_executed);
          
         }
         else{   //task not available, ready queue empty.
@@ -623,7 +623,7 @@ void* cpu( void *arg){
        
         int remainingTasks = -9;
         pthread_mutex_lock(&num_tasks_mutex);
-        remainingTasks = NUMBER_OF_TASKS_TASK_FILE - num_tasks;
+        remainingTasks = NUMBER_OF_TASKS_TASK_FILE - num_tasks_executed;
         pthread_mutex_unlock(&num_tasks_mutex);
         printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU PRE = %d\n", NUMBER_OF_TASKS_TASK_FILE);
         if(remainingTasks == 0){   //add logs!!!
