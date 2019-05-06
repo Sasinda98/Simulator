@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
     char *queueSizeChar;
     
     //File name and amount of tasks m is taken here.
-    if(argc == 2){
+    if(argc == 3){
         fileName = argv[1];    //file name
 
         queueSizeChar = argv[2];    //queue size
