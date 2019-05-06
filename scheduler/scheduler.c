@@ -466,20 +466,14 @@ void *task(void *fileName){
         
        // isTaskInserted--; //is task taken.
         pthread_mutex_unlock(&emptySpacesMutex);
-        
-        
-       // pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the isTaskInserted variable.
-            
-      //  isTaskInserted = 1; //task inserted.
-       // pthread_mutex_unlock(&isTaskInsertedMutex); //aquire lock to modify the 
-       
-       // pthread_cond_signal(&taskCpuCondition); //to the end
-        
-        //TASK THREAD SHOULD BLOCK WHEN QUEUE IS FULL, AND UNBLOCK WHEN POP/CPU EXEC
+      
         
         if(continueInsertionNew == 1){
             continueInsertionNew = 0;
             num++;
+            free(pTask_1);
+            free(pTask_2);
+            
             pTask_1 = NULL;
             pTask_2 = NULL;
 
@@ -644,30 +638,23 @@ void* cpu( void *arg){
     int cpuId = *pcpuId;
     
     int task_exec_count_individual = 0;
-    //sp
+
     printf("CPU ID: %d\n", cpuId);
-    
-    //pthread_cleanup_push((void *)pthread_mutex_unlock, &fullSpacesMutex);
-    //pthread_cleanup_pop(1);
+
     while(1){
         
         pthread_mutex_lock(&fullSpacesMutex);
         
-        while((fullSpaces == 0) && (num_tasks == 5)){     //no new tasks in ready queue to execute so go block the thread.
+        while(fullSpaces == 0){     //no new tasks in ready queue to execute so go block the thread.
             printf("CPU-%d going to blocking state.\n", cpuId);
             
             pthread_cond_wait(&cpuCondition, &fullSpacesMutex);  //releases mutex waits on condition (signal).
             printf("CPU-%d going to UNBLOCKED state.\n", cpuId);
         }
-        
-        
+
         pthread_mutex_unlock(&fullSpacesMutex);
         
-        //sem_wait(&fullSemaphore);
-        
         struct Task *task = pop();  //get a task from ready queue. pthread_cleanup_push() an
-        
-       // sem_post(&emptySemaphore);
 
         if(task != NULL){   //task available from ready queue.
             
@@ -693,8 +680,6 @@ void* cpu( void *arg){
             double waiting_time = getTimeElapsed(arrival_t, service_t); //compute waiting time for this task by getting the difference.
             printf("Waiting TIME ELAPSED: %f\n", waiting_time);
             //END of obtaining service time, waiting time...................................................................         
-
-            //strcpy(twoTasks[0].arrival_time, time1);    //for sim logs.
             
             pthread_mutex_lock(&total_waiting_time_mutex);  //obtaining lock to modify total_waiting_time [shared resource]
             
@@ -703,7 +688,9 @@ void* cpu( void *arg){
             pthread_mutex_unlock(&total_waiting_time_mutex);    //release the lock so another thread can have its go at it.
             
             addSimulationLog_Pre_Exec(*task, service_time, pcpuId); //adds record to simulation log with service time & other related fields.
-
+                
+            free(service_time);
+            
             sleep(task->cpu_burst); //sleep for burst time, simulate cpu EXECUTING the task.
 
             //Obtaining completion time.....................................................................................
@@ -713,6 +700,11 @@ void* cpu( void *arg){
             char *completion_time = getCurrentTime(); //obtaining current time in full format.
             format_time(completion_time); //formatting it down to only contain the time.
 
+            free(completion_time);
+            
+            addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
+            task_exec_count_individual++;
+            
             double turn_around_time = getTimeElapsed(arrival_t, completion_t);      //computes turn around time by getting the difference & other related fields.
             //End of obtaining completion time.....................................................................................
             printf("Turn Around Time: %f\n", turn_around_time);
@@ -730,9 +722,7 @@ void* cpu( void *arg){
             pthread_mutex_unlock(&num_tasks_mutex); //release the lock so another thread can have its go at it.
             
             printf("number of tasks executed all together %d\n", num_tasks);
-            
-            addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
-            task_exec_count_individual++;
+         
             
         }
         else{   //task not available, ready queue empty.
@@ -958,6 +948,8 @@ void setArrivalTimeTask(struct Task *task){
     format_time(time1); //getting only the time
 
     strcpy(task->arrival_time, time1);    //for sim logs.
+    
+    free(time1);
 
     printf("Task number = %d cpu_burst = %d arrival_time = %s\n", task->task_number, task->cpu_burst, task->arrival_time);
 }
