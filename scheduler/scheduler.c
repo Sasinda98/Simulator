@@ -72,7 +72,13 @@ int main(int argc, char** argv) {
     initialize(tasks, queueSize);
     
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
-   // generateTaskFile("task_file");
+    
+    char choice;
+    printf("Create new task file? Y/N?\n");
+    if(choice == 'Y'){
+        generateTaskFile("task_file");
+    }
+   
 
     emptySpaces = queueSize;
     fullSpaces = 0;
