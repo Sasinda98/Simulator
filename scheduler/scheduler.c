@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
     
     pthread_create(&tid, &attr, task, "task_file"); //sending task file as param to the thread.
    
-    //Preventing pointless creation of cpu threads.
+    //Preventing pointless creation of cpu threads by only creating required amount depending on number of tasks.
     if(NUMBER_OF_TASKS_TASK_FILE >= 3){
         /*
          * cpu-1 thread spawning
