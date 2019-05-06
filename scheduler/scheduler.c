@@ -643,9 +643,6 @@ void* cpu( void *arg){
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);    
-        }else{
-            printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM FAIL REM TSK OUT OF BOUNDS = %d\n", NUMBER_OF_TASKS_TASK_FILE);
-            printf("remaining tasks varible out of bounds cpu thread fail!\n");
         }
     }
 }
