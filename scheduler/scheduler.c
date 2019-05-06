@@ -58,13 +58,29 @@ pthread_t tid_cpu1; //thread id cpu 1
 pthread_t tid_cpu2; //thread id cpu 2
 pthread_t tid_cpu3; //thread id cpu 3
 
-int queueSize = 0;
+int queueSize = 3;  //default
 
 int num_tasks_executed = 0;   //shared variables, shared across the 3 cpus. stores number of tasks executed.
 double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
 
 int main(int argc, char** argv) {
+    char *fileName;
+    char *queueSizeChar;
+    
     //File name and amount of tasks m is taken here.
+    if(argc == 2){
+        fileName = argv[1];    //file name
+
+        queueSizeChar = argv[2];    //queue size
+        
+        printf("Filename = %s, Queue size = %s", fileName, queueSizeChar);
+        sleep(10);
+    }else{
+        printf("Provide required command-line arguments. Filename of task file followed by queuesize\n");
+        exit(0);
+    }
+
+    
     printf("Scheduler started!\n\n");
     queueSize = 10;
     
@@ -374,10 +390,10 @@ void *task(void *fileName){
             continueInsertionNew = 0;
 
             if(pTask_1 != NULL)
-              //  free(pTask_1);
+                free(pTask_1);
             
             if(pTask_2 != NULL)
-              //  free(pTask_2);
+                free(pTask_2);
             
             pTask_1 = NULL;
             pTask_2 = NULL;
