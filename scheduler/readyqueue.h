@@ -122,7 +122,7 @@ struct Task *pop(){
 }
 
 void destroy_queue(){
-  //  free(pTaskArray);
+    free(pTaskArray);
 }
 
 
