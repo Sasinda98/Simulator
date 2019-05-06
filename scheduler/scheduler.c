@@ -95,41 +95,74 @@ int main(int argc, char** argv) {
     
     pthread_create(&tid, &attr, task, "task_file"); //sending task file as param to the thread.
    
-    
-    /*
-     * cpu-1 thread spawning
-     */
-    pthread_attr_t attr_cpu1;    //attributes
-    pthread_attr_init(&attr_cpu1);
-    
-    int cpuid1 = 1;
-    pthread_create(&tid_cpu1, &attr_cpu1, cpu, &cpuid1); //sending cpu id as param
-    
-    
-        
-    /*
-     * cpu-2 thread spawning
-     */
-    pthread_attr_t attr_cpu2;    //attributes
-    pthread_attr_init(&attr_cpu2);
-    
-    int cpuid2 = 2;
-    pthread_create(&tid_cpu2, &attr_cpu2, cpu, &cpuid2); //sending cpu id as param
-    
-        
-    /*
-     * cpu-3 thread spawning
-     */
+    //Preventing pointless creation of cpu threads.
+    if(NUMBER_OF_TASKS_TASK_FILE >= 3){
+        /*
+         * cpu-1 thread spawning
+         */
+        pthread_attr_t attr_cpu1;    //attributes
+        pthread_attr_init(&attr_cpu1);
 
-    pthread_attr_t attr_cpu3;    //attributes
-    pthread_attr_init(&attr_cpu3);
-    
-    int cpuid3 = 3;
-    pthread_create(&tid_cpu3, &attr_cpu3, cpu, &cpuid3); //sending cpu id as param
-    
-    pthread_join(tid_cpu1, NULL);    //main thread wait till cpu1 is done.    
-    pthread_join(tid_cpu2, NULL);    //main thread wait till cpu2 is done.   
-    pthread_join(tid_cpu3, NULL);    //main thread wait till cpu3 is done.   
+        int cpuid1 = 1;
+        pthread_create(&tid_cpu1, &attr_cpu1, cpu, &cpuid1); //sending cpu id as param
+
+        /*
+         * cpu-2 thread spawning
+         */
+        pthread_attr_t attr_cpu2;    //attributes
+        pthread_attr_init(&attr_cpu2);
+
+        int cpuid2 = 2;
+        pthread_create(&tid_cpu2, &attr_cpu2, cpu, &cpuid2); //sending cpu id as param
+
+        /*
+         * cpu-3 thread spawning
+         */
+
+        pthread_attr_t attr_cpu3;    //attributes
+        pthread_attr_init(&attr_cpu3);
+
+        int cpuid3 = 3;
+        pthread_create(&tid_cpu3, &attr_cpu3, cpu, &cpuid3); //sending cpu id as param
+        
+        pthread_join(tid_cpu1, NULL);    //main thread wait till cpu1 is done.    
+        pthread_join(tid_cpu2, NULL);    //main thread wait till cpu2 is done.   
+        pthread_join(tid_cpu3, NULL);    //main thread wait till cpu3 is done. 
+
+    }else if(NUMBER_OF_TASKS_TASK_FILE == 2){
+         /*
+         * cpu-1 thread spawning
+         */
+        pthread_attr_t attr_cpu1;    //attributes
+        pthread_attr_init(&attr_cpu1);
+
+        int cpuid1 = 1;
+        pthread_create(&tid_cpu1, &attr_cpu1, cpu, &cpuid1); //sending cpu id as param
+
+        /*
+         * cpu-2 thread spawning
+         */
+        pthread_attr_t attr_cpu2;    //attributes
+        pthread_attr_init(&attr_cpu2);
+
+        int cpuid2 = 2;
+        pthread_create(&tid_cpu2, &attr_cpu2, cpu, &cpuid2); //sending cpu id as param
+        
+        pthread_join(tid_cpu1, NULL);    //main thread wait till cpu1 is done.    
+        pthread_join(tid_cpu2, NULL);    //main thread wait till cpu2 is done.   
+        
+    }else if(NUMBER_OF_TASKS_TASK_FILE == 1){
+                 /*
+         * cpu-1 thread spawning
+         */
+        pthread_attr_t attr_cpu1;    //attributes
+        pthread_attr_init(&attr_cpu1);
+
+        int cpuid1 = 1;
+        pthread_create(&tid_cpu1, &attr_cpu1, cpu, &cpuid1); //sending cpu id as param
+
+        pthread_join(tid_cpu1, NULL);    //main thread wait till cpu1 is done.    
+    }
 
     pthread_join(tid, NULL);    //main thread wait till task is done.
     destroy_queue();
