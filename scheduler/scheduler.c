@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
    // generateTaskFile("task_file");
 
     printf("Sleeping 5 secs\n");
-    sleep(5);
+    sleep(1);
     
     emptySpaces = queueSize;
     fullSpaces = 0;
