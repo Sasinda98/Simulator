@@ -73,9 +73,6 @@ int main(int argc, char** argv) {
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
    // generateTaskFile("task_file");
 
-    //printf("Sleeping 5 secs\n");
-    //sleep(1);
-    
     emptySpaces = queueSize;
     fullSpaces = 0;
     
@@ -195,7 +192,7 @@ int generateTaskFile(char *fileName){
         */
         cpu_burst = rand() % 50 + 1;    
         int status = fprintf(pFile, "%d %d\n", task_number, cpu_burst);
-       //printf("cpu_burst %d", cpu_burst);
+  
         if(status < 0){
             printf("writing to task file failed\n");
             return 0;
@@ -233,15 +230,15 @@ int readTaskFile(char *fileName){
     
 }
 
+long fileReadHead;
+struct Task *taskArray = NULL;
+
 /*
  * Returns pointer to two tasks from task file per call, if not found or error returns NULL
  * Referred to the link below to get an idea on how to return array of struct.
  * Link: https://stackoverflow.com/questions/47028165/how-do-i-return-an-array-of-struct-from-a-function
  * Accessed: 1 May 2019
  */
-long fileReadHead;
-struct Task *taskArray = NULL;
-
 //Returns tasks from task file, if not found NULL is returned.
 struct Task *getNextTask(char *fileName){
     FILE *pFile = fopen(fileName, "r");    //open for writing.
@@ -326,7 +323,6 @@ int getMaxTaskNumber(char *fileName){
             numberOfTasks++;
         }
         else{
-            //  printf("EOF REACHED\n");
             return 0;
         }
         readHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
@@ -364,14 +360,11 @@ void *task(void *fileName){
             printf("TASK THREAD going to UNBLOCKED state.\n");
         }
         
-       // isTaskInserted--; //is task taken.
         pthread_mutex_unlock(&emptySpacesMutex);
-      
-        
+
         if(continueInsertionNew == 1){
             continueInsertionNew = 0;
-           
-            
+
             if(pTask_1 != NULL)
                 free(pTask_1);
             
@@ -447,7 +440,6 @@ void *task(void *fileName){
             }
         }
         else if(getRemainingSpaces() == 1){
-          //  printf("\n1 space available\n");
 
             if(pTask_1 != NULL){    //task available
                 if(isT1_Inserted == 0){
@@ -622,7 +614,6 @@ void* cpu( void *arg){
             
             printf("number of tasks executed all together %d\n", num_tasks);
          
-            
         }
         else{   //task not available, ready queue empty.
             printf("Empty/no tasks available for cpu - %d execution. GOING TO EXIT PHASE\n", cpuId);
@@ -655,9 +646,6 @@ void* cpu( void *arg){
             printf("remaining tasks varible out of bounds cpu thread fail!\n");
         }
     }
-    
- //   pthread_exit(0);
-
 }
 
 /*
@@ -675,10 +663,9 @@ char *getCurrentTime(){
 
     time ( &rawtime );
     timeinfo = localtime ( &rawtime );
-   // printf ( "Current local time and date: %s", asctime (timeinfo) );
+ 
     strcpy (ptime, asctime (timeinfo));
-    
-   // printf("The time---------- %s", ptime);
+
     return ptime;
 
 }
@@ -732,7 +719,7 @@ int addSimulationLog_Task(struct Task task){
     }
     
     int status = fprintf(pFile, "task #: %d\nArrival time: %s\n", task.task_number, task.arrival_time);
-    //printf("cpu_burst %d", cpu_burst);
+
     if(status < 0){
         printf("writing to simulation_log file failed\n");
         return 0;
@@ -744,8 +731,7 @@ int addSimulationLog_Task(struct Task task){
 }
 
 void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId){
-    //int cpuId = 1;
-    
+
     FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.          
     
     if(pFile == NULL){
@@ -780,7 +766,7 @@ void addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cp
     }
     
     int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n", *cpuId, task.task_number, task.arrival_time, completion_time);
-    //printf("cpu_burst %d", cpu_burst);
+    
     if(status < 0){
         printf("writing to simulation_log file failed\n");
         
@@ -807,7 +793,7 @@ void addTaskTerminationLog(int num_tasks_inserted){
     }
     
     int status = fprintf(pFile, "Number of asks put in to Ready-Queue: %d\nTerminate at time: %s\n", num_tasks_inserted, currentTime);
-    //printf("cpu_burst %d", cpu_burst);
+  
     if(status < 0){
         printf("writing to simulation_log file failed\n");
     }
@@ -829,7 +815,30 @@ void addCpuTerminationLog(int num_tasks_inserted, int cpuId){
     }
     
     int status = fprintf(pFile, "CPU-%d terminates after servicing %d tasks\n", cpuId, num_tasks_inserted);
-    //printf("cpu_burst %d", cpu_burst);
+
+    if(status < 0){
+        printf("writing to simulation_log file failed\n");
+    }
+    
+    fclose(pFile);
+    pFile = NULL;
+}
+
+void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double turnaroundTime){
+    double avgWaitingTime = waitingTime / (double) num_tasks_serviced;
+    double avgTurnAroundTime = turnaroundTime / (double) num_tasks_serviced;
+    
+    FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.        
+    
+    if(pFile == NULL){
+        char temp[3];
+        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.");
+        scanf("%s", temp);
+        exit(0);
+    }
+    
+    int status = fprintf(pFile, "Number of tasks: %d\nAverage waiting time: %0.3f\nAverage turn around time: %0.3f\n", num_tasks_serviced, avgWaitingTime, avgTurnAroundTime);
+  
     if(status < 0){
         printf("writing to simulation_log file failed\n");
     }
