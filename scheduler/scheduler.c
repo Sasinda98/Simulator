@@ -610,14 +610,15 @@ void *task(void *fileName){
         if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
             printf("TASK THREAD QUITTING : ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE. %d tasks were added to ready queue\n",   total_num_tasks_inserted);
             addTaskTerminationLog(total_num_tasks_inserted);
+            
+            if(pTask_1 != NULL)
+                free(pTask_1);
+            
+            if(pTask_2 != NULL)
+                free(pTask_2);
+            
             pthread_exit(0);    //terminate the thread.
-          //  return 0;
         }
-        //sleep(1); disabling sleep to make it fast
-       
-      // pthread_mutex_lock(&isTaskInsertedMutex); //aquire lock to modify the 
-        
-      // pthread_cond_signal(&taskCpuCondition); //to the end
     }
     
     return 0;
