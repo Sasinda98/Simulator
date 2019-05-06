@@ -312,7 +312,7 @@ int getMaxTaskNumber(char *fileName){
         char temp[3];
         printf("Failed to open file, press any key followed by enter key to exit.");
         scanf("%s", temp);
-      
+        exit(0);    //quit entire app
         return 0; 
     }
     
