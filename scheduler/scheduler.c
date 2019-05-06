@@ -600,26 +600,26 @@ void* cpu( void *arg){
         pthread_mutex_lock(&num_tasks_mutex);
         remainingTasks = NUMBER_OF_TASKS_TASK_FILE - num_tasks;
         pthread_mutex_unlock(&num_tasks_mutex);
-        printf("NUMBER_OF_TASKS_TASKS_FILE CPU PRE = %d", NUMBER_OF_TASKS_TASK_FILE);
+        printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU PRE = %d\n", NUMBER_OF_TASKS_TASK_FILE);
         if(remainingTasks == 0){   //add logs!!!
-            printf("NUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d", NUMBER_OF_TASKS_TASK_FILE);
+            printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d", NUMBER_OF_TASKS_TASK_FILE);
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);  
         }
         else if(remainingTasks == 1){
-            printf("NUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d", NUMBER_OF_TASKS_TASK_FILE);
+            printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
         }
         else if(remainingTasks == 2){
-            printf("NUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d", NUMBER_OF_TASKS_TASK_FILE);
+            printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
             printf("CPU-%d THREAD TERMINATES AFTER EXEC %d tasks : ALL TASKS IN TASK FILE EXECUTED.\n.", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);    
         }else{
-            printf("NUMBER_OF_TASKS_TASKS_FILE CPU TERM FAIL REM TSK OUT OF BOUNDS = %d", NUMBER_OF_TASKS_TASK_FILE);
+            printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM FAIL REM TSK OUT OF BOUNDS = %d\n", NUMBER_OF_TASKS_TASK_FILE);
             printf("remaining tasks varible out of bounds cpu thread fail!\n");
         }
     }
