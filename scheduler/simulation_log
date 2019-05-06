@@ -1214,3 +1214,71 @@ Arrival time: 18:57:51
 Service time: 18:57:57
 task #: 19
 Arrival time: 18:57:57
+task #: 0
+Arrival time: 6:19:17
+Statistics for CPU-3:
+Task #0
+Arrival time: 6:19:17
+Service time: 6:19:17
+task #: 1
+Arrival time: 6:19:17
+task #: 2
+Arrival time: 6:19:17
+Statistics for CPU-1:
+Task #1
+Arrival time: 6:19:17
+Service time: 6:19:17
+task #: 3
+Arrival time: 6:19:17
+Statistics for CPU-2:
+Task #2
+Arrival time: 6:19:17
+Service time: 6:19:17
+task #: 4
+Arrival time: 6:19:17
+task #: 5
+Arrival time: 6:19:17
+task #: 6
+Arrival time: 6:19:17
+task #: 7
+Arrival time: 6:19:17
+task #: 8
+Arrival time: 6:19:17
+task #: 9
+Arrival time: 6:19:17
+task #: 10
+Arrival time: 6:19:17
+task #: 11
+Arrival time: 6:19:17
+task #: 12
+Arrival time: 6:19:17
+Statistics for CPU-2:
+Task #2
+Arrival time: 6:19:17
+Completion time: 6:19:19
+Statistics for CPU-1:
+Task #1
+Arrival time: 6:19:17
+Completion time: 6:19:19
+Statistics for CPU-2:
+Task #3
+Arrival time: 6:19:17
+Service time: 6:19:19
+task #: 13
+Arrival time: 6:19:19
+Statistics for CPU-1:
+Task #4
+Arrival time: 6:19:17
+Service time: 6:19:19
+task #: 14
+Arrival time: 6:19:19
+Statistics for CPU-3:
+Task #0
+Arrival time: 6:19:17
+Completion time: 6:19:21
+Statistics for CPU-3:
+Task #5
+Arrival time: 6:19:17
+Service time: 6:19:21
+task #: 15
+Arrival time: 6:19:21

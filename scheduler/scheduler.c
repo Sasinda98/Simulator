@@ -22,9 +22,8 @@
 //FUNCTION PROTOTYPES...........................................................
 int generateTaskFile(char *fileName);
 int readTaskFile(char *fileName);
-struct Task *getNextTwoTasks(char *fileName);
+
 void *task(void *fileName);
-long long timeInMilliseconds(void);
 void format_time(char *output);
 char *getCurrentTime();
 double  getTimeElapsed();
@@ -37,7 +36,7 @@ int getMaxTaskNumber(char *fileName);
 void setArrivalTimeTask(struct Task *task);
 void addTaskTerminationLog(int num_tasks_inserted);
 void addCpuTerminationLog(int num_tasks_inserted, int cpuId);
-void *cpuRoutine(void *arg);
+
 
 //GLOBAL VARIABLES..............................................................
 int INVALID_TASK_NUM_CODE = -99;    //deprecated
@@ -73,6 +72,7 @@ int main(int argc, char** argv) {
     
     struct Task tasks[queueSize];
     initialize(tasks, queueSize);
+    
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
    // generateTaskFile("task_file");
 
@@ -211,130 +211,6 @@ int readTaskFile(char *fileName){
  */
 long fileReadHead;
 struct Task *taskArray = NULL;
-
-struct Task *getNextTwoTasks1(char *fileName){
-    
-    FILE *pFile = fopen(fileName, "r");    //open for writing.
-    
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        return NULL;
-    }
-    
-    fseek(pFile, 0, SEEK_END);  //moving file position indicator to the end.
-
-    long endOfFile = ftell(pFile);  //current position (i.e. eof) of file position indicator.
-    
-    if(fileReadHead != endOfFile){      //if file position indicatior 'fileReadHead' is not at the end of file.
-
-        fseek(pFile, fileReadHead, SEEK_SET);  //move file position indicator to last left off position.         
-
-        int task_number, cpu_burst;
-        struct Task task[2];
-        taskArray = &task[0];
-        
-        struct Task *taskArray = malloc(sizeof(struct Task) * 2);
-      
-        for(int i = 0; i < 2; i++){
-            
-            fscanf(pFile, "%d %d\n", &task_number, &cpu_burst);  //moves file position indicator by 2 lines, (for loop).
-    
-            task[i].task_number = task_number;
-            task[i].cpu_burst = cpu_burst;
-         
-        }
-        
-        *(taskArray) = task[0]; //setting up the pointers.
-        *(taskArray + 1) = task[1]; //setting up the pointers.
-          
-        fileReadHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
-        fclose(pFile);  //closing opened file
-        pFile = NULL; //making sure reference is not there anymore.
-        return taskArray;
-    }else{
-        printf("END OF FILE REACHED\n");
-    }
-
-   fileReadHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
-
-    fclose(pFile);  //closing opened file
-    pFile = NULL; //making sure reference is not there anymore.
-    return NULL;
-    
-}
-
-struct Task *getNextTwoTasks(char *fileName){
-    
-    FILE *pFile = fopen(fileName, "r");    //open for writing.
-    
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        return NULL;
-    }
-    
-    fseek(pFile, 0, SEEK_END);  //moving file position indicator to the end.
-
-    long endOfFile = ftell(pFile);  //current position (i.e. eof) of file position indicator.
-    
-    if(fileReadHead != endOfFile){      //if file position indicatior 'fileReadHead' is not at the end of file.
-
-        fseek(pFile, fileReadHead, SEEK_SET);  //move file position indicator to last left off position.         
-
-        int task_number, cpu_burst;
-        struct Task task[2];
-        taskArray = &task[0];
-        
-        struct Task *taskArray = malloc(sizeof(struct Task) * 2);
-      
-        for(int i = 0; i < 2; i++){
-            
-            int status = fscanf(pFile, "%d %d\n", &task_number, &cpu_burst);  //moves file position indicator by 2 lines, (for loop).
-            task[i].task_number = task_number;
-            task[i].cpu_burst = cpu_burst;
-           
-            if(status == EOF){
-                task[i].task_number = -99;  //flag to indicate that this is not a valid task.
-                task[i].cpu_burst = -99;
-                if(i==0){
-                     *(taskArray) = task[0]; //setting up the pointers.
-                }
-                else{
-                     *(taskArray + 1) = task[1]; //setting up the pointers.
-                }
-            }
-            else{
-                if(i==0){
-                     *(taskArray) = task[0]; //setting up the pointers.
-                }
-                else{
-                     *(taskArray + 1) = task[1]; //setting up the pointers.
-                }
-            }
-               
-        }
-        
-       // *(taskArray) = task[0]; //setting up the pointers.
-       // *(taskArray + 1) = task[1]; //setting up the pointers.
-          
-        fileReadHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
-        fclose(pFile);  //closing opened file
-        pFile = NULL; //making sure reference is not there anymore.
-        return taskArray;
-    }else{
-        printf("END OF FILE REACHED\n");
-    }
-
-   fileReadHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
-
-    fclose(pFile);  //closing opened file
-    pFile = NULL; //making sure reference is not there anymore.
-    return NULL;
-    
-}
 
 //Returns tasks from task file, if not found NULL is returned.
 struct Task *getNextTask(char *fileName){
@@ -752,109 +628,6 @@ void *task(void *fileName){
     return 0;
 }
 
-/*
- * Solution to obtain time in milliseconds taken from the given link.
- * Link: https://stackoverflow.com/questions/10192903/time-in-milliseconds-in-c
- * Author: zebo zhuang
- * Accessed: 2 May 2019
- */
-long long timeInMilliseconds(void) {
-    struct timeval tv;
-
-    gettimeofday(&tv,NULL);
-    return (((long long)tv.tv_sec)*1000)+(tv.tv_usec/1000);
-}
-
-
- 
-/*
- * Solution to obtain current time taken from the given link. This was modified to suit my needs.
- * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
- * Author: mingos
- * Accessed: 2 May 2019
- */
-//Gets the current time in full date time format, refer to format_time() to see how the output could be used to extract time.
-char *getCurrentTime(){
-    time_t rawtime;
-    struct tm * timeinfo;
-    char *ptime = NULL;
-    ptime = malloc(sizeof(char)*50);
-
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
-   // printf ( "Current local time and date: %s", asctime (timeinfo) );
-    strcpy (ptime, asctime (timeinfo));
-    
-   // printf("The time---------- %s", ptime);
-    return ptime;
-
-}
-
-/*
- * Solution to format time was taken from the given link. Modifications were done to suit the needs.
- * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
- * Author: hexinpeter
- * Accessed: 2 May 2019
- */
-//Extracts out the time from the full date time format outputted by the getCurrentTime() function.
-void format_time(char *output){
-    time_t rawtime;
-    struct tm * timeinfo;
-    
-    char str[50];
-    strcpy(str, output);
-    
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
-
-    sprintf(output, "%d:%d:%d",timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
-    //printf("format_time %s\n", output);
-}
-
-
-/*
- * Refered to the given link to understand the use of difftime() function in c.
- * Link: https://www.tutorialspoint.com/c_standard_library/c_function_difftime.htm
- * Accessed: 2 May 2019
- */
-//This function is to get the time elapsed when two start and end times of time_t type are given. 
-double getTimeElapsed( time_t start_t, time_t end_t ){
-   double diff_t;
-
-   diff_t = difftime(end_t, start_t);   //getting the difference.
-   
-   return diff_t;
-}
-
-//Adds record to simulation log containing task info, number and arrival time. To be used in task().
-int addSimulationLog_Task(struct Task task){
-    
-    FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.        .        
-    
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        return 0;
-    }
-    
-    int status = fprintf(pFile, "task #: %d\nArrival time: %s\n", task.task_number, task.arrival_time);
-    //printf("cpu_burst %d", cpu_burst);
-    if(status < 0){
-        printf("writing to simulation_log file failed\n");
-        return 0;
-    }
-    
-    fclose(pFile);
-    pFile = NULL;
-    return 1;
-}
-
-void *cpuRoutine(void *arg){
-    pthread_mutex_unlock(&fullSpacesMutex);
-    return NULL;
-}
-    
 int num_tasks = 0;   //shared variables, shared across the 3 cpus. stores number of tasks executed.
 double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
 
@@ -880,7 +653,7 @@ void* cpu( void *arg){
         
         pthread_mutex_lock(&fullSpacesMutex);
         
-        while(fullSpaces == 0){     //no new tasks in ready queue to execute so go block the thread.
+        while((fullSpaces == 0) && (num_tasks == 5)){     //no new tasks in ready queue to execute so go block the thread.
             printf("CPU-%d going to blocking state.\n", cpuId);
             
             pthread_cond_wait(&cpuCondition, &fullSpacesMutex);  //releases mutex waits on condition (signal).
@@ -995,58 +768,89 @@ void* cpu( void *arg){
 
 }
 
+/*
+ * Solution to obtain current time taken from the given link. This was modified to suit my needs.
+ * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
+ * Author: mingos
+ * Accessed: 2 May 2019
+ */
+//Gets the current time in full date time format, refer to format_time() to see how the output could be used to extract time.
+char *getCurrentTime(){
+    time_t rawtime;
+    struct tm * timeinfo;
+    char *ptime = NULL;
+    ptime = malloc(sizeof(char)*50);
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+   // printf ( "Current local time and date: %s", asctime (timeinfo) );
+    strcpy (ptime, asctime (timeinfo));
+    
+   // printf("The time---------- %s", ptime);
+    return ptime;
+
+}
+
+/*
+ * Solution to format time was taken from the given link. Modifications were done to suit the needs.
+ * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
+ * Author: hexinpeter
+ * Accessed: 2 May 2019
+ */
+//Extracts out the time from the full date time format outputted by the getCurrentTime() function.
+void format_time(char *output){
+    time_t rawtime;
+    struct tm * timeinfo;
+    
+    char str[50];
+    strcpy(str, output);
+    
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+
+    sprintf(output, "%d:%d:%d",timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+    //printf("format_time %s\n", output);
+}
 
 
 /*
- void cpu(){
-    struct Task *task = pop();  //get a task from ready queue.
-    
-    if(task != NULL){   //task available from ready queue.
-        printf("CPU executing task# = %d burst = %d\n", task->task_number, task->cpu_burst);
-        
-        //Obtaining service time, waiting time.........................................................................
-        time_t arrival_t = task->arrival_t;    //getting arrival time from the task.
-        time_t service_t;   //var that stores service time. Time at which task entered the cpu.
-        time(&service_t);  //sets the service_t to its value i.e. time now.
+ * Refered to the given link to understand the use of difftime() function in c.
+ * Link: https://www.tutorialspoint.com/c_standard_library/c_function_difftime.htm
+ * Accessed: 2 May 2019
+ */
+//This function is to get the time elapsed when two start and end times of time_t type are given. 
+double getTimeElapsed( time_t start_t, time_t end_t ){
+   double diff_t;
 
-        char *service_time = getCurrentTime(); //obtaining current time in full format.
-        format_time(service_time); //formatting it down to only contain the time.
-
-        double waiting_time = getTimeElapsed(arrival_t, service_t); //compute waiting time for this task by getting the difference.
-        printf("Waiting TIME ELAPSED: %f\n", waiting_time);
-        //END of obtaining service time, waiting time...................................................................         
-           
-        //strcpy(twoTasks[0].arrival_time, time1);    //for sim logs.
-
-        total_waiting_time = total_waiting_time + waiting_time; //compute total waiting time.
-        addSimulationLog_Pre_Exec(*task, service_time); //adds record to simulation log with service time & other related fields.
-        
-        sleep(task->cpu_burst); //sleep for burst time, simulate cpu EXECUTING the task.
-        
-        //Obtaining completion time.....................................................................................
-        time_t completion_t;  //var that stores completion time.
-        time(&completion_t); //sets the completion_t to its value i.e. time now, which is essentially the completion time.
-        
-        char *completion_time = getCurrentTime(); //obtaining current time in full format.
-        format_time(completion_time); //formatting it down to only contain the time.
-        
-        double turn_around_time = getTimeElapsed(arrival_t, completion_t);      //computes turn around time by getting the difference & other related fields.
-        //End of obtaining completion time.....................................................................................
-        printf("Turn Around Time: %f\n", turn_around_time);
-        
-        total_turnaround_time = total_turnaround_time + turn_around_time;   //computes total turn around time.
-        num_tasks++;    //increment num of tasks executed by one.
-        addSimulationLog_Post_Exec(*task, completion_time); //adds record to simulation log with completion time.
-    }
-    else{   //task not available, ready queue empty.
-        printf("Empty no tasks available\n");
-    }
+   diff_t = difftime(end_t, start_t);   //getting the difference.
+   
+   return diff_t;
 }
 
- */
+//Adds record to simulation log containing task info, number and arrival time. To be used in task().
+int addSimulationLog_Task(struct Task task){
+    
+    FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.        .        
+    
+    if(pFile == NULL){
+        char temp[3];
+        printf("Failed to open file, press any key followed by enter key to exit.");
+        scanf("%s", temp);
+        return 0;
+    }
+    
+    int status = fprintf(pFile, "task #: %d\nArrival time: %s\n", task.task_number, task.arrival_time);
+    //printf("cpu_burst %d", cpu_burst);
+    if(status < 0){
+        printf("writing to simulation_log file failed\n");
+        return 0;
+    }
+    
+    fclose(pFile);
+    pFile = NULL;
+    return 1;
+}
 
-//Adds record to simulation log containing cpu execution info (i.e. cpu num) and task info (i.e. arrival times and task num).
-// To be used in cpu().
 void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId){
     //int cpuId = 1;
     
