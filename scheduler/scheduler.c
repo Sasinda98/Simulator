@@ -73,8 +73,8 @@ int main(int argc, char** argv) {
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
    // generateTaskFile("task_file");
 
-    printf("Sleeping 5 secs\n");
-    sleep(1);
+    //printf("Sleeping 5 secs\n");
+    //sleep(1);
     
     emptySpaces = queueSize;
     fullSpaces = 0;
