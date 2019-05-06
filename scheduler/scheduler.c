@@ -75,6 +75,7 @@ int main(int argc, char** argv) {
     
     char choice;
     printf("Create new task file? Y/N?\n");
+    scanf("%c", &choice);
     if(choice == 'Y'){
         generateTaskFile("task_file");
     }
