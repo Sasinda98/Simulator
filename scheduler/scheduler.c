@@ -220,12 +220,9 @@ struct Task *getNextTask(char *fileName){
         char temp[3];
         printf("Failed to open file, press any key followed by enter key to exit.");
         scanf("%s", temp);
-        
-        struct Task invalidTask;
-        invalidTask.task_number = INVALID_TASK_NUM_CODE;
+
         exit(-1);   //quit entire application.
         return NULL; 
-            
     }
     
     fseek(pFile, 0, SEEK_END);  //moving file position indicator to the end.
@@ -471,8 +468,12 @@ void *task(void *fileName){
         if(continueInsertionNew == 1){
             continueInsertionNew = 0;
             num++;
-            free(pTask_1);
-            free(pTask_2);
+            
+            if(pTask_1 != NULL)
+                free(pTask_1);
+            
+            if(pTask_2 != NULL)
+                free(pTask_2);
             
             pTask_1 = NULL;
             pTask_2 = NULL;
