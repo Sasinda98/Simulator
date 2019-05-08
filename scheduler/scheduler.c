@@ -605,7 +605,7 @@ void* cpu( void *arg){
 
             addSimulationLog_Pre_Exec(*task, service_time, pcpuId); //adds record to simulation log with service time & other related fields.
 
-            //free(service_time);
+            free(service_time);
 
             sleep(task->cpu_burst); //sleep for burst time, simulate cpu EXECUTING the task.
 
@@ -619,7 +619,7 @@ void* cpu( void *arg){
             addSimulationLog_Post_Exec(*task, completion_time, pcpuId); //adds record to simulation log with completion time.
             task_exec_count_individual++;
 
-           // free(completion_time);
+            free(completion_time);
 
             double turn_around_time = getTimeElapsed(arrival_t, completion_t);      //computes turn around time by getting the difference & other related fields.
             //End of obtaining completion time.....................................................................................
@@ -812,6 +812,8 @@ void addTaskTerminationLog(int num_tasks_inserted){
     char *currentTime = getCurrentTime(); //obtaining current time in full format.
     format_time(currentTime); //getting only the time
 
+    free(currentTime);
+    
     FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.
 
     if(pFile == NULL){
