@@ -216,6 +216,8 @@ int generateTaskFile(char *fileName){
         int status = fprintf(pFile, "%d %d\n", task_number, cpu_burst);
   
         if(status < 0){
+             fclose(pFile);  //closing opened file.
+             pFile = NULL; //making sure ref is not there anymore.
             printf("writing to task file failed\n");
             return 0;
         }
@@ -292,7 +294,8 @@ struct Task *getNextTask(char *fileName){
         task.cpu_burst = cpu_burst;
         
         if(status == EOF){
-  
+            fclose(pFile);  //closing opened file.
+            pFile = NULL; //making sure ref is not there anymore.
             
             return NULL;
         }
@@ -303,8 +306,6 @@ struct Task *getNextTask(char *fileName){
         fclose(pFile);  //closing opened file
         pFile = NULL; //making sure reference is not there anymore.
         return ptask;
-    }else{
-       // printf("END OF FILE REACHED\n");
     }
 
     fileReadHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
@@ -345,6 +346,8 @@ int getMaxTaskNumber(char *fileName){
             numberOfTasks++;
         }
         else{
+            fclose(pFile);  //closing opened file.
+            pFile = NULL; //making sure ref is not there anymore.
             return 0;
         }
         readHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
@@ -740,6 +743,8 @@ int addSimulationLog_Task(struct Task task){
     int status = fprintf(pFile, "task #: %d\nArrival time: %s\n", task.task_number, task.arrival_time);
 
     if(status < 0){
+        fclose(pFile);
+        pFile = NULL;
         printf("writing to simulation_log file failed\n");
         return 0;
     }
@@ -763,6 +768,8 @@ void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId)
     int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n", *cpuId, task.task_number, task.arrival_time, service_time);
     //printf("cpu_burst %d", cpu_burst);
     if(status < 0){
+        fclose(pFile);
+        pFile = NULL;
         printf("writing to simulation_log file failed\n");
     }
     
@@ -787,6 +794,8 @@ void addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cp
     int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n", *cpuId, task.task_number, task.arrival_time, completion_time);
     
     if(status < 0){
+        fclose(pFile);
+        pFile = NULL;
         printf("writing to simulation_log file failed\n");
         
     }
@@ -814,6 +823,8 @@ void addTaskTerminationLog(int num_tasks_inserted){
     int status = fprintf(pFile, "Number of asks put in to Ready-Queue: %d\nTerminate at time: %s\n", num_tasks_inserted, currentTime);
   
     if(status < 0){
+        fclose(pFile);
+        pFile = NULL;
         printf("writing to simulation_log file failed\n");
     }
     
@@ -836,6 +847,8 @@ void addCpuTerminationLog(int num_tasks_inserted, int cpuId){
     int status = fprintf(pFile, "CPU-%d terminates after servicing %d tasks\n", cpuId, num_tasks_inserted);
 
     if(status < 0){
+        fclose(pFile);
+        pFile = NULL;
         printf("writing to simulation_log file failed\n");
     }
     
@@ -859,6 +872,8 @@ void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double tu
     int status = fprintf(pFile, "Number of tasks: %d\nAverage waiting time: %0.3f\nAverage turn around time: %0.3f\n", num_tasks_serviced, avgWaitingTime, avgTurnAroundTime);
   
     if(status < 0){
+        fclose(pFile);
+        pFile = NULL;
         printf("writing to simulation_log file failed\n");
     }
     
