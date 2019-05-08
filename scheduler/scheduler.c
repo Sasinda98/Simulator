@@ -812,7 +812,7 @@ void addTaskTerminationLog(int num_tasks_inserted){
     char *currentTime = getCurrentTime(); //obtaining current time in full format.
     format_time(currentTime); //getting only the time
 
-    free(currentTime);
+   
     
     FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.
 
@@ -830,7 +830,7 @@ void addTaskTerminationLog(int num_tasks_inserted){
         pFile = NULL;
         printf("writing to simulation_log file failed\n");
     }
-
+    free(currentTime);
     fclose(pFile);
     pFile = NULL;
 }
