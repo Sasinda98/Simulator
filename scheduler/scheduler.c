@@ -391,10 +391,10 @@ void *task(void *fileName){
             continueInsertionNew = 0;
 
             if(pTask_1 != NULL)
-               // free(pTask_1);
+                free(pTask_1);
 
             if(pTask_2 != NULL)
-               // free(pTask_2);
+                free(pTask_2);
 
             pTask_1 = NULL;
             pTask_2 = NULL;
@@ -529,10 +529,10 @@ void *task(void *fileName){
             addTaskTerminationLog(total_num_tasks_inserted);
 
             if(pTask_1 != NULL)
-               // free(pTask_1);
+                free(pTask_1);
 
             if(pTask_2 != NULL)
-               //free(pTask_2);
+                free(pTask_2);
 
             pthread_exit(0);    //terminate the thread.
         }
