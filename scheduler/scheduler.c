@@ -67,6 +67,7 @@ int main(int argc, char** argv) {
     char *fileName;
     char *queueSizeChar;
     
+    /*
     //File name and amount of tasks m is taken here.
     if(argc == 3){
         
@@ -76,7 +77,7 @@ int main(int argc, char** argv) {
         printf("Provide required command-line arguments. Filename of task file followed by queuesize\n");
         exit(0);
     }
-
+*/
     
     printf("Scheduler started!\n\n");
     queueSize = 10;
