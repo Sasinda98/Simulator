@@ -1,5 +1,5 @@
 
-/* 
+/*
  * File:   readyqueue.h
  * Author: W.A.A.D Gayal Sasinda Rupasinghe
  * Title: Queue data structure to handle the ready queue.
@@ -16,7 +16,7 @@ struct Task{
     char arrival_time[50];  //stores time in character form, human readable.
     char service_time[50];  //stores time in character form, human readable.
     int termination_time;
-    time_t arrival_t;   
+    time_t arrival_t;
 };
 
 int front = -1;
@@ -33,20 +33,20 @@ pthread_mutex_t queue_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t nItems_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t remaining_Mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void initialize(struct Task tasks[], int size){   
-    
+void initialize(struct Task tasks[], int size){
+
     /*
      * Resolved the trap 6 error I got on runtime by using this link. "You are writing memory you do not own"
      * Author: ryyker
      * Link: https://stackoverflow.com/questions/26431147/abort-trap-6-error-in-c
      * Accessed: 2 May 2019
      */
-    
+
     pTaskArray = malloc(sizeof(struct Task) * size);    //Allocating required memory, the fix for trap 6. Forgot to allocate memory as a result got trap 6 error.
     //*pTaskArray = tasks[0]; //getting pointer setup to first index of task array.
-    MAX_SIZE = size;   
-    
-}  
+    MAX_SIZE = size;
+
+}
 
 int isEmpty(){
     if(nItems == 0){
@@ -62,27 +62,27 @@ int isFull(){
     }else{
         return 0;
     }
-   
+
 }
 
 int insert(struct Task newTask){
 
     pthread_mutex_lock(&queue_mutex);
-    
+
     if(isFull() == 0){    //not full
         ++rear;
         if(rear == (MAX_SIZE))  //if rear at last index
             rear = rear % (MAX_SIZE);
         printf("\n\nREAR ==== %d\n\n", rear);
-        
+
         *(pTaskArray + rear) = newTask;
         successful_insertions++;
         printf("\n INSERTION SUCCESSFUL = %d %d\n", (pTaskArray + rear)->task_number, (pTaskArray + rear)->cpu_burst );
-        
+
         pthread_mutex_lock(&nItems_mutex);
             nItems++;
         pthread_mutex_unlock(&nItems_mutex);
-   
+
         pthread_mutex_unlock(&queue_mutex);
         return 1;   //success
     }
@@ -122,7 +122,7 @@ struct Task *pop(){
 }
 
 void destroy_queue(){
-    //free(pTaskArray);
+    free(pTaskArray);
 }
 
 
