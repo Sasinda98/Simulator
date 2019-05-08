@@ -43,7 +43,7 @@ void initialize(struct Task tasks[], int size){
      */
     
     pTaskArray = malloc(sizeof(struct Task) * size);    //Allocating required memory, the fix for trap 6. Forgot to allocate memory as a result got trap 6 error.
-    *pTaskArray = tasks[0]; //getting pointer setup to first index of task array.
+    //*pTaskArray = tasks[0]; //getting pointer setup to first index of task array.
     MAX_SIZE = size;   
     
 }  

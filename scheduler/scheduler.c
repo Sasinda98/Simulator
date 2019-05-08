@@ -69,12 +69,9 @@ int main(int argc, char** argv) {
     
     //File name and amount of tasks m is taken here.
     if(argc == 3){
-        fileName = argv[1];    //file name
-
-        queueSizeChar = argv[2];    //queue size
         
-        printf("Filename = %s, Queue size = %s", argv[0], argv[1]);
-        sleep(10);
+       //printf("Filename = %s, Queue size = %s", argv[0], argv[1]);
+       //sleep(10);
     }else{
         printf("Provide required command-line arguments. Filename of task file followed by queuesize\n");
         exit(0);
