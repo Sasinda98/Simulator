@@ -828,8 +828,8 @@ void addTaskTerminationLog(int num_tasks_inserted){
         printf("writing to simulation_log file failed\n");
     }
     
-    //fclose(pFile);
-    //pFile = NULL;
+    fclose(pFile);
+    pFile = NULL;
 }
 
 //adds how many tasks each cpu thread executed in to the simulation_log file.
@@ -877,8 +877,8 @@ void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double tu
         printf("writing to simulation_log file failed\n");
     }
     
-    fclose(pFile);
-    pFile = NULL;
+    //fclose(pFile);
+    //pFile = NULL;
 }
 
 
