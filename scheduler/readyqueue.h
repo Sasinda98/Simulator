@@ -71,7 +71,7 @@ int insert(struct Task newTask){
     
     if(isFull() == 0){    //not full
         ++rear;
-        if(rear == (MAX_SIZE - 1))  //if rear at last index
+        if(rear == (MAX_SIZE))  //if rear at last index
             rear = rear % (MAX_SIZE);
         
         
@@ -106,7 +106,7 @@ struct Task *pop(){
      pthread_mutex_lock(&queue_mutex);
     if( isEmpty() == 0 ){   //not empty
         ++front;
-        if(front == (MAX_SIZE - 1))
+        if(front == (MAX_SIZE))
             front = front % (MAX_SIZE);
         pthread_mutex_lock(&nItems_mutex);
         nItems--;
