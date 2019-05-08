@@ -880,8 +880,8 @@ void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double tu
         printf("writing to simulation_log file failed\n");
     }
 
-    //fclose(pFile);
-    //pFile = NULL;
+    fclose(pFile);
+    pFile = NULL;
 }
 
 
