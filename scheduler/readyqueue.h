@@ -73,7 +73,7 @@ int insert(struct Task newTask){
         ++rear;
         if(rear == (MAX_SIZE))  //if rear at last index
             rear = rear % (MAX_SIZE);
-        
+        printf("\n\nREAR ==== %d\n\n", rear);
         
         *(pTaskArray + rear) = newTask;
         successful_insertions++;
