@@ -58,29 +58,46 @@ pthread_t tid_cpu1; //thread id cpu 1
 pthread_t tid_cpu2; //thread id cpu 2
 pthread_t tid_cpu3; //thread id cpu 3
 
-int queueSize = 3;  //default
+
 
 int num_tasks_executed = 0;   //shared variables, shared across the 3 cpus. stores number of tasks executed.
 double total_waiting_time = 0.0, total_turnaround_time = 0.0;   //shared vars across 3 cpus.
 
-int main(int argc, char** argv) {
-    char *fileName;
-    char *queueSizeChar;
-
+int main(int argc, char *argv[]) {
+    char *taskFileName;
+    int queueSize = 10;  //default
+    
+    
     /*
-    //File name and amount of tasks m is taken here.
-    if(argc == 3){
-
-       //printf("Filename = %s, Queue size = %s", argv[0], argv[1]);
-       //sleep(10);
-    }else{
-        printf("Provide required command-line arguments. Filename of task file followed by queuesize\n");
+     * Referred to the link below to understand how to read command-line parameters.
+     * Link: https://www.tutorialspoint.com/cprogramming/c_command_line_arguments.htm
+     * Accessed: 9th May 2019
+     */
+    //Getting the command-line parameters.
+    if( argc == 3 ) {
+        taskFileName = argv[1];//filename
+        
+        /*
+         * Referred to reply on stackoverflow to see how to convert string containing numbers to integer type.
+         * Link: https://stackoverflow.com/questions/628761/convert-a-character-digit-to-the-corresponding-integer-in-c
+         * Author: Paul W Homer
+         * Accessed: 9th May 2019
+         */
+        sscanf(argv[2], "%d", &queueSize);
+        printf("Queue size input = %d\n", queueSize);
+        printf("File name input = %s\n", taskFileName);
+    }
+    else if( argc > 3 ) {
+        printf("Two arguments are expected.\nProgram will quit...\n");
         exit(0);
     }
-*/
+    else {
+        printf("Two arguments are expected, please provide task file name followed by queue size.\nProgram will quit...\n");
+        exit(0);
+    }
 
     printf("Scheduler started!\n\n");
-    queueSize = 10;
+   
 
     struct Task tasks[queueSize];
     initialize(tasks, queueSize);
@@ -92,8 +109,8 @@ int main(int argc, char** argv) {
         generateTaskFile("task_file");
     }
 */
-    NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber("task_file");
-
+    NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber(taskFileName);
+    exit(0);
     emptySpaces = queueSize;
     fullSpaces = 0;
 
@@ -111,7 +128,7 @@ int main(int argc, char** argv) {
     pthread_attr_t attr;    //attributes
     pthread_attr_init(&attr);
 
-    pthread_create(&tid, &attr, task, "task_file"); //sending task file as param to the thread.
+    pthread_create(&tid, &attr, task, taskFileName); //sending task file as param to the thread.
 
     //Preventing pointless creation of cpu threads by only creating required amount depending on number of tasks.
     if(NUMBER_OF_TASKS_TASK_FILE >= 3){
@@ -210,7 +227,7 @@ int generateTaskFile(char *fileName){
         /*
          * Refered to below link to understand use of random number generators.
          * Link: https://www.programmingsimplified.com/c-program-generate-random-numbers
-         * Accessed: 30 April 2019
+         * Accessed: 30th April 2019
         */
         cpu_burst = rand() % 50 + 1;
         int status = fprintf(pFile, "%d %d\n", task_number, cpu_burst);
@@ -261,7 +278,7 @@ struct Task *taskArray = NULL;
  * Returns pointer to two tasks from task file per call, if not found or error returns NULL
  * Referred to the link below to get an idea on how to return array of struct.
  * Link: https://stackoverflow.com/questions/47028165/how-do-i-return-an-array-of-struct-from-a-function
- * Accessed: 1 May 2019
+ * Accessed: 1st May 2019
  */
 //Returns tasks from task file, if not found NULL is returned.
 struct Task *getNextTask(char *fileName){
@@ -674,7 +691,7 @@ void* cpu( void *arg){
  * Solution to obtain current time taken from the given link. This was modified to suit my needs.
  * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
  * Author: mingos
- * Accessed: 2 May 2019
+ * Accessed: 2nd May 2019
  */
 //Gets the current time in full date time format, refer to format_time() to see how the output could be used to extract time.
 char *getCurrentTime(){
@@ -684,7 +701,7 @@ char *getCurrentTime(){
     ptime = malloc(sizeof(char)*50);
 
     time (&rawtime);
-    localtime_r (&rawtime, timeinfo);
+    localtime_r (&rawtime, timeinfo);   //thread safe, localtime_r is thread safe.
 
     strcpy (ptime, asctime (timeinfo));
     free(timeinfo);
@@ -696,7 +713,7 @@ char *getCurrentTime(){
  * Solution to format time was taken from the given link. Modifications were done to suit the needs.
  * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
  * Author: hexinpeter
- * Accessed: 2 May 2019
+ * Accessed: 2nd May 2019
  */
 //Extracts out the time from the full date time format outputted by the getCurrentTime() function.
 void format_time(char *output){
@@ -707,7 +724,7 @@ void format_time(char *output){
     strcpy(str, output);
 
     time ( &rawtime );
-    localtime_r(&rawtime, timeinfo);
+    localtime_r(&rawtime, timeinfo);    //thread safe, localtime_r is thread safe.
 
     sprintf(output, "%d:%d:%d",timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
     //printf("format_time %s\n", output);
@@ -718,7 +735,7 @@ void format_time(char *output){
 /*
  * Refered to the given link to understand the use of difftime() function in c.
  * Link: https://www.tutorialspoint.com/c_standard_library/c_function_difftime.htm
- * Accessed: 2 May 2019
+ * Accessed: 2nd May 2019
  */
 //This function is to get the time elapsed when two start and end times of time_t type are given.
 double getTimeElapsed( time_t start_t, time_t end_t ){
