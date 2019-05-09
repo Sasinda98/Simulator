@@ -5,6 +5,9 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>readyqueue.h</itemPath>
+      <itemPath>simulationLog.h</itemPath>
+      <itemPath>taskFile.h</itemPath>
+      <itemPath>timeTask.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -14,6 +17,17 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>scheduler.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -41,6 +55,12 @@
       </item>
       <item path="scheduler.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="simulationLog.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="taskFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="timeTask.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
@@ -65,6 +85,12 @@
       <item path="readyqueue.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="scheduler.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="simulationLog.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="taskFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="timeTask.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

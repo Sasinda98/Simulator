@@ -13,6 +13,8 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <time.h>
+#include "taskFile.h"
+#include "simulationLog.h"
 
 //FUNCTION PROTOTYPES...........................................................
 void *task(void *fileName);
@@ -22,17 +24,17 @@ char *getCurrentTime();
 void format_time(char *output);
 double getTimeElapsed();
 
-int generateTaskFile(char *fileName);
-struct Task *getNextTask(char *fileName);
-int getMaxTaskNumber(char *fileName);
+//int generateTaskFile(char *fileName);
+//struct Task *getNextTask(char *fileName);
+//int getMaxTaskNumber(char *fileName);
 void setArrivalTimeTask(struct Task *task);
 
-int addSimulationLog_Task(struct Task task);
-void addTaskTerminationLog(int num_tasks_inserted);
-void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId);
-void addSimulationLog_Post_Exec(struct Task task, char *service_time, int *cpuId);
-void addCpuTerminationLog(int num_tasks_inserted, int cpuId);
-void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double turnaroundTime);
+//int addSimulationLog_Task(struct Task task);
+//void addTaskTerminationLog(int num_tasks_inserted);
+//void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId);
+//void addSimulationLog_Post_Exec(struct Task task, char *service_time, int *cpuId);
+//void addCpuTerminationLog(int num_tasks_inserted, int cpuId);
+//void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double turnaroundTime);
 
 //GLOBAL VARIABLES..............................................................
 int NUMBER_OF_TASKS_TASK_FILE = 0;  //number of tasks in task file.
@@ -198,156 +200,6 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-//Generates task file
-int generateTaskFile(char *fileName){
-
-    FILE *pFile = fopen(fileName, "w");    //open/create file for writing.
-
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        return 0;
-    }
-
-    int cpu_burst = 0;
-
-    //Writes formatted output to the task_file, [task_number cpu_burst]
-    for(int task_number = 0; task_number < 100; task_number++){
-        /*
-         * Refered to below link to understand use of random number generators in c.
-         * Link: https://www.programmingsimplified.com/c-program-generate-random-numbers
-         * Accessed: 30th April 2019
-        */
-        cpu_burst = rand() % 50 + 1;
-        int status = fprintf(pFile, "%d %d\n", task_number, cpu_burst);
-
-        if(status < 0){
-             fclose(pFile);  //closing opened file.
-             pFile = NULL; //making sure ref is not there anymore.
-            printf("writing to task file failed\n");
-            return 0;
-        }
-    }
-
-    fclose(pFile);  //closing opened file.
-    pFile = NULL; //making sure ref is not there anymore.
-
-    return 0;
-}
-
-long fileReadHead;
-struct Task *taskArray = NULL;
-/*
- * Returns pointer to next task from task file per every call, if not found or error the function returns NULL
- * Referred to the link below to get an idea on how to return array of struct.
- * Link: https://stackoverflow.com/questions/47028165/how-do-i-return-an-array-of-struct-from-a-function
- * Accessed: 1st May 2019
- */
-//Returns next task from task file, if not NULL is returned.
-struct Task *getNextTask(char *fileName){
-    FILE *pFile = fopen(fileName, "r");    //open file (task file) for reading.
-
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-
-        exit(-1);   //quit entire application.
-        return NULL;
-    }
-
-    fseek(pFile, 0, SEEK_END);  //moving file position indicator to the end of the file.
-
-    long endOfFile = ftell(pFile);  //current position (i.e. eof) of file position indicator.
-
-    if(fileReadHead != endOfFile){      //if file position indicatior 'fileReadHead' is not at the end of file.
-
-        fseek(pFile, fileReadHead, SEEK_SET);  //move file position indicator to last left off position.
-
-        int task_number, cpu_burst;
-        struct Task task;
-        struct Task *ptask = malloc(sizeof(struct Task));
-
-
-        int status = fscanf(pFile, "%d %d\n", &task_number, &cpu_burst);  //write the line to file.
-        task.task_number = task_number;
-        task.cpu_burst = cpu_burst;
-
-        if(status == EOF){
-            fclose(pFile);  //closing opened file.
-            pFile = NULL; //making sure ref is not there anymore.
-            return NULL;
-        }
-
-        *ptask = task;
-
-        fileReadHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
-        fclose(pFile);  //closing opened file
-        pFile = NULL; //making sure reference is not there anymore.
-        return ptask;
-    }
-
-
-    fileReadHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
-
-    fclose(pFile);  //closing opened file
-    pFile = NULL; //making sure reference is not there anymore.
-
-    return NULL;
-}
-
-
-//Returns number of tasks available in task file.
-long readHead;
-int getMaxTaskNumber(char *fileName){
-    int numberOfTasks = 0;
-    FILE *pFile = fopen(fileName, "r");    //open for writing.
-
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        exit(0);    //quit entire app
-        return 0;
-    }
-
-    fseek(pFile, 0, SEEK_END);  //moving file position indicator to the end.
-
-    long endOfFile = ftell(pFile);  //current position (i.e. eof) of file position indicator.
-
-    int task_number, cpu_burst;
-    while(readHead != endOfFile){      //while file position indicator 'fileReadHead' is not at the end of file.
-
-        fseek(pFile, readHead, SEEK_SET);  //move file position indicator to last left off position.
-
-        int status = fscanf(pFile, "%d %d\n", &task_number, &cpu_burst);  //write the line to file.
-
-        if(status != EOF){
-            numberOfTasks++;
-        }
-        else{
-            fclose(pFile);  //closing opened file.
-            pFile = NULL; //making sure ref is not there anymore.
-            return 0;
-        }
-        readHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
-    }
-    printf("TASK FILE HAS %d tasks.\n", numberOfTasks);
-
-    fclose(pFile);  //closing opened file
-    pFile = NULL; //making sure reference is not there anymore.
-    return numberOfTasks;
-}
-
-
-int continueInsertionNew = 1;      //Determines whether new task insertion is possible or not, NOT possible to insert new ones when there are tasks leftover needing insertion.
-
-int isT1_Inserted = 0, isT2_Inserted = 0; //indicates whether task 1, task 2 were successfully inserted or not. 1 = success, 0 = fail.
-struct Task *pTask_1 = NULL;    //pointer to task 1
-struct Task *pTask_2 = NULL;    //pointer to task 2
-struct Task task_1, task_2; //variable that can store tasks 1,2
-
 /*
  * Populate the ready queue with tasks, this function runs on task thread.
  */
@@ -355,6 +207,13 @@ struct Task task_1, task_2; //variable that can store tasks 1,2
 void *task(void *fileName){
     char *pFileName = (char *)fileName; //casting void * to char *
     int total_num_tasks_inserted = 0;
+    
+    int continueInsertionNew = 1;      //Determines whether new task insertion is possible or not, NOT possible to insert new ones when there are tasks leftover needing insertion.
+    int isT1_Inserted = 0, isT2_Inserted = 0; //indicates whether task 1, task 2 were successfully inserted or not. 1 = success, 0 = fail.
+    struct Task *pTask_1 = NULL;    //pointer to task 1
+    struct Task *pTask_2 = NULL;    //pointer to task 2
+    struct Task task_1, task_2; //variable that can store tasks 1,2
+    
 
     while(1){
 
@@ -651,237 +510,3 @@ void* cpu( void *arg){
         }
     }
 }
-
-/*
- * Solution to obtain current time taken from the given link. This was modified to suit the needs.
- * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
- * Author: mingos
- * Accessed: 2nd May 2019
- */
-//Gets the current time in full date time format, refer to format_time() to see how the output could be used to extract time.
-char *getCurrentTime(){
-    time_t rawtime;
-    struct tm * timeinfo = malloc(sizeof(struct tm));
-    char *ptime = NULL;
-    ptime = malloc(sizeof(char)*50);
-
-    time (&rawtime);
-    localtime_r (&rawtime, timeinfo);   //thread safe, localtime_r is thread safe.
-
-    strcpy (ptime, asctime (timeinfo));
-    free(timeinfo);
-    return ptime;
-
-}
-
-/*
- * Solution to format time was taken from the given link. Modifications were done to suit the needs.
- * Link: https://stackoverflow.com/questions/5141960/get-the-current-time-in-c
- * Author: hexinpeter
- * Accessed: 2nd May 2019
- */
-//Extracts out the time from the full date time format outputted by the getCurrentTime() function.
-void format_time(char *output){
-    time_t rawtime;
-    struct tm * timeinfo = malloc(sizeof(struct tm));
-
-    char str[50];
-    strcpy(str, output);
-
-    time ( &rawtime );
-    localtime_r(&rawtime, timeinfo);    //localtime_r is thread safe.
-
-    sprintf(output, "%d:%d:%d",timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
-
-    free(timeinfo);
-}
-
-
-/*
- * Refered to the given link to understand the use of difftime() function in c.
- * Link: https://www.tutorialspoint.com/c_standard_library/c_function_difftime.htm
- * Accessed: 2nd May 2019
- */
-//This function is to get the time elapsed when start and end times of time_t type are given.
-double getTimeElapsed( time_t start_t, time_t end_t ){
-   double diff_t;
-
-   diff_t = difftime(end_t, start_t);   //getting the difference.
-
-   return diff_t;
-}
-
-//Adds record to simulation log containing task info, task number and arrival time. To be used in task().
-int addSimulationLog_Task(struct Task task){
-
-    FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.        .
-
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        return 0;
-    }
-
-    int status = fprintf(pFile, "task #: %d\nArrival time: %s\n", task.task_number, task.arrival_time);
-
-    if(status < 0){
-        fclose(pFile);
-        pFile = NULL;
-        printf("writing to simulation_log file failed\n");
-        return 0;
-    }
-
-    fclose(pFile);
-    pFile = NULL;
-    return 1;
-}
-
-//Adds record to simulation log containing task info -: cpu#, task number, arrival time and service time. 
-//To be used in cpu().
-void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId){
-
-    FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.
-
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        exit(0);
-    }
-
-    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n", *cpuId, task.task_number, task.arrival_time, service_time);
-    //printf("cpu_burst %d", cpu_burst);
-    if(status < 0){
-        fclose(pFile);
-        pFile = NULL;
-        printf("writing to simulation_log file failed\n");
-    }
-
-    fclose(pFile);
-    pFile = NULL;
-}
-
-//Adds record to simulation_log containing cpu execution info (i.e. cpu num, completion time) and task info (i.e. arrival times and task num).
-//To be used in cpu().
-void addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cpuId){
-
-    FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.
-
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        exit(0);
-    }
-
-    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n", *cpuId, task.task_number, task.arrival_time, completion_time);
-
-    if(status < 0){
-        fclose(pFile);
-        pFile = NULL;
-        printf("writing to simulation_log file failed\n");
-
-    }
-
-    fclose(pFile);
-    pFile = NULL;
-
-}
-
-//Gets time of task thread termination, number of tasks executed by task thread and logs it to simulation_log file.
-void addTaskTerminationLog(int num_tasks_inserted){
-
-    char *currentTime = getCurrentTime(); //obtaining current time in full format.
-    format_time(currentTime); //getting only the time
-
-    FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.
-
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        exit(0);
-    }
-
-    int status = fprintf(pFile, "Number of asks put in to Ready-Queue: %d\nTerminate at time: %s\n", num_tasks_inserted, currentTime);
-
-    if(status < 0){
-        fclose(pFile);
-        pFile = NULL;
-        printf("writing to simulation_log file failed\n");
-    }
-    free(currentTime);
-    fclose(pFile);
-    pFile = NULL;
-}
-
-//Adds how many tasks each cpu thread executed in to the simulation_log file.
-void addCpuTerminationLog(int num_tasks_inserted, int cpuId){
-
-    FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.
-
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        exit(0);
-    }
-
-    int status = fprintf(pFile, "CPU-%d terminates after servicing %d tasks\n", cpuId, num_tasks_inserted);
-
-    if(status < 0){
-        fclose(pFile);
-        pFile = NULL;
-        printf("writing to simulation_log file failed\n");
-    }
-
-    fclose(pFile);
-    pFile = NULL;
-}
-
-//Adds record to simulation log about number of tasks serviced, average waiting time and average turnaround time.
-void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double turnaroundTime){
-    double avgWaitingTime = waitingTime / (double) num_tasks_serviced;
-    double avgTurnAroundTime = turnaroundTime / (double) num_tasks_serviced;
-
-    FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.
-
-    if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
-        exit(0);
-    }
-
-    int status = fprintf(pFile, "Number of tasks: %d\nAverage waiting time: %0.3f\nAverage turn around time: %0.3f\n", num_tasks_serviced, avgWaitingTime, avgTurnAroundTime);
-
-    if(status < 0){
-        fclose(pFile);
-        pFile = NULL;
-        printf("writing to simulation_log file failed\n");
-    }
-
-    fclose(pFile);
-    pFile = NULL;
-}
-
-
-//Sets the arrival time of task, to be used just before insertion to the ready queue.
-void setArrivalTimeTask(struct Task *task){
-    time_t task1_start;
-    time(&task1_start); //init with time stamp for this point.
-
-    task->arrival_t = task1_start;    //setting times that are operator friendly. for calculations. Not human readable.
-
-    char *time1 = getCurrentTime(); //obtaining current time in full format.
-    format_time(time1); //getting only the time
-
-    strcpy(task->arrival_time, time1);    //setting the arival time of the task.
-
-    free(time1);
-
-    printf("Task number = %d cpu_burst = %d arrival_time = %s\n", task->task_number, task->cpu_burst, task->arrival_time);
-}
-
-
