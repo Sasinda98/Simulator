@@ -101,16 +101,16 @@ int main(int argc, char *argv[]) {
 
     struct Task tasks[queueSize];
     initialize(tasks, queueSize);
-/*
+
     char choice;
     printf("Create new task file? Y/N?\n");
     scanf("%c", &choice);
     if(choice == 'Y'){
         generateTaskFile("task_file");
     }
-*/
+
     NUMBER_OF_TASKS_TASK_FILE = getMaxTaskNumber(taskFileName);
-    exit(0);
+
     emptySpaces = queueSize;
     fullSpaces = 0;
 
