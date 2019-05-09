@@ -845,6 +845,7 @@ void addCpuTerminationLog(int num_tasks_inserted, int cpuId){
     pFile = NULL;
 }
 
+//Adds record to simulation log about number of tasks serviced, average waiting time and average turnaround time.
 void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double turnaroundTime){
     double avgWaitingTime = waitingTime / (double) num_tasks_serviced;
     double avgTurnAroundTime = turnaroundTime / (double) num_tasks_serviced;
