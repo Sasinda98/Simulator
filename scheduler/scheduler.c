@@ -17,26 +17,9 @@
 #include "taskFile.h"
 #include "simulationLog.h" 
 
-
 //FUNCTION PROTOTYPES...........................................................
 void *task(void *fileName);
 void *cpu( void *arg);
-
-//char *getCurrentTime();
-//void format_time(char *output);
-//double getTimeElapsed();
-    
-//int generateTaskFile(char *fileName);
-//struct Task *getNextTask(char *fileName);
-//int getMaxTaskNumber(char *fileName);
-//void setArrivalTimeTask(struct Task *task);
-
-//int addSimulationLog_Task(struct Task task);
-//void addTaskTerminationLog(int num_tasks_inserted);
-//void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId);
-//void addSimulationLog_Post_Exec(struct Task task, char *service_time, int *cpuId);
-//void addCpuTerminationLog(int num_tasks_inserted, int cpuId);
-//void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double turnaroundTime);
 
 //GLOBAL VARIABLES..............................................................
 int NUMBER_OF_TASKS_TASK_FILE = 0;  //number of tasks in task file.

@@ -5,6 +5,13 @@
  * Title: Queue data structure to handle the ready queue.
  * Created on 30 April 2019, 7:41 PM
  */
+
+/*
+ * The purpose of this header is to hold functions related to the ready queue.
+ * Contains the implementation of the queue data structure.
+ */
+
+
 #include <time.h>
 #include <string.h>
 #include <pthread.h>
