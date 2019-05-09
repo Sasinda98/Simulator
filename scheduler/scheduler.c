@@ -8,26 +8,28 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "readyqueue.h"
 #include <string.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <time.h>
+
+#include "readyqueue.h"
 #include "taskFile.h"
-#include "simulationLog.h"
+#include "simulationLog.h" 
+
 
 //FUNCTION PROTOTYPES...........................................................
 void *task(void *fileName);
 void *cpu( void *arg);
 
-char *getCurrentTime();
-void format_time(char *output);
-double getTimeElapsed();
-
+//char *getCurrentTime();
+//void format_time(char *output);
+//double getTimeElapsed();
+    
 //int generateTaskFile(char *fileName);
 //struct Task *getNextTask(char *fileName);
 //int getMaxTaskNumber(char *fileName);
-void setArrivalTimeTask(struct Task *task);
+//void setArrivalTimeTask(struct Task *task);
 
 //int addSimulationLog_Task(struct Task task);
 //void addTaskTerminationLog(int num_tasks_inserted);
