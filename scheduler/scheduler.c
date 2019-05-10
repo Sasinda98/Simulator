@@ -2,8 +2,6 @@
 /*
  * File:   main.c
  * Author: W.A.A.D Gayal Sasinda Rupasinghe
- *
- * Created on 30 April 2019, 6:10 PM
  */
 
 #include <stdio.h>

@@ -3,7 +3,6 @@
  * File:   readyqueue.h
  * Author: W.A.A.D Gayal Sasinda Rupasinghe
  * Title: Queue data structure to handle the ready queue.
- * Created on 30 April 2019, 7:41 PM
  */
 
 /*
