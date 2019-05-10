@@ -24,7 +24,7 @@ void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double tu
         exit(-1);
     }
 
-    int status = fprintf(pFile, "Number of tasks: %d\nAverage waiting time: %0.3f\nAverage turn around time: %0.3f\n", num_tasks_serviced, avgWaitingTime, avgTurnAroundTime);
+    int status = fprintf(pFile, "Number of tasks: %d\nAverage waiting time: %0.1f seconds\nAverage turn around time: %0.1f seconds\n", num_tasks_serviced, avgWaitingTime, avgTurnAroundTime);
 
     if(status < 0){
         fclose(pFile);
@@ -49,7 +49,7 @@ void addSimulationLog_Task(struct Task task){
         exit(-1);
     }
 
-    int status = fprintf(pFile, "task #: %d\nArrival time: %s\n", task.task_number, task.arrival_time);
+    int status = fprintf(pFile, "task #: %d\nArrival time: %s\n\n", task.task_number, task.arrival_time);
 
     if(status < 0){
         fclose(pFile);
@@ -77,7 +77,7 @@ void addTaskTerminationLog(int num_tasks_inserted){
         exit(-1);
     }
 
-    int status = fprintf(pFile, "Number of asks put in to Ready-Queue: %d\nTerminate at time: %s\n", num_tasks_inserted, currentTime);
+    int status = fprintf(pFile, "Number of asks put in to Ready-Queue: %d\nTerminate at time: %s\n\n", num_tasks_inserted, currentTime);
 
     if(status < 0){
         fclose(pFile);
@@ -104,7 +104,7 @@ void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId)
         exit(0);
     }
 
-    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n", *cpuId, task.task_number, task.arrival_time, service_time);
+    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n\n", *cpuId, task.task_number, task.arrival_time, service_time);
     //printf("cpu_burst %d", cpu_burst);
     if(status < 0){
         fclose(pFile);
@@ -130,7 +130,7 @@ void addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cp
         exit(0);
     }
 
-    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n", *cpuId, task.task_number, task.arrival_time, completion_time);
+    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n\n", *cpuId, task.task_number, task.arrival_time, completion_time);
 
     if(status < 0){
         fclose(pFile);
@@ -156,7 +156,7 @@ void addCpuTerminationLog(int num_tasks_inserted, int cpuId){
         exit(0);
     }
 
-    int status = fprintf(pFile, "CPU-%d terminates after servicing %d tasks\n", cpuId, num_tasks_inserted);
+    int status = fprintf(pFile, "CPU-%d terminates after servicing %d tasks.\n\n", cpuId, num_tasks_inserted);
 
     if(status < 0){
         fclose(pFile);
