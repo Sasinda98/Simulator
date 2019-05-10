@@ -11,11 +11,9 @@
  * Contains the implementation of the queue data structure.
  */
 
-
 #include <time.h>
 #include <string.h>
 #include <pthread.h>
-
 
 struct Task{
     int task_number;
@@ -49,8 +47,7 @@ void initialize(struct Task tasks[], int size){
      * Accessed: 2 May 2019
      */
 
-    pTaskArray = malloc(sizeof(struct Task) * size);    //Allocating required memory, the fix for trap 6. Forgot to allocate memory as a result got trap 6 error.
-    //*pTaskArray = tasks[0]; //getting pointer setup to first index of task array.
+    pTaskArray = malloc(sizeof(struct Task) * size);    //Allocating required memory,
     MAX_SIZE = size;
 
 }
@@ -80,21 +77,20 @@ int insert(struct Task newTask){
         ++rear;
         if(rear == (MAX_SIZE))  //if rear at last index
             rear = rear % (MAX_SIZE);
-        printf("\n\nREAR ==== %d\n\n", rear);
 
         *(pTaskArray + rear) = newTask;
         successful_insertions++;
-        printf("\n INSERTION SUCCESSFUL = %d %d\n", (pTaskArray + rear)->task_number, (pTaskArray + rear)->cpu_burst );
+        printf("INSERTION TO READY QUEUE SUCCESSFUL: Rear = %d,Task = %d %d.\n", rear,(pTaskArray + rear)->task_number, (pTaskArray + rear)->cpu_burst );
 
         pthread_mutex_lock(&nItems_mutex);
-            nItems++;
+        nItems++;
         pthread_mutex_unlock(&nItems_mutex);
 
         pthread_mutex_unlock(&queue_mutex);
         return 1;   //success
     }
     else{
-        printf("\n INSERTION FAILED = %d %d\n", newTask.task_number, newTask.cpu_burst );
+        printf("INSERTION TO READY QUEUE FAILED: Task= %d %d.\n", newTask.task_number, newTask.cpu_burst );
         pthread_mutex_unlock(&queue_mutex);
         return 0;   //fail
     }
@@ -118,12 +114,12 @@ struct Task *pop(){
         pthread_mutex_lock(&nItems_mutex);
         nItems--;
         pthread_mutex_unlock(&nItems_mutex);
-    pthread_mutex_unlock(&queue_mutex);
+        pthread_mutex_unlock(&queue_mutex);
         return (pTaskArray + front);
     }
     else{
-        printf("Nothing left to pop!\n");
-    pthread_mutex_unlock(&queue_mutex);
+        printf("READY QUEUE EMPTY: Nothing left to pop.\n");
+        pthread_mutex_unlock(&queue_mutex);
         return NULL;
     }
 }

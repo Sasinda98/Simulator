@@ -6,18 +6,19 @@
 /*
  * The purpose of this header is to hold functions related to task file operations.
  */
+
 #include <unistd.h>
 
 //Generates task file
-int generateTaskFile(char *fileName){
+void generateTaskFile(char *fileName){
 
     FILE *pFile = fopen(fileName, "w");    //open/create file for writing.
 
     if(pFile == NULL){
         char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
+        printf("Failed to open file, press any key followed by enter key to exit.\n");
         scanf("%s", temp);
-        return 0;
+        exit(-1);
     }
 
     int cpu_burst = 0;
@@ -33,17 +34,16 @@ int generateTaskFile(char *fileName){
         int status = fprintf(pFile, "%d %d\n", task_number, cpu_burst);
 
         if(status < 0){
-             fclose(pFile);  //closing opened file.
-             pFile = NULL; //making sure ref is not there anymore.
-            printf("writing to task file failed\n");
-            return 0;
+            fclose(pFile);  //closing opened file.
+            pFile = NULL; //making sure ref is not there anymore.
+            printf("ERROR: Writing/creating to task file failed, Application will quit...\n");
+            exit(-1);
         }
     }
 
     fclose(pFile);  //closing opened file.
     pFile = NULL; //making sure ref is not there anymore.
 
-    return 0;
 }
 
 //Returns number of tasks available in task file.
@@ -54,9 +54,9 @@ int getMaxTaskNumber(char *fileName){
 
     if(pFile == NULL){
         char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
+        printf("Failed to open file, press any key followed by enter key to exit.\n");
         scanf("%s", temp);
-        exit(0);    //quit entire app
+        exit(-1);    //quit entire app
         return 0;
     }
 
@@ -81,7 +81,7 @@ int getMaxTaskNumber(char *fileName){
         }
         readHead = ftell(pFile);    //store the current position of file position indicator so the next time, it start read from there.
     }
-    printf("TASK FILE HAS %d tasks.\n", numberOfTasks);
+    printf("TASK FILE HAS: %d tasks.\n", numberOfTasks);
 
     fclose(pFile);  //closing opened file
     pFile = NULL; //making sure reference is not there anymore.
@@ -102,7 +102,7 @@ struct Task *getNextTask(char *fileName){
 
     if(pFile == NULL){
         char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.");
+        printf("Failed to open file, press any key followed by enter key to exit.\n");
         scanf("%s", temp);
 
         exit(-1);   //quit entire application.

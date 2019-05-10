@@ -349,7 +349,7 @@ void *task(void *fileName){
 
         //Kill switch
         if(getSuccessfulInsertions() == NUMBER_OF_TASKS_TASK_FILE ){
-            printf("TASK THREAD QUITTING : ALL ITEMS IN TASK FILE WAS ADDED TO QUEUE. %d tasks were added to ready queue.\n",   total_num_tasks_inserted);
+            printf("TASK THREAD QUITTING: All tasks added to the queue. %d tasks were added to ready queue.\n",   total_num_tasks_inserted);
             addTaskTerminationLog(total_num_tasks_inserted);
 
             if(pTask_1 != NULL)
@@ -377,15 +377,14 @@ void* cpu( void *arg){
 
     int task_exec_count_individual = 0;
 
-    printf("CPU ID: %d thread created successfully.\n", cpuId);
+    printf("THREAD CREATION SUCCESSFUL: CPU-%d thread was created.\n", cpuId);
 
     while(1){
 
         pthread_mutex_lock(&fullSpacesMutex);
 
         while(fullSpaces == 0){     //no new tasks in ready queue to execute so block the thread.
-            printf("CPU-%d going to blocking state.\n", cpuId);
-
+            printf("CPU-%d going to BLOCKING state.\n", cpuId);
             pthread_cond_wait(&cpuCondition, &fullSpacesMutex);  //releases mutex waits on condition var (signal). Waits on task thread to wake it up.
             printf("CPU-%d going to UNBLOCKED state.\n", cpuId);
         }
@@ -406,7 +405,7 @@ void* cpu( void *arg){
 
             pthread_cond_signal(&taskCondition); //signal TASK thread to wake up (if blocked)as task from queue was taken in for execution.
 
-            printf("CPU-%d executing task# = %d burst = %d\n", cpuId, task->task_number, task->cpu_burst);
+            printf("CPU-%d EXECUTING: task# = %d burst = %d\n", cpuId, task->task_number, task->cpu_burst);
             
             //Obtaining service time, waiting time.........................................................................
             time_t arrival_t = task->arrival_t;    //getting arrival time from the task.
@@ -417,7 +416,7 @@ void* cpu( void *arg){
             format_time(service_time); //formatting it down to only contain the time. Human readable format.
 
             double waiting_time = getTimeElapsed(arrival_t, service_t); //compute waiting time for this task by getting the difference.
-            printf("Waiting TIME ELAPSED: %f\n", waiting_time);
+            printf("WAITING TIME: Task# = %d, Waiting time = %0.3f\n", task->task_number, waiting_time);
             //END of obtaining service time, waiting time...................................................................
 
             pthread_mutex_lock(&total_waiting_time_mutex);  //obtaining lock to modify total_waiting_time [shared resource]
@@ -447,7 +446,7 @@ void* cpu( void *arg){
             double turn_around_time = getTimeElapsed(arrival_t, completion_t);      //computes turn around time by getting the difference.
             //End of obtaining completion time.....................................................................................
             
-            printf("Turn Around Time: %f\n", turn_around_time);
+            printf("TURNAROUND TIME: Task# = %d, Turnaround time = %0.3f\n\n", task->task_number,turn_around_time);
 
             pthread_mutex_lock(&total_turnaround_time_mutex);   //getting the lock for modification of total_turnaround_time var. [shared resource].
 
@@ -461,7 +460,7 @@ void* cpu( void *arg){
 
             pthread_mutex_unlock(&num_tasks_mutex); //release the lock so another thread can have its go at it.
 
-            printf("Number of tasks executed all together %d\n", num_tasks_executed);
+////////////printf("Number of tasks executed all together %d\n", num_tasks_executed);
 
         }
         else{   //task not available, ready queue empty.
@@ -472,23 +471,23 @@ void* cpu( void *arg){
         pthread_mutex_lock(&num_tasks_mutex);
         remainingTasks = NUMBER_OF_TASKS_TASK_FILE - num_tasks_executed;
         pthread_mutex_unlock(&num_tasks_mutex);
-        printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU PRE = %d\n", NUMBER_OF_TASKS_TASK_FILE);
+////////printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU PRE = %d\n", NUMBER_OF_TASKS_TASK_FILE);
         
         //CPU thread termination is handled here.
         if(remainingTasks == 0){   //add logs!!!
-            printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
+////////////printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
             printf("CPU-%d THREAD TERMINATES AFTER EXECUTING %d TASKS.\n", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
         }
         else if(remainingTasks == 1){
-            printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
+////////////printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
             printf("CPU-%d THREAD TERMINATES AFTER EXECUTING %d TASKS.\n", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
         }
         else if(remainingTasks == 2){
-            printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
+////////////printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
             printf("CPU-%d THREAD TERMINATES AFTER EXECUTING %d TASKS.\n", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
