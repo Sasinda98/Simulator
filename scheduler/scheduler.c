@@ -459,9 +459,6 @@ void* cpu( void *arg){
             num_tasks_executed++;    //increment num of tasks executed by one. [shared resource]
 
             pthread_mutex_unlock(&num_tasks_mutex); //release the lock so another thread can have its go at it.
-
-////////////printf("Number of tasks executed all together %d\n", num_tasks_executed);
-
         }
         else{   //task not available, ready queue empty.
             printf("Empty/no tasks available for cpu - %d execution. GOING TO EXIT PHASE\n", cpuId);
@@ -471,23 +468,19 @@ void* cpu( void *arg){
         pthread_mutex_lock(&num_tasks_mutex);
         remainingTasks = NUMBER_OF_TASKS_TASK_FILE - num_tasks_executed;
         pthread_mutex_unlock(&num_tasks_mutex);
-////////printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU PRE = %d\n", NUMBER_OF_TASKS_TASK_FILE);
         
         //CPU thread termination is handled here.
         if(remainingTasks == 0){   //add logs!!!
-////////////printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
             printf("CPU-%d THREAD TERMINATES AFTER EXECUTING %d TASKS.\n", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
         }
         else if(remainingTasks == 1){
-////////////printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
             printf("CPU-%d THREAD TERMINATES AFTER EXECUTING %d TASKS.\n", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
         }
         else if(remainingTasks == 2){
-////////////printf("\nNUMBER_OF_TASKS_TASKS_FILE CPU TERM = %d\n", NUMBER_OF_TASKS_TASK_FILE);
             printf("CPU-%d THREAD TERMINATES AFTER EXECUTING %d TASKS.\n", cpuId, task_exec_count_individual);
             addCpuTerminationLog(task_exec_count_individual, cpuId);
             pthread_exit(0);
