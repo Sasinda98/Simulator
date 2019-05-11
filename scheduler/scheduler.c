@@ -374,6 +374,7 @@ void* cpu( void *arg){
     int cpuId = *pcpuId;
 
     int task_exec_count_individual = 0;
+    struct Task *task = NULL;
 
     printf("THREAD CREATION SUCCESSFUL: CPU-%d thread was created.\n", cpuId);
 
@@ -389,8 +390,9 @@ void* cpu( void *arg){
 
         pthread_mutex_unlock(&fullSpacesMutex);
 
-        struct Task *task = pop();  //get a task from ready queue.
-
+        task = pop();  //get a task from ready queue.
+        struct Task utask = *task;
+        
         if(task != NULL){   //task available from ready queue.
 
             pthread_mutex_lock(&emptySpacesMutex);
@@ -423,7 +425,7 @@ void* cpu( void *arg){
 
             pthread_mutex_unlock(&total_waiting_time_mutex);    //release the lock so another thread can have its go at it.
 
-            addSimulationLog_Pre_Exec(*task, service_time, cpuId); //adds record to simulation log with service time & other related fields.
+            addSimulationLog_Pre_Exec(utask, service_time, cpuId); //adds record to simulation log with service time & other related fields.
 
             free(service_time);
 
@@ -436,7 +438,7 @@ void* cpu( void *arg){
             char *completion_time = getCurrentTime(); //obtaining current time in full format. Human readable format.
             format_time(completion_time); //formatting it down to only contain the time. Human readable format.
 
-            addSimulationLog_Post_Exec(*task, completion_time, cpuId); //adds record to simulation log with completion time.
+            addSimulationLog_Post_Exec(utask, completion_time, cpuId); //adds record to simulation log with completion time.
             task_exec_count_individual++;
 
             free(completion_time);
