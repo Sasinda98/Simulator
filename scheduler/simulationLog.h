@@ -93,7 +93,7 @@ void addTaskTerminationLog(int num_tasks_inserted){
 
 //Adds record to simulation log containing task info -: cpu#, task number, arrival time and service time. 
 //To be used in cpu().
-void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId){
+void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int cpuId){
 
     FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.
 
@@ -104,7 +104,7 @@ void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId)
         exit(0);
     }
 
-    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n\n", *cpuId, task.task_number, task.arrival_time, service_time);
+    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n\n", cpuId, task.task_number, task.arrival_time, service_time);
     //printf("cpu_burst %d", cpu_burst);
     if(status < 0){
         fclose(pFile);
@@ -119,7 +119,7 @@ void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int *cpuId)
 
 //Adds record to simulation_log containing cpu execution info (i.e. cpu num, completion time) and task info (i.e. arrival times and task num).
 //To be used in cpu().
-void addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cpuId){
+void addSimulationLog_Post_Exec(struct Task task, char *completion_time, int cpuId){
 
     FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.
 
@@ -130,7 +130,7 @@ void addSimulationLog_Post_Exec(struct Task task, char *completion_time, int *cp
         exit(0);
     }
 
-    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n\n", *cpuId, task.task_number, task.arrival_time, completion_time);
+    int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n\n", cpuId, task.task_number, task.arrival_time, completion_time);
 
     if(status < 0){
         fclose(pFile);
