@@ -1,6 +1,6 @@
 
 /*
- * File:   main.c
+ * File:   scheduler.c
  * Author: W.A.A.D Gayal Sasinda Rupasinghe
  */
 

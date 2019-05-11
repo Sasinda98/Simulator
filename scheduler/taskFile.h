@@ -34,7 +34,7 @@ void generateTaskFile(char *fileName){
         if(status < 0){
             fclose(pFile);  //closing opened file.
             pFile = NULL; //making sure ref is not there anymore.
-            printf("ERROR: Writing/creating to task file failed, Application will quit...\n");
+            printf("ERROR: Writing/creating to task file failed, program will quit.\n");
             exit(-1);
         }
     }
