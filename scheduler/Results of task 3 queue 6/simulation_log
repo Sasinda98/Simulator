@@ -1,0 +1,52 @@
+
+task #: 0
+Arrival time: 16:41:46
+
+task #: 1
+Arrival time: 16:41:46
+
+Statistics for CPU-1:
+Task #0
+Arrival time: 16:41:46
+Service time: 16:41:46
+
+task #: 2
+Arrival time: 16:41:46
+
+Statistics for CPU-2:
+Task #1
+Arrival time: 16:41:46
+Service time: 16:41:46
+
+Number of asks put in to Ready-Queue: 3
+Terminate at time: 16:41:46
+
+Statistics for CPU-3:
+Task #2
+Arrival time: 16:41:46
+Service time: 16:41:46
+
+Statistics for CPU-2:
+Task #1
+Arrival time: 16:41:46
+Completion time: 16:41:48
+
+CPU-2 terminates after servicing 1 tasks.
+
+Statistics for CPU-3:
+Task #2
+Arrival time: 16:41:46
+Completion time: 16:41:48
+
+CPU-3 terminates after servicing 1 tasks.
+
+Statistics for CPU-1:
+Task #0
+Arrival time: 16:41:46
+Completion time: 16:41:50
+
+CPU-1 terminates after servicing 1 tasks.
+
+Number of tasks: 3
+Average waiting time: 0.0 seconds
+Average turnaround time: 2.7 seconds
