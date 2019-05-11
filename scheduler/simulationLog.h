@@ -24,7 +24,7 @@ void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double tu
         exit(-1);
     }
 
-    int status = fprintf(pFile, "Number of tasks: %d\nAverage waiting time: %0.1f seconds\nAverage turn around time: %0.1f seconds\n", num_tasks_serviced, avgWaitingTime, avgTurnAroundTime);
+    int status = fprintf(pFile, "Number of tasks: %d\nAverage waiting time: %0.1f seconds\nAverage turnaround time: %0.1f seconds\n", num_tasks_serviced, avgWaitingTime, avgTurnAroundTime);
 
     if(status < 0){
         fclose(pFile);
