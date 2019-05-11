@@ -374,7 +374,7 @@ void* cpu( void *arg){
     int cpuId = *pcpuId;
 
     int task_exec_count_individual = 0;
-    struct Task *task = NULL;
+    struct Task *pTask = NULL;
 
     printf("THREAD CREATION SUCCESSFUL: CPU-%d thread was created.\n", cpuId);
 
@@ -390,10 +390,10 @@ void* cpu( void *arg){
 
         pthread_mutex_unlock(&fullSpacesMutex);
 
-        task = pop();  //get a task from ready queue.
-        struct Task utask = *task;
+        pTask = pop();  //get a task from ready queue.
+        struct Task task = *pTask;  //dereferencing.
         
-        if(task != NULL){   //task available from ready queue.
+        if(pTask != NULL){   //task available from ready queue.
 
             pthread_mutex_lock(&emptySpacesMutex);
             emptySpaces++;
@@ -405,10 +405,10 @@ void* cpu( void *arg){
 
             pthread_cond_signal(&taskCondition); //signal TASK thread to wake up (if blocked)as task from queue was taken in for execution.
 
-            printf("CPU-%d EXECUTING: task# = %d burst = %d\n", cpuId, task->task_number, task->cpu_burst);
+            printf("CPU-%d EXECUTING: task# = %d burst = %d\n", cpuId, task.task_number, task.cpu_burst);
             
             //Obtaining service time, waiting time.........................................................................
-            time_t arrival_t = task->arrival_t;    //getting arrival time from the task.
+            time_t arrival_t = task.arrival_t;    //getting arrival time from the task.
             time_t service_t;   //var that stores service time. Time at which task entered the cpu.
             time(&service_t);  //sets the service_t to its value i.e. time now.
 
@@ -416,7 +416,7 @@ void* cpu( void *arg){
             format_time(service_time); //formatting it down to only contain the time. Human readable format.
 
             double waiting_time = getTimeElapsed(arrival_t, service_t); //compute waiting time for this task by getting the difference.
-            printf("WAITING TIME: Task# = %d, Waiting time = %0.3f\n", task->task_number, waiting_time);
+            printf("WAITING TIME: Task# = %d, Waiting time = %0.3f\n", task.task_number, waiting_time);
             //END of obtaining service time, waiting time...................................................................
 
             pthread_mutex_lock(&total_waiting_time_mutex);  //obtaining lock to modify total_waiting_time [shared resource]
@@ -425,11 +425,11 @@ void* cpu( void *arg){
 
             pthread_mutex_unlock(&total_waiting_time_mutex);    //release the lock so another thread can have its go at it.
 
-            addSimulationLog_Pre_Exec(utask, service_time, cpuId); //adds record to simulation log with service time & other related fields.
+            addSimulationLog_Pre_Exec(task, service_time, cpuId); //adds record to simulation log with service time & other related fields.
 
             free(service_time);
 
-            sleep(task->cpu_burst); //sleep for burst time, simulate cpu EXECUTING the task.
+            sleep(task.cpu_burst); //sleep for burst time, simulate cpu EXECUTING the task.
 
             //Obtaining completion time.....................................................................................
             time_t completion_t;  //var that stores completion time.
@@ -438,7 +438,7 @@ void* cpu( void *arg){
             char *completion_time = getCurrentTime(); //obtaining current time in full format. Human readable format.
             format_time(completion_time); //formatting it down to only contain the time. Human readable format.
 
-            addSimulationLog_Post_Exec(utask, completion_time, cpuId); //adds record to simulation log with completion time.
+            addSimulationLog_Post_Exec(task, completion_time, cpuId); //adds record to simulation log with completion time.
             task_exec_count_individual++;
 
             free(completion_time);
@@ -446,7 +446,7 @@ void* cpu( void *arg){
             double turn_around_time = getTimeElapsed(arrival_t, completion_t);      //computes turn around time by getting the difference.
             //End of obtaining completion time.....................................................................................
             
-            printf("TURNAROUND TIME: Task# = %d, Turnaround time = %0.3f\n\n", task->task_number,turn_around_time);
+            printf("TURNAROUND TIME: Task# = %d, Turnaround time = %0.3f\n\n", task.task_number,turn_around_time);
 
             pthread_mutex_lock(&total_turnaround_time_mutex);   //getting the lock for modification of total_turnaround_time var. [shared resource].
 
