@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
 
     pthread_join(tid, NULL);    //main thread wait till task thread is done.
 
-    printf("Number of TASKS SERVICED %d, AVG wait Time %0.3f, AVG TAT %0.3f\n", num_tasks_executed,total_waiting_time / (double) num_tasks_executed, total_turnaround_time / (double) num_tasks_executed );
+    printf("Number of TASKS SERVICED %d, AVG wait Time %0.1f, AVG TAT %0.1f\n", num_tasks_executed,total_waiting_time / (double) num_tasks_executed, total_turnaround_time / (double) num_tasks_executed );
     addMainTerminationLog(num_tasks_executed, total_waiting_time, total_turnaround_time);
     destroy_queue();    //free the memory allocated for ready queue, see readyqueue.h.
 
@@ -416,7 +416,7 @@ void* cpu( void *arg){
             format_time(service_time); //formatting it down to only contain the time. Human readable format.
 
             double waiting_time = getTimeElapsed(arrival_t, service_t); //compute waiting time for this task by getting the difference.
-            printf("WAITING TIME: Task# = %d, Waiting time = %0.3f\n", task.task_number, waiting_time);
+            printf("WAITING TIME: Task# = %d, Waiting time = %0.1f\n", task.task_number, waiting_time);
             //END of obtaining service time, waiting time...................................................................
 
             pthread_mutex_lock(&total_waiting_time_mutex);  //obtaining lock to modify total_waiting_time [shared resource]
@@ -446,7 +446,7 @@ void* cpu( void *arg){
             double turn_around_time = getTimeElapsed(arrival_t, completion_t);      //computes turn around time by getting the difference.
             //End of obtaining completion time.....................................................................................
             
-            printf("TURNAROUND TIME: Task# = %d, Turnaround time = %0.3f\n\n", task.task_number,turn_around_time);
+            printf("TURNAROUND TIME: Task# = %d, Turnaround time = %0.1f\n\n", task.task_number,turn_around_time);
 
             pthread_mutex_lock(&total_turnaround_time_mutex);   //getting the lock for modification of total_turnaround_time var. [shared resource].
 
