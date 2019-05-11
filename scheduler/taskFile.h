@@ -15,9 +15,7 @@ void generateTaskFile(char *fileName){
     FILE *pFile = fopen(fileName, "w");    //open/create file for writing.
 
     if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.\n");
-        scanf("%s", temp);
+        printf("Failed to open task file, program will quit.\n");
         exit(-1);
     }
 
@@ -53,10 +51,8 @@ int getMaxTaskNumber(char *fileName){
     FILE *pFile = fopen(fileName, "r");    //open for writing.
 
     if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.\n");
-        scanf("%s", temp);
-        exit(-1);    //quit entire app
+        printf("Failed to open task file, program will quit.\n");
+        exit(-1);
         return 0;
     }
 
@@ -101,10 +97,7 @@ struct Task *getNextTask(char *fileName){
     FILE *pFile = fopen(fileName, "r");    //open file (task file) for reading.
 
     if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open file, press any key followed by enter key to exit.\n");
-        scanf("%s", temp);
-
+        printf("Failed to open task file, program will quit.\n");
         exit(-1);   //quit entire application.
         return NULL;
     }

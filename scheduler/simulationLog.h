@@ -18,9 +18,7 @@ void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double tu
     FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.
 
     if(pFile == NULL){
-        char temp[3];
-        printf("ERROR: Failed to open/create simulation_log file, press any key followed by enter key to exit.");
-        scanf("%s", temp);
+        printf("ERROR: Failed to open/create simulation_log file, program will quit.\n");
         exit(-1);
     }
 
@@ -29,7 +27,7 @@ void addMainTerminationLog(int num_tasks_serviced, double waitingTime, double tu
     if(status < 0){
         fclose(pFile);
         pFile = NULL;
-        printf("ERROR: Writing/creating to simulation_log file failed, Application will quit...\n");
+        printf("ERROR: Writing/creating to simulation_log file failed, program will quit.\n");
         exit(-1);
     }
 
@@ -43,9 +41,7 @@ void addSimulationLog_Task(struct Task task){
     FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.        .
 
     if(pFile == NULL){
-        char temp[3];
-        printf("ERROR: Failed to open file, press any key followed by enter key to exit.\n");
-        scanf("%s", temp);
+        printf("ERROR: Failed to open file, program will quit.\n");
         exit(-1);
     }
 
@@ -54,7 +50,7 @@ void addSimulationLog_Task(struct Task task){
     if(status < 0){
         fclose(pFile);
         pFile = NULL;
-        printf("ERROR: Writing/creating to simulation_log file failed, Application will quit...\n");
+        printf("ERROR: Writing/creating to simulation_log file failed, program will quit.\n");
         exit(-1);
     }
 
@@ -71,9 +67,7 @@ void addTaskTerminationLog(int num_tasks_inserted){
     FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.
 
     if(pFile == NULL){
-        char temp[3];
-        printf("Failed to open/create simulation_log file, press any key followed by enter key to exit.\n");
-        scanf("%s", temp);
+        printf("Failed to open/create simulation_log file, program will quit.\n");
         exit(-1);
     }
 
@@ -82,7 +76,7 @@ void addTaskTerminationLog(int num_tasks_inserted){
     if(status < 0){
         fclose(pFile);
         pFile = NULL;
-        printf("ERROR: Writing/creating to simulation_log file failed, Application will quit...\n");
+        printf("ERROR: Writing/creating to simulation_log file failed, program will quit.\n");
         exit(-1);
     }
     free(currentTime);
@@ -98,10 +92,8 @@ void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int cpuId){
     FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.
 
     if(pFile == NULL){
-        char temp[3];
-        printf("ERROR: Failed to open/create simulation_log file, press any key followed by enter key to exit.\n");
-        scanf("%s", temp);
-        exit(0);
+        printf("ERROR: Failed to open/create simulation_log file, program will quit.\n");
+        exit(-1);
     }
 
     int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nService time: %s\n\n", cpuId, task.task_number, task.arrival_time, service_time);
@@ -109,7 +101,7 @@ void addSimulationLog_Pre_Exec(struct Task task, char *service_time, int cpuId){
     if(status < 0){
         fclose(pFile);
         pFile = NULL;
-        printf("ERROR: Writing/creating to simulation_log file failed, Application will quit...\n");
+        printf("ERROR: Writing/creating to simulation_log file failed, program will quit.\n");
         exit(-1);
     }
 
@@ -124,10 +116,8 @@ void addSimulationLog_Post_Exec(struct Task task, char *completion_time, int cpu
     FILE *pFile = fopen("simulation_log", "a");     //open for writing, appending.
 
     if(pFile == NULL){
-        char temp[3];
-        printf("ERROR: Failed to open/create simulation_log file, press any key followed by enter key to exit.\n");
-        scanf("%s", temp);
-        exit(0);
+        printf("ERROR: Failed to open/create simulation_log file, program will quit.\n");
+        exit(-1);
     }
 
     int status = fprintf(pFile, "Statistics for CPU-%d:\nTask #%d\nArrival time: %s\nCompletion time: %s\n\n", cpuId, task.task_number, task.arrival_time, completion_time);
@@ -135,7 +125,7 @@ void addSimulationLog_Post_Exec(struct Task task, char *completion_time, int cpu
     if(status < 0){
         fclose(pFile);
         pFile = NULL;
-        printf("ERROR: Writing/creating to simulation_log file failed, Application will quit...\n");
+        printf("ERROR: Writing/creating to simulation_log file failed, program will quit.\n");
         exit(-1);
     }
 
@@ -150,10 +140,8 @@ void addCpuTerminationLog(int num_tasks_inserted, int cpuId){
     FILE *pFile = fopen("simulation_log", "a");    //open for writing, appending.
 
     if(pFile == NULL){
-        char temp[3];
-        printf("ERROR: Failed to open/create simulation_log file, press any key followed by enter key to exit.\n");
-        scanf("%s", temp);
-        exit(0);
+        printf("ERROR: Failed to open/create simulation_log file, program will quit.\n");
+        exit(-1);
     }
 
     int status = fprintf(pFile, "CPU-%d terminates after servicing %d tasks.\n\n", cpuId, num_tasks_inserted);
@@ -161,7 +149,7 @@ void addCpuTerminationLog(int num_tasks_inserted, int cpuId){
     if(status < 0){
         fclose(pFile);
         pFile = NULL;
-        printf("ERROR: Writing/creating to simulation_log file failed, Application will quit...\n");
+        printf("ERROR: Writing/creating to simulation_log file failed, program will quit.\n");
         exit(-1);
     }
 
